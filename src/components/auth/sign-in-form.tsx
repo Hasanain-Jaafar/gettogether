@@ -43,7 +43,15 @@ export function SignInForm() {
       password: values.password,
     });
     if (signInError) {
-      setError(signInError.message ?? "Invalid email or password.");
+      const msg = signInError.message ?? "";
+      const friendly =
+        msg.toLowerCase().includes("invalid login credentials") ||
+        msg.toLowerCase().includes("invalid_credentials")
+          ? "Invalid email or password."
+          : msg.toLowerCase().includes("email not confirmed")
+          ? "Check your inbox and confirm your email before signing in."
+          : msg || "Invalid email or password.";
+      setError(friendly);
       return;
     }
     router.push("/dashboard");
