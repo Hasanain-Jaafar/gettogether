@@ -39,7 +39,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         .from("post-images")
         .upload(path, imageFile, { upsert: false });
       if (error) {
-        toast.error(error.message ?? "Image upload failed.");
+        const message =
+          error.message?.toLowerCase().includes("bucket") &&
+          error.message?.toLowerCase().includes("not found")
+            ? "Post images bucket missing. Create a bucket named post-images in Supabase Storage (see STORAGE.md)."
+            : error.message ?? "Image upload failed.";
+        toast.error(message);
         setSubmitting(false);
         return;
       }
@@ -83,6 +88,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
           />
           {preview && (
             <div className="relative inline-block">
+              {/* eslint-disable-next-line @next/next/no-img-element -- blob URL preview, not optimizable by next/image */}
               <img
                 src={preview}
                 alt="Preview"
