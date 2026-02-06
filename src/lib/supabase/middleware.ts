@@ -6,9 +6,15 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    return response;
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
@@ -32,7 +38,8 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/sign-up");
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith("/dashboard") ||
-    request.nextUrl.pathname.startsWith("/profile");
+    request.nextUrl.pathname.startsWith("/profile") ||
+    request.nextUrl.pathname.startsWith("/u/");
 
   if (isProtectedRoute && !user) {
     const signInUrl = new URL("/sign-in", request.url);

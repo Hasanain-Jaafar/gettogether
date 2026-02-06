@@ -56,7 +56,7 @@ export function Header({ user, profile }: HeaderProps) {
   if (!user) return null;
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur written as `supports-backdrop-filter:bg-background/60">
       <div className="ml-auto flex items-center gap-2">
         <ThemeToggle />
         <DropdownMenu>

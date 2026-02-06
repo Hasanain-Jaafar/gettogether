@@ -51,10 +51,10 @@ export function SignInForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Sign in</CardTitle>
-        <CardDescription>
+    <Card className="border-border/80 bg-card/95 shadow-xl shadow-primary/5 dark:shadow-primary/10 backdrop-blur-sm">
+      <CardHeader className="space-y-1.5 pb-2">
+        <CardTitle className="text-2xl tracking-tight">Sign in</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Enter your email and password to sign in.
         </CardDescription>
       </CardHeader>
@@ -76,6 +76,7 @@ export function SignInForm() {
                     <Input
                       type="email"
                       placeholder="you@example.com"
+                      className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
                   </FormControl>
@@ -90,17 +91,22 @@ export function SignInForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      className="bg-muted/50 border-border focus-visible:ring-primary/30"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </CardContent>
-          <CardFooter className="flex flex-col gap-4">
+          <CardFooter className="flex flex-col gap-4 pt-2">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-11 font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? "Signing in…" : "Sign in"}
@@ -109,7 +115,7 @@ export function SignInForm() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
-                className="text-primary underline-offset-4 hover:underline"
+                className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 Sign up
               </Link>

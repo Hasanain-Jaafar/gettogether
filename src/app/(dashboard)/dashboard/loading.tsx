@@ -3,9 +3,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function DashboardLoading() {
   return (
     <div className="space-y-6">
-      <div>
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="mt-2 h-4 w-96" />
+      <Skeleton className="h-[140px] w-full rounded-2xl" />
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-[280px] w-full rounded-2xl" />
+        ))}
       </div>
     </div>
   );

@@ -18,7 +18,10 @@ A production-ready full-stack SaaS app with Next.js (App Router), Supabase (Auth
 - Persistent sessions (Supabase SSR)
 - Profiles (name, bio, avatar) with auto-creation on sign up
 - Avatar upload to Supabase Storage
-- Dark mode
+- **Community feed**: chronological posts, optional image, likes, flat comments
+- **Public profiles**: view any user at `/u/[userId]`
+- Rate-limited post creation; RLS on posts, likes, comments
+- Dark mode; pink + white + soft gray visual identity
 - Mobile-first responsive layout
 
 ## Getting Started
@@ -39,7 +42,8 @@ Copy `.env.example` to `.env.local` and set:
 ### 3. Supabase setup
 
 - Run the SQL in [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor.
-- Create the `avatars` storage bucket and policies as in [`supabase/STORAGE.md`](supabase/STORAGE.md).
+- Run the SQL in [`supabase/migrations/002_community.sql`](supabase/migrations/002_community.sql) (posts, likes, comments, profile read policy).
+- Create the `avatars` and `post-images` storage buckets and policies as in [`supabase/STORAGE.md`](supabase/STORAGE.md) and [`supabase/storage-post-images.sql`](supabase/storage-post-images.sql).
 - In Authentication → URL Configuration, add redirect URL: `http://localhost:3000/api/auth/callback`.
 
 ### 4. Run locally

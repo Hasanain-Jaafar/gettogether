@@ -9,7 +9,7 @@ export default function MarketingLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60">
         <Link href="/" className="font-semibold">
           GetTogether
         </Link>

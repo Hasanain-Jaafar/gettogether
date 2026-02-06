@@ -57,10 +57,14 @@ export function SignUpForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>Enter your details to sign up.</CardDescription>
+    <Card className="border-border/80 bg-card/95 shadow-xl shadow-primary/5 dark:shadow-primary/10 backdrop-blur-sm">
+      <CardHeader className="space-y-1.5 pb-2">
+        <CardTitle className="text-2xl tracking-tight">
+          Create an account
+        </CardTitle>
+        <CardDescription className="text-muted-foreground">
+          Enter your details to sign up.
+        </CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -77,7 +81,11 @@ export function SignUpForm() {
                 <FormItem>
                   <FormLabel>Name (optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your name" {...field} />
+                    <Input
+                      placeholder="Your name"
+                      className="bg-muted/50 border-border focus-visible:ring-primary/30"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -93,6 +101,7 @@ export function SignUpForm() {
                     <Input
                       type="email"
                       placeholder="you@example.com"
+                      className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
                   </FormControl>
@@ -110,6 +119,7 @@ export function SignUpForm() {
                     <Input
                       type="password"
                       placeholder="At least 6 characters"
+                      className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
                   </FormControl>
@@ -118,10 +128,10 @@ export function SignUpForm() {
               )}
             />
           </CardContent>
-          <CardFooter className="flex flex-col gap-4">
+          <CardFooter className="flex flex-col gap-4 pt-2">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-11 font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? "Creating account…" : "Sign up"}
@@ -130,7 +140,7 @@ export function SignUpForm() {
               Already have an account?{" "}
               <Link
                 href="/sign-in"
-                className="text-primary underline-offset-4 hover:underline"
+                className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 Sign in
               </Link>
