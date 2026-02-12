@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { updateProfile } from "@/app/(dashboard)/profile/actions";
@@ -32,8 +32,6 @@ import {
   Calendar,
   Hash,
   User,
-  Eye,
-  EyeOff,
   X,
   Plus,
 } from "lucide-react";
@@ -80,18 +78,21 @@ export function ProfileForm({
       name: initialName ?? "",
       bio: initialBio ?? "",
       location: initialLocation ?? "",
-      pronouns: (initialPronouns as any) ?? "",
+      pronouns: (initialPronouns || undefined) as ProfileInput["pronouns"],
       interests: initialInterests ?? [],
       website: initialWebsite ?? "",
       birthday: initialBirthday ?? "",
-      relationship_status: (initialRelationshipStatus as any) ?? "",
+      relationship_status: (initialRelationshipStatus || undefined) as ProfileInput["relationship_status"],
       show_birthday: initialShowBirthday ?? true,
       show_age: initialShowAge ?? true,
       show_location: initialShowLocation ?? true,
     },
   });
 
-  const interests = form.watch("interests") || [];
+  const interests = useWatch({ control: form.control, name: "interests" }) || [];
+  const name = useWatch({ control: form.control, name: "name" });
+  const birthday = useWatch({ control: form.control, name: "birthday" });
+  const showAge = useWatch({ control: form.control, name: "show_age" });
 
   function addInterest() {
     const trimmed = interestInput.trim().toLowerCase();
@@ -143,7 +144,7 @@ export function ProfileForm({
         <AvatarUpload
           userId={userId}
           avatarUrl={avatarUrl}
-          name={form.watch("name") || initialName}
+          name={name || initialName}
           email={email}
           onUploadComplete={(url) => setAvatarUrl(url || null)}
         />
@@ -210,8 +211,8 @@ export function ProfileForm({
                         <option value="in a relationship">
                           In a relationship
                         </option>
-                        <option value="it's complicated">
-                          It's complicated
+                        <option value="it&apos;s complicated">
+                          It&apos;s complicated
                         </option>
                         <option value="married">Married</option>
                       </select>
@@ -327,9 +328,9 @@ export function ProfileForm({
                 />
               </div>
 
-              {form.watch("birthday") && form.watch("show_age") && (
+              {birthday && showAge && (
                 <p className="text-sm text-muted-foreground">
-                  Your age will be displayed as: <strong>{calculateAge(form.watch("birthday"))} years old</strong>
+                  Your age will be displayed as: <strong>{calculateAge(birthday)} years old</strong>
                 </p>
               )}
             </div>
@@ -367,7 +368,7 @@ export function ProfileForm({
 
               {interests.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {interests.map((interest) => (
+                  {interests.map((interest: string) => (
                     <span
                       key={interest}
                       className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1.5 text-sm text-primary"
@@ -431,7 +432,7 @@ export function ProfileForm({
                     <FormControl>
                       <Textarea
                         placeholder="Tell others a bit about yourself..."
-                        className="min-h-[120px] resize-y"
+                        className="min-h-30 resize-y"
                         maxLength={500}
                         {...field}
                       />
