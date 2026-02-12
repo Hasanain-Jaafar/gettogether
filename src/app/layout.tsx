@@ -16,7 +16,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "GetTogether",
-  description: "A modern platform to manage your profile and collaborate.",
+  description: "A cozy gathering place where love blossoms and relationships grow. Connect with kindred spirits and build meaningful relationships.",
+  icons: {
+    icon: "/icons/favicon.svg",
+    shortcut: "/icons/favicon.svg",
+    apple: "/icons/favicon.svg",
+  },
 };
 
 export default function RootLayout({
