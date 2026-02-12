@@ -184,13 +184,13 @@ export function PostCard({
                 {post.content}
               </p>
               {post.image_url && (
-                <div className="relative mt-3 h-80 w-full overflow-hidden rounded-xl">
+                <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-xl sm:aspect-auto sm:h-80">
                   <Image
                     src={post.image_url}
-                    alt="Post"
+                    alt="Post image"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 600px"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 600px, 800px"
                   />
                 </div>
               )}

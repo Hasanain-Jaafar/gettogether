@@ -64,12 +64,12 @@ export function ProfileForm({
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="rounded-2xl">
+      <CardHeader className="px-6 py-5">
         <CardTitle>Profile</CardTitle>
         <CardDescription>Update your name, bio, and avatar.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 px-6 pb-6">
         <AvatarUpload
           userId={userId}
           avatarUrl={avatarUrl}

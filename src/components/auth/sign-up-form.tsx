@@ -49,7 +49,13 @@ export function SignUpForm() {
       },
     });
     if (signUpError) {
-      setError(signUpError.message ?? "Could not create account.");
+      const msg = signUpError.message ?? "";
+      const friendly =
+        msg.toLowerCase().includes("rate limit") ||
+        msg.toLowerCase().includes("rate_limit")
+          ? "Too many sign-up attempts. Please wait a few minutes and try again."
+          : msg || "Could not create account.";
+      setError(friendly);
       return;
     }
     router.push("/dashboard");

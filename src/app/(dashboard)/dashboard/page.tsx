@@ -19,7 +19,7 @@ export default async function DashboardPage() {
 
   if (!posts?.length) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <CreatePostForm userId={user.id} />
         <div className="rounded-2xl border border-border/80 bg-card p-8 text-center text-muted-foreground shadow-sm">
           <p className="font-medium">No posts yet</p>
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <CreatePostForm userId={user.id} />
       <ul className="space-y-4">
         {posts.map((post) => (

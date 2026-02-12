@@ -21,7 +21,11 @@ export function DashboardShell({
       <Header user={user} profile={profile} />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-4 md:p-6">
+          <div className="mx-auto w-full max-w-4xl lg:max-w-5xl">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

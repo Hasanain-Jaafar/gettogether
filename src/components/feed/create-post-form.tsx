@@ -76,8 +76,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
   return (
     <Card className="rounded-2xl border border-border/80 bg-card shadow-sm">
-      <CardContent className="p-4">
-        <form onSubmit={handleSubmit} className="space-y-3">
+      <CardContent className="p-4 sm:p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <Textarea
             placeholder="What's on your mind?"
             value={content}
@@ -126,7 +126,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
             </Button>
             <Button
               type="submit"
-              className="rounded-xl bg-primary px-5"
+              className="rounded-xl"
               disabled={submitting || !content.trim()}
             >
               {submitting ? "Posting…" : "Post"}
