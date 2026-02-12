@@ -122,9 +122,10 @@ export default async function DashboardPage() {
                     .get(post.id)
                     ?.map((userId) => likerProfileMap.get(userId))
                     .filter(
-                      (profile): profile is { name: string | null; avatar_url: string | null } =>
+                      (profile): profile is { id: string; name: string | null; avatar_url: string | null } =>
                         profile !== undefined
-                    ) ?? []
+                    )
+                    .map(({ name, avatar_url }) => ({ name, avatar_url })) ?? []
                 }
               />
             </li>
