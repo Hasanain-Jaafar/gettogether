@@ -11,7 +11,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, bio, avatar_url")
+    .select("*")
     .eq("id", user.id)
     .single();
 
@@ -20,7 +20,7 @@ export default async function ProfilePage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Profile</h1>
         <p className="text-muted-foreground">
-          Manage your profile and preferences.
+          Share more about yourself to help others connect with you.
         </p>
       </div>
       <ProfileForm
@@ -29,6 +29,15 @@ export default async function ProfilePage() {
         initialName={profile?.name ?? null}
         initialBio={profile?.bio ?? null}
         initialAvatarUrl={profile?.avatar_url ?? null}
+        initialLocation={profile?.location ?? null}
+        initialPronouns={profile?.pronouns ?? null}
+        initialInterests={profile?.interests ?? null}
+        initialWebsite={profile?.website ?? null}
+        initialBirthday={profile?.birthday ?? null}
+        initialRelationshipStatus={profile?.relationship_status ?? null}
+        initialShowBirthday={profile?.show_birthday ?? null}
+        initialShowAge={profile?.show_age ?? null}
+        initialShowLocation={profile?.show_location ?? null}
       />
     </div>
   );

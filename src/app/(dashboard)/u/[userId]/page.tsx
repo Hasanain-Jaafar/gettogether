@@ -4,6 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PostCard } from "@/components/feed/post-card";
+import {
+  MapPin,
+  Calendar,
+  Hash,
+  Globe,
+  Heart,
+} from "lucide-react";
 
 function getInitials(name: string | null): string {
   if (!name?.trim()) return "?";
@@ -17,6 +24,26 @@ function formatJoinDate(created_at: string): string {
   return new Date(created_at).toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
+  });
+}
+
+function calculateAge(birthday: string): number | null {
+  if (!birthday) return null;
+  const birth = new Date(birthday);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+function formatBirthday(birthday: string): string {
+  const date = new Date(birthday);
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
   });
 }
 
@@ -34,7 +61,7 @@ export default async function PublicProfilePage({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, name, bio, avatar_url, created_at")
+    .select("*")
     .eq("id", userId)
     .single();
 
@@ -71,6 +98,7 @@ export default async function PublicProfilePage({
   const commentProfileMap = new Map(
     commentProfiles?.map((p) => [p.id, p]) ?? []
   );
+
   type CommentWithAuthor = {
     id: string;
     post_id: string;
@@ -94,36 +122,129 @@ export default async function PublicProfilePage({
 
   return (
     <div className="space-y-6">
+      {/* Profile Card */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-          <Avatar className="size-20 shrink-0">
-            <AvatarImage src={profile.avatar_url ?? undefined} />
-            <AvatarFallback className="text-2xl">
-              {getInitials(profile.name)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1 text-center sm:text-left">
-            <h1 className="text-xl font-semibold text-foreground">
-              {profile.name ?? "Someone"}
-            </h1>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+          {/* Avatar and Basic Info */}
+          <div className="flex flex-col items-center gap-4 sm:w-auto">
+            <Avatar className="size-24">
+              <AvatarImage src={profile.avatar_url ?? undefined} />
+              <AvatarFallback className="text-3xl">
+                {getInitials(profile.name)}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+
+          {/* Profile Details */}
+          <div className="flex-1 space-y-4 text-center sm:text-left">
+            <div>
+              <h1 className="text-2xl font-semibold text-foreground">
+                {profile.name ?? "Someone"}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Joined {formatJoinDate(profile.created_at)}
+              </p>
+            </div>
+
+            {/* Bio */}
             {profile.bio && (
-              <p className="mt-1 text-muted-foreground">{profile.bio}</p>
+              <div className="flex items-start gap-2">
+                <Heart className="size-4 shrink-0 mt-1 text-primary" />
+                <p className="text-sm text-foreground">{profile.bio}</p>
+              </div>
             )}
-            <p className="mt-2 text-sm text-muted-foreground">
-              Joined {formatJoinDate(profile.created_at)}
-            </p>
-            <p className="mt-1 text-sm font-medium text-foreground">
-              {posts?.length ?? 0} post{(posts?.length ?? 0) !== 1 ? "s" : ""}
-            </p>
+
+            {/* Location */}
+            {profile.location && profile.show_location && (
+              <div className="flex items-center gap-2">
+                <MapPin className="size-4 shrink-0 text-primary" />
+                <span className="text-sm text-foreground">{profile.location}</span>
+              </div>
+            )}
+
+            {/* Birthday/Age */}
+            {profile.birthday && (profile.show_birthday || profile.show_age) && (
+              <div className="flex items-center gap-2">
+                <Calendar className="size-4 shrink-0 text-primary" />
+                <span className="text-sm text-foreground">
+                  {profile.show_birthday
+                    ? formatBirthday(profile.birthday)
+                    : null}
+                  {profile.show_birthday && profile.show_age
+                    ? " • "
+                    : null}
+                  {profile.show_age
+                    ? `${calculateAge(profile.birthday)} years old`
+                    : null}
+                </span>
+              </div>
+            )}
+
+            {/* Interests */}
+            {profile.interests && profile.interests.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Hash className="size-4 shrink-0 text-primary" />
+                  <span className="text-sm font-medium text-foreground">
+                    Interests
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {profile.interests.map((interest) => (
+                    <span
+                      key={interest}
+                      className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1.5 text-xs text-primary"
+                    >
+                      {interest}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Website */}
+            {profile.website && (
+              <div className="flex items-center gap-2">
+                <Globe className="size-4 shrink-0 text-primary" />
+                <Link
+                  href={profile.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline"
+                >
+                  {profile.website.replace(/^https?:\/\//, "")}
+                </Link>
+              </div>
+            )}
+
+            {/* Relationship Status */}
+            {profile.relationship_status && (
+              <div className="flex items-center gap-2">
+                <Heart className="size-4 shrink-0 text-primary" />
+                <span className="text-sm text-foreground">
+                  {profile.relationship_status}
+                </span>
+              </div>
+            )}
+
+            {/* Edit Button */}
             {isOwnProfile && (
-              <Button asChild className="mt-4 rounded-xl" variant="outline">
+              <Button asChild className="rounded-full" variant="outline">
                 <Link href="/profile">Edit profile</Link>
               </Button>
             )}
+
+            {/* Stats */}
+            <div className="text-sm">
+              <p className="font-medium text-foreground">
+                {posts?.length ?? 0} post{(posts?.length ?? 0) !== 1 ? "s" : ""}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Posts */}
       {!posts?.length ? (
         <div className="rounded-2xl border border-border/80 bg-card p-8 text-center text-muted-foreground shadow-sm">
           <p>No posts yet.</p>
@@ -140,6 +261,7 @@ export default async function PublicProfilePage({
                 currentUserLiked={userLikedSet.has(post.id)}
                 comments={commentsByPost.get(post.id) ?? []}
                 currentUserId={currentUser.id}
+                likers={[]}
               />
             </li>
           ))}

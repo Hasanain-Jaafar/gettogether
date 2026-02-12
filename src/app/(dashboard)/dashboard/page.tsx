@@ -118,9 +118,13 @@ export default async function DashboardPage() {
                 comments={commentsByPost.get(post.id) ?? []}
                 currentUserId={user.id}
                 likers={
-                  likesByPost.get(post.id)?.map(
-                    (userId) => likerProfileMap.get(userId) ?? null
-                  ) ?? []
+                  likesByPost
+                    .get(post.id)
+                    ?.map((userId) => likerProfileMap.get(userId))
+                    .filter(
+                      (profile): profile is { name: string | null; avatar_url: string | null } =>
+                        profile !== undefined
+                    ) ?? []
                 }
               />
             </li>
