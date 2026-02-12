@@ -43,6 +43,7 @@ export type PostCardProps = {
   currentUserLiked: boolean;
   comments: CommentWithAuthor[];
   currentUserId: string;
+  likers: { name: string | null; avatar_url: string | null }[];
 };
 
 function getInitials(name: string | null): string {
@@ -61,6 +62,7 @@ export function PostCard({
   currentUserLiked,
   comments,
   currentUserId,
+  likers,
 }: PostCardProps) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -202,6 +204,7 @@ export function PostCard({
             postId={post.id}
             initialCount={likeCount}
             initialLiked={currentUserLiked}
+            likers={likers}
           />
           <CommentSection
             postId={post.id}

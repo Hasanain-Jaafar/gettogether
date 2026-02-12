@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, User, X } from "lucide-react";
+import { Home, User, X, Search, MessageSquare, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type MobileNavProps = {
@@ -14,6 +14,9 @@ type MobileNavProps = {
 
 const navItems = [
   { href: "/dashboard", label: "Feed", icon: Home },
+  { href: "/explore", label: "Explore", icon: Search },
+  { href: "/messages", label: "Messages", icon: MessageSquare },
+  { href: "/notifications", label: "Notifications", icon: Bell },
   { href: "/profile", label: "Profile", icon: User },
 ];
 
@@ -79,7 +82,7 @@ export function MobileNav({ isOpen, onClose, onLogout }: MobileNavProps) {
             }}
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
-            <X className="size-4 shrink-0" />
+            <LogOut className="size-4 shrink-0" />
             Log out
           </button>
         </nav>

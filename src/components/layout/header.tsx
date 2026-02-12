@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { Home, User, LogOut, Menu } from "lucide-react";
+import { Home, User, LogOut, Menu, Bell, MessageSquare, Search } from "lucide-react";
 
 function getInitials(name: string | null, email: string | undefined): string {
   if (name?.trim()) {
@@ -29,6 +30,16 @@ function getInitials(name: string | null, email: string | undefined): string {
   }
   return "U";
 }
+
+const mainNavItems = [
+  { href: "/dashboard", label: "Feed", icon: Home },
+  { href: "/profile", label: "Profile", icon: User },
+];
+
+const secondaryNavItems = [
+  { href: "/explore", label: "Explore", icon: Search },
+  { href: "/messages", label: "Messages", icon: MessageSquare },
+];
 
 type HeaderProps = {
   user: {
@@ -55,7 +66,7 @@ export function Header({ user, profile }: HeaderProps) {
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/sign-in");
+    router.push("/");
     router.refresh();
   }
 
@@ -63,7 +74,7 @@ export function Header({ user, profile }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/95 px-2 sm:px-4 backdrop-blur supports-backdrop-filter:bg-background/60">
         {/* Mobile menu button */}
         <Button
           variant="ghost"
@@ -75,43 +86,70 @@ export function Header({ user, profile }: HeaderProps) {
           <span className="sr-only">Open menu</span>
         </Button>
 
-        {/* Desktop navigation */}
+        {/* Main navigation - desktop */}
         <nav className="hidden md:flex items-center gap-1">
-          <Link
-            href="/dashboard"
-            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              pathname === "/dashboard"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            }`}
-          >
-            <Home className="size-4 shrink-0" />
-            Feed
-          </Link>
-          <Link
-            href="/profile"
-            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              pathname === "/profile"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            }`}
-          >
-            <User className="size-4 shrink-0" />
-            Profile
-          </Link>
+          {mainNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  pathname === item.href
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                <Icon className="size-4 shrink-0" />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Right side: theme toggle + avatar */}
-        <div className="ml-auto flex items-center gap-2">
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Secondary navigation */}
+        <nav className="flex items-center gap-1 sm:gap-2">
+          {secondaryNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Button
+                key={item.href}
+                variant="ghost"
+                size="icon"
+                asChild
+                className="rounded-lg"
+              >
+                <Link href={item.href}>
+                  <Icon className="size-5" />
+                  <span className="sr-only">{item.label}</span>
+                </Link>
+              </Button>
+            );
+          })}
+
+          {/* Notifications with badge */}
+          <Button variant="ghost" size="icon" className="rounded-lg relative">
+            <Link href="/notifications">
+              <Bell className="size-5" />
+              <span className="sr-only">Notifications</span>
+            </Link>
+            <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-xs bg-primary text-primary-foreground">
+              3
+            </Badge>
+          </Button>
+
+          {/* Theme toggle */}
           <ThemeToggle />
+
+          {/* Avatar dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative size-9 rounded-full hover:bg-accent">
                 <Avatar className="size-9">
-                  <AvatarImage
-                    src={avatarUrl ?? undefined}
-                    alt={name ?? "User"}
-                  />
+                  <AvatarImage src={avatarUrl ?? undefined} alt={name ?? "User"} />
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </Button>
@@ -123,13 +161,13 @@ export function Header({ user, profile }: HeaderProps) {
                   Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2">
+              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
                 <LogOut className="size-4" />
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </nav>
       </header>
 
       {/* Mobile navigation */}

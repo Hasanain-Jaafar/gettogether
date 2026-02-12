@@ -32,7 +32,7 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="border-t bg-background px-4 py-20 sm:py-24">
+    <section id="features" className="border-t bg-background px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-5xl">
         {/* Section header */}
         <motion.div

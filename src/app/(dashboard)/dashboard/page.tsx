@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { CreatePostForm } from "@/components/feed/create-post-form";
 import { PostCard } from "@/components/feed/post-card";
+import { DashboardRealtime } from "@/components/feed/dashboard-realtime";
 
 const POSTS_PAGE_SIZE = 20;
 
@@ -45,10 +46,25 @@ export default async function DashboardPage() {
 
   const likeCountMap = new Map<string, number>();
   const userLikedSet = new Set<string>();
+  const likesByPost = new Map<string, string[]>();
   likes?.forEach((l) => {
     likeCountMap.set(l.post_id, (likeCountMap.get(l.post_id) ?? 0) + 1);
     if (l.user_id === user.id) userLikedSet.add(l.post_id);
+
+    const likers = likesByPost.get(l.post_id) ?? [];
+    likers.push(l.user_id);
+    likesByPost.set(l.post_id, likers);
   });
+
+  // Get profiles of users who liked posts
+  const likerUserIds = [...new Set(likes?.map((l) => l.user_id) ?? [])];
+  const { data: likerProfiles } = await supabase
+    .from("profiles")
+    .select("id, name, avatar_url")
+    .in("id", likerUserIds);
+  const likerProfileMap = new Map(
+    likerProfiles?.map((p) => [p.id, p]) ?? []
+  );
 
   const { data: comments } = await supabase
     .from("comments")
@@ -84,25 +100,33 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <CreatePostForm userId={user.id} />
-      <ul className="space-y-4">
-        {posts.map((post) => (
-          <li key={post.id}>
-            <PostCard
-              post={post}
-              author={
-                profileMap.get(post.user_id) ?? { name: null, avatar_url: null }
-              }
-              likeCount={likeCountMap.get(post.id) ?? 0}
-              commentCount={commentCountMap.get(post.id) ?? 0}
-              currentUserLiked={userLikedSet.has(post.id)}
-              comments={commentsByPost.get(post.id) ?? []}
-              currentUserId={user.id}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <DashboardRealtime />
+      <div className="space-y-4 sm:space-y-6">
+        <CreatePostForm userId={user.id} />
+        <ul className="space-y-4">
+          {posts.map((post) => (
+            <li key={post.id}>
+              <PostCard
+                post={post}
+                author={
+                  profileMap.get(post.user_id) ?? { name: null, avatar_url: null }
+                }
+                likeCount={likeCountMap.get(post.id) ?? 0}
+                commentCount={commentCountMap.get(post.id) ?? 0}
+                currentUserLiked={userLikedSet.has(post.id)}
+                comments={commentsByPost.get(post.id) ?? []}
+                currentUserId={user.id}
+                likers={
+                  likesByPost.get(post.id)?.map(
+                    (userId) => likerProfileMap.get(userId) ?? null
+                  ) ?? []
+                }
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
