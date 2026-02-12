@@ -190,7 +190,7 @@ export default async function PublicProfilePage({
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {profile.interests.map((interest) => (
+                  {profile.interests.map((interest: string) => (
                     <span
                       key={interest}
                       className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1.5 text-xs text-primary"
