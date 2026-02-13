@@ -12,16 +12,19 @@ create table if not exists public.follows (
 
 alter table public.follows enable row level security;
 
+drop policy if exists "Authenticated can read follows" on public.follows;
 create policy "Authenticated can read follows"
   on public.follows for select
   to authenticated
   using (true);
 
+drop policy if exists "Authenticated can insert own follow" on public.follows;
 create policy "Authenticated can insert own follow"
   on public.follows for insert
   to authenticated
   with check (auth.uid() = follower_id);
 
+drop policy if exists "Users can delete own follow" on public.follows;
 create policy "Users can delete own follow"
   on public.follows for delete
   to authenticated

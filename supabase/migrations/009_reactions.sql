@@ -12,16 +12,19 @@ create table if not exists public.reactions (
 
 alter table public.reactions enable row level security;
 
+drop policy if exists "Authenticated can read reactions" on public.reactions;
 create policy "Authenticated can read reactions"
   on public.reactions for select
   to authenticated
   using (true);
 
+drop policy if exists "Authenticated can insert own reaction" on public.reactions;
 create policy "Authenticated can insert own reaction"
   on public.reactions for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own reaction" on public.reactions;
 create policy "Users can delete own reaction"
   on public.reactions for delete
   to authenticated

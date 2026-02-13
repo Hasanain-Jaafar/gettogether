@@ -8,6 +8,19 @@ export type TrendingTopic = {
   last_trending_at: string;
 };
 
+type PostWithUser = {
+  id: string;
+  user_id: string;
+  content: string;
+  image_url: string | null;
+  created_at: string;
+  author?: {
+    id: string;
+    name: string | null;
+    avatar_url: string | null;
+  } | null;
+};
+
 export async function extractHashtags(content: string): Promise<string[]> {
   const hashtagRegex = /#(\w+)/g;
   const hashtags: string[] = [];
@@ -52,7 +65,7 @@ export async function getPostsByHashtag(
   userId: string,
   limit: number = 20,
   offset: number = 0
-): Promise<{ posts: any[]; error?: string }> {
+): Promise<{ posts: PostWithUser[]; error?: string }> {
   const supabase = await createClient();
 
   const { data: posts, error } = await supabase

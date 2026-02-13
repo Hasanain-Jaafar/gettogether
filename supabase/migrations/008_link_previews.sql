@@ -15,11 +15,13 @@ create table if not exists public.link_previews (
 
 alter table public.link_previews enable row level security;
 
+drop policy if exists "Authenticated can read link previews" on public.link_previews;
 create policy "Authenticated can read link previews"
   on public.link_previews for select
   to authenticated
   using (true);
 
+drop policy if exists "Service role can update link previews" on public.link_previews;
 create policy "Service role can update link previews"
   on public.link_previews for all
   to service_role

@@ -11,16 +11,19 @@ create table if not exists public.bookmarks (
 
 alter table public.bookmarks enable row level security;
 
+drop policy if exists "Authenticated can read bookmarks" on public.bookmarks;
 create policy "Authenticated can read bookmarks"
   on public.bookmarks for select
   to authenticated
   using (auth.uid() = user_id);
 
+drop policy if exists "Authenticated can insert own bookmark" on public.bookmarks;
 create policy "Authenticated can insert own bookmark"
   on public.bookmarks for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own bookmark" on public.bookmarks;
 create policy "Users can delete own bookmark"
   on public.bookmarks for delete
   to authenticated

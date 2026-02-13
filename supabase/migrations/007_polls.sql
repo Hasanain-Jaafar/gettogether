@@ -12,11 +12,13 @@ create table if not exists public.polls (
 
 alter table public.polls enable row level security;
 
+drop policy if exists "Authenticated can read polls" on public.polls;
 create policy "Authenticated can read polls"
   on public.polls for select
   to authenticated
   using (true);
 
+drop policy if exists "Users can insert own poll" on public.polls;
 create policy "Users can insert own poll"
   on public.polls for insert
   to authenticated
@@ -24,6 +26,7 @@ create policy "Users can insert own poll"
     auth.uid() = (select user_id from public.posts where id = post_id)
   );
 
+drop policy if exists "Users can update own poll" on public.polls;
 create policy "Users can update own poll"
   on public.polls for update
   to authenticated
@@ -41,6 +44,7 @@ create table if not exists public.poll_options (
 
 alter table public.poll_options enable row level security;
 
+drop policy if exists "Authenticated can read poll options" on public.poll_options;
 create policy "Authenticated can read poll options"
   on public.poll_options for select
   to authenticated
@@ -57,16 +61,19 @@ create table if not exists public.poll_votes (
 
 alter table public.poll_votes enable row level security;
 
+drop policy if exists "Authenticated can read poll votes" on public.poll_votes;
 create policy "Authenticated can read poll votes"
   on public.poll_votes for select
   to authenticated
   using (true);
 
+drop policy if exists "Authenticated can insert own vote" on public.poll_votes;
 create policy "Authenticated can insert own vote"
   on public.poll_votes for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own vote" on public.poll_votes;
 create policy "Users can delete own vote"
   on public.poll_votes for delete
   to authenticated

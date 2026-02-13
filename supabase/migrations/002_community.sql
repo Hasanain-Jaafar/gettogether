@@ -12,22 +12,26 @@ create table if not exists public.posts (
 
 alter table public.posts enable row level security;
 
+drop policy if exists "Authenticated can read posts" on public.posts;
 create policy "Authenticated can read posts"
   on public.posts for select
   to authenticated
   using (true);
 
+drop policy if exists "Authenticated can insert own post" on public.posts;
 create policy "Authenticated can insert own post"
   on public.posts for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update own post" on public.posts;
 create policy "Users can update own post"
   on public.posts for update
   to authenticated
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own post" on public.posts;
 create policy "Users can delete own post"
   on public.posts for delete
   to authenticated
@@ -46,16 +50,19 @@ create table if not exists public.likes (
 
 alter table public.likes enable row level security;
 
+drop policy if exists "Authenticated can read likes" on public.likes;
 create policy "Authenticated can read likes"
   on public.likes for select
   to authenticated
   using (true);
 
+drop policy if exists "Authenticated can insert own like" on public.likes;
 create policy "Authenticated can insert own like"
   on public.likes for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own like" on public.likes;
 create policy "Users can delete own like"
   on public.likes for delete
   to authenticated
@@ -75,22 +82,26 @@ create table if not exists public.comments (
 
 alter table public.comments enable row level security;
 
+drop policy if exists "Authenticated can read comments" on public.comments;
 create policy "Authenticated can read comments"
   on public.comments for select
   to authenticated
   using (true);
 
+drop policy if exists "Authenticated can insert own comment" on public.comments;
 create policy "Authenticated can insert own comment"
   on public.comments for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update own comment" on public.comments;
 create policy "Users can update own comment"
   on public.comments for update
   to authenticated
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own comment" on public.comments;
 create policy "Users can delete own comment"
   on public.comments for delete
   to authenticated
@@ -99,6 +110,7 @@ create policy "Users can delete own comment"
 create index if not exists comments_post_id_idx on public.comments(post_id);
 
 -- Profiles: allow authenticated users to read any profile (for feed and public profile pages)
+drop policy if exists "Authenticated can read any profile" on public.profiles;
 create policy "Authenticated can read any profile"
   on public.profiles for select
   to authenticated

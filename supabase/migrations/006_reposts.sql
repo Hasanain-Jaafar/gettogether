@@ -16,16 +16,19 @@ create table if not exists public.reposts (
 
 alter table public.reposts enable row level security;
 
+drop policy if exists "Authenticated can read reposts" on public.reposts;
 create policy "Authenticated can read reposts"
   on public.reposts for select
   to authenticated
   using (true);
 
+drop policy if exists "Authenticated can insert own repost" on public.reposts;
 create policy "Authenticated can insert own repost"
   on public.reposts for insert
   to authenticated
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete own repost" on public.reposts;
 create policy "Users can delete own repost"
   on public.reposts for delete
   to authenticated

@@ -11,12 +11,14 @@ create table if not exists public.trending_topics (
 
 alter table public.trending_topics enable row level security;
 
+drop policy if exists "Authenticated can read trending topics" on public.trending_topics;
 create policy "Authenticated can read trending topics"
   on public.trending_topics for select
   to authenticated
   using (true);
 
 -- Only allow service role to update trending topics (via function)
+drop policy if exists "Service role can update trending topics" on public.trending_topics;
 create policy "Service role can update trending topics"
   on public.trending_topics for all
   to service_role

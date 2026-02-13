@@ -38,6 +38,15 @@ begin
 end;
 $$ language plpgsql;
 
+-- Function to set is_reply based on parent_post_id
+create or replace function public.set_is_reply()
+returns trigger as $$
+begin
+  new.is_reply := (new.parent_post_id is not null);
+  return new;
+end;
+$$ language plpgsql;
+
 -- Triggers for reply count management
 drop trigger if exists increment_reply_count_trigger on public.posts;
 create trigger increment_reply_count_trigger
@@ -53,8 +62,4 @@ create trigger decrement_reply_count_trigger
 drop trigger if exists set_is_reply_trigger on public.posts;
 create trigger set_is_reply_trigger
   before insert or update on public.posts
-  for each row execute function $$
-begin
-  new.is_reply := (new.parent_post_id is not null);
-end;
-$$ language plpgsql;
+  for each row execute function public.set_is_reply();

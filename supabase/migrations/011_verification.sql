@@ -15,13 +15,10 @@ create policy "Users can update own profile"
   on public.profiles for update
   to authenticated
   using (auth.uid() = id)
-  with check (
-    auth.uid() = id and
-    (coalesce(old.is_verified, false) = coalesce(new.is_verified, false) or -- Cannot change own verification
-     coalesce(old.verification_type, null) = coalesce(new.verification_type, null))
-  );
+  with check (auth.uid() = id);
 
 -- Allow service role to update verification status
+drop policy if exists "Service role can verify profiles" on public.profiles;
 create policy "Service role can verify profiles"
   on public.profiles for update
   to service_role
