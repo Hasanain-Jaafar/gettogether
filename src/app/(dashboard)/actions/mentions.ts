@@ -70,29 +70,30 @@ export async function notifyMentionedUsers(
     return { success: true, notified: [] };
   }
 
-  // Find users mentioned
+  // Batch query: find users by name or ID in a single query
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, name");
+
+  if (!profiles) {
+    return { success: true, notified: [] };
+  }
+
+  // Find mentioned users using the batched data
   const userIds: string[] = [];
+  const profileMap = new Map(profiles.map((p) => [p.id, p]));
+
   for (const mention of mentions) {
-    // Try to find by name or by exact ID match
-    const { data } = await supabase
-      .from("profiles")
-      .select("id")
-      .ilike("name", mention)
-      .limit(1);
+    // Try exact ID match first
+    if (profileMap.has(mention)) {
+      userIds.push(mention);
+      continue;
+    }
 
-    if (data?.[0]) {
-      userIds.push(data[0].id);
-    } else {
-      // Try exact ID match
-      const { data: idMatch } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", mention)
-        .limit(1);
-
-      if (idMatch?.[0]) {
-        userIds.push(idMatch[0].id);
-      }
+    // Try to find by exact name match
+    const byName = profiles.find((p) => p.name === mention);
+    if (byName) {
+      userIds.push(byName.id);
     }
   }
 

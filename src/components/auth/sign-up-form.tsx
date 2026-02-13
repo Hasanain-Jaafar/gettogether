@@ -59,7 +59,6 @@ export function SignUpForm() {
       return;
     }
     router.push("/dashboard");
-    router.refresh();
   }
 
   return (

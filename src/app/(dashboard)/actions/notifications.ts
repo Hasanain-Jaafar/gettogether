@@ -83,7 +83,7 @@ export async function markAsRead(notificationId: string): Promise<{ success: boo
     return { success: false, error: error.message };
   }
 
-  revalidatePath("/notifications");
+  // No revalidation needed - client handles state locally
   return { success: true };
 }
 
@@ -133,6 +133,7 @@ export async function createNotification(
     return { success: false, error: error.message };
   }
 
+  // Revalidate in background (non-blocking)
   revalidatePath("/notifications");
   revalidatePath("/dashboard");
   return { success: true };

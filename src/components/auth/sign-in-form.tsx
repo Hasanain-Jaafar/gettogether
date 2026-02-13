@@ -55,7 +55,6 @@ export function SignInForm() {
       return;
     }
     router.push("/dashboard");
-    router.refresh();
   }
 
   return (

@@ -62,8 +62,8 @@ export async function createPost(
 
   if (error) return { success: false, error: error.message };
 
-  // Notify mentioned users
-  await notifyMentionedUsers(post.id, parsed.data.content, user.id);
+  // Notify mentioned users (non-blocking - fire and forget)
+  notifyMentionedUsers(post.id, parsed.data.content, user.id).catch(console.error);
 
   revalidatePath("/dashboard");
   revalidatePath("/profile");

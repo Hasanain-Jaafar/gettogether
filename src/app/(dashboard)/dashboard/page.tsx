@@ -2,13 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 import { CreatePostForm } from "@/components/feed/create-post-form";
 import { PostCard } from "@/components/feed/post-card";
 import { DashboardRealtime } from "@/components/feed/dashboard-realtime";
+import { DashboardSidebar } from "@/components/feed/dashboard-sidebar";
 import { FeedTabs } from "@/components/feed/feed-tabs";
-import { TrendingSidebar } from "@/components/feed/trending-sidebar";
-import { WhoToFollow } from "@/components/feed/who-to-follow";
 import { EmptyState } from "@/components/feed/empty-state";
 import { getForYouFeed, getFollowingFeed } from "@/app/(dashboard)/actions/feed";
-import { getTrendingTopics } from "@/app/(dashboard)/actions/hashtags";
-import { getWhoToFollow } from "@/app/(dashboard)/actions/follows";
 
 const POSTS_PAGE_SIZE = 20;
 
@@ -45,9 +42,6 @@ export default async function DashboardPage({
   }
 
   if (!posts?.length) {
-    const trending = await getTrendingTopics(5);
-    const whoToFollow = await getWhoToFollow(user.id, 3);
-
     return (
       <>
         <DashboardRealtime />
@@ -69,11 +63,8 @@ export default async function DashboardPage({
               }}
             />
           </div>
-          <div className="lg:col-span-1 space-y-6">
-            <TrendingSidebar trending={trending} />
-            <div id="who-to-follow">
-              <WhoToFollow users={whoToFollow} />
-            </div>
+          <div className="lg:col-span-1 hidden lg:block">
+            <DashboardSidebar />
           </div>
         </div>
       </>
@@ -175,10 +166,6 @@ export default async function DashboardPage({
     if (r.user_id === user.id) userRepostedSet.add(r.post_id);
   });
 
-  // Get trending topics and who to follow
-  const trending = await getTrendingTopics(5);
-  const whoToFollow = await getWhoToFollow(user.id, 3);
-
   // Get follows to know who the user is following
   const { data: following } = await supabase
     .from("follows")
@@ -238,11 +225,8 @@ export default async function DashboardPage({
             ))}
           </ul>
         </div>
-        <div className="lg:col-span-1 space-y-6 hidden lg:block">
-          <TrendingSidebar trending={trending} />
-          <div id="who-to-follow">
-            <WhoToFollow users={whoToFollow} />
-          </div>
+        <div className="lg:col-span-1 hidden lg:block">
+          <DashboardSidebar />
         </div>
       </div>
     </>
