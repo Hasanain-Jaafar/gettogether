@@ -205,7 +205,7 @@ export function PostCard({
                 {post.content}
               </p>
               {post.image_url && (
-                <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-xl sm:aspect-auto sm:h-80">
+                <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-xl bg-muted">
                   <Image
                     src={post.image_url}
                     alt="Post image"

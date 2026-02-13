@@ -92,7 +92,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               <img
                 src={preview}
                 alt="Preview"
-                className="max-h-48 rounded-xl object-cover"
+                className="aspect-video max-h-48 w-auto max-w-full rounded-xl object-cover"
               />
               <button
                 type="button"
