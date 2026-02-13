@@ -3,16 +3,15 @@
 import { useEffect, useState } from "react";
 import { TrendingSidebar } from "./trending-sidebar";
 import { WhoToFollow } from "./who-to-follow";
-
-type TrendingTopic = {
-  hashtag: string;
-  count: number;
-};
+import type { TrendingTopic } from "@/app/(dashboard)/actions/hashtags";
 
 type WhoToFollowUser = {
-  id: string;
-  name: string | null;
-  avatar_url: string | null;
+  user: {
+    id: string;
+    name: string | null;
+    avatar_url: string | null;
+  };
+  mutualFollowers: number;
 };
 
 type DashboardSidebarProps = {
@@ -26,7 +25,6 @@ export function DashboardSidebar({
 }: DashboardSidebarProps) {
   const [trending, setTrending] = useState<TrendingTopic[]>(trendingInitial || []);
   const [whoToFollow, setWhoToFollow] = useState<WhoToFollowUser[]>(whoToFollowInitial || []);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // Load sidebar data after component mounts (non-blocking)
@@ -44,8 +42,6 @@ export function DashboardSidebar({
         setWhoToFollow(whoToFollowData.users || []);
       } catch (error) {
         console.error("Failed to load sidebar data:", error);
-      } finally {
-        setIsLoaded(true);
       }
     };
 
