@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -54,6 +54,7 @@ export function Header({ user, profile }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const name =
     profile?.name ??
@@ -62,6 +63,68 @@ export function Header({ user, profile }: HeaderProps) {
     null;
   const initials = getInitials(name, user?.email);
   const avatarUrl = profile?.avatar_url ?? null;
+  const userId = user?.id ?? "";
+
+  // Fetch unread notification count
+  useEffect(() => {
+    if (!userId) {
+      setUnreadCount(0);
+      return;
+    }
+
+    async function fetchUnreadCount() {
+      const client = createClient();
+      const { count } = await client
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("read", false);
+
+      setUnreadCount(count ?? 0);
+    }
+
+    fetchUnreadCount();
+
+    // Subscribe to new notifications
+    const client = createClient();
+    const channel = client
+      .channel("notifications")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (payload.new.read === false) {
+            setUnreadCount((prev) => prev + 1);
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const wasUnread = payload.old?.read === false;
+          const isNowRead = payload.new?.read === true;
+          if (wasUnread && isNowRead) {
+            setUnreadCount((prev) => Math.max(prev - 1, 0));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [user]);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -136,9 +199,11 @@ export function Header({ user, profile }: HeaderProps) {
               <Bell className="size-5" />
               <span className="sr-only">Notifications</span>
             </Link>
-            <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-xs bg-primary text-primary-foreground">
-              3
-            </Badge>
+            {unreadCount > 0 && (
+              <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-xs bg-primary text-primary-foreground">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Badge>
+            )}
           </Button>
 
           {/* Theme toggle */}
