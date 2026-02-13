@@ -29,7 +29,7 @@ export async function getNotifications(
   // Get notifications
   const { data: notifications, error } = await supabase
     .from("notifications")
-    .select("*, actor:profiles(id, name, avatar_url)")
+    .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -45,8 +45,23 @@ export async function getNotifications(
     .eq("user_id", userId)
     .eq("read", false);
 
+  // Get actor profiles
+  const actorIds = [...new Set(notifications?.map((n) => n.actor_id).filter(Boolean) ?? [])];
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, name, avatar_url")
+    .in("id", actorIds);
+
+  const profileMap = new Map(profiles?.map((p) => [p.id, p]) ?? []);
+
+  // Merge actor data into notifications
+  const notificationsWithActors = (notifications ?? []).map((notification) => ({
+    ...notification,
+    actor: notification.actor_id ? profileMap.get(notification.actor_id) ?? null : null,
+  }));
+
   return {
-    notifications: notifications ?? [],
+    notifications: notificationsWithActors,
     unreadCount: count ?? 0,
   };
 }

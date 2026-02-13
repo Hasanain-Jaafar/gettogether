@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Heart, MessageCircle, Repeat2, User2, Hash, BarChart3 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { relativeTime } from "@/lib/utils";
 import { markAsRead } from "@/app/(dashboard)/actions/notifications";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type NotificationItemProps = {
   notification: {
@@ -81,23 +81,23 @@ export function NotificationItem({
   className,
 }: NotificationItemProps) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [isRead, setIsRead] = useState(notification.read);
+  const [marking, setMarking] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     // Don't prevent default navigation for the actor link
     if ((e.target as HTMLElement).closest("a[href*='/u/']")) return;
 
-    if (!isRead) {
-      startTransition(async () => {
-        const result = await markAsRead(notification.id);
-        if (result.success) {
-          setIsRead(true);
-          onMarkAsRead?.(notification.id);
-        } else {
-          toast.error(result.error || "Failed to mark as read");
-        }
-      });
+    if (!isRead && !marking) {
+      setMarking(true);
+      const result = await markAsRead(notification.id);
+      if (result.success) {
+        setIsRead(true);
+        onMarkAsRead?.(notification.id);
+      } else {
+        toast.error(result.error || "Failed to mark as read");
+      }
+      setMarking(false);
     }
   };
 
@@ -111,7 +111,7 @@ export function NotificationItem({
     <div
       onClick={handleClick}
       className={cn(
-        "flex items-start gap-3 p-4 rounded-xl transition-all cursor-pointer",
+        "flex items-start gap-3 p-4 rounded-xl transition-all",
         isRead
           ? "bg-muted/20 hover:bg-muted/40"
           : "bg-card border border-primary/20 hover:border-primary/50",
