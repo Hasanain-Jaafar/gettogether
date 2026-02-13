@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PostCard } from "@/components/feed/post-card";
+import { getFollowers, getFollowing } from "@/app/(dashboard)/actions/follows";
+import { Users } from "lucide-react";
 import {
   MapPin,
   Calendar,
@@ -144,10 +146,42 @@ export default async function PublicProfilePage({
     if (r.user_id === currentUser.id) userRepostedSet.add(r.post_id);
   });
 
+  // Get followers and following
+  const followers = await getFollowers(userId);
+  const following = await getFollowing(userId);
+
   const isOwnProfile = currentUser.id === userId;
 
   return (
     <div className="space-y-6">
+      {/* Followers / Following Stats */}
+      <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center gap-3">
+            <Users className="size-5 text-primary" />
+            <div>
+              <p className="text-lg font-semibold text-foreground">
+                {followers.length}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Follower{followers.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Users className="size-5 text-primary" />
+            <div>
+              <p className="text-lg font-semibold text-foreground">
+                {following.length}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Following
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Profile Card */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
