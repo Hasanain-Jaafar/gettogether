@@ -61,11 +61,47 @@ export function DashboardRealtime() {
       )
       .subscribe();
 
+    // Subscribe to bookmarks
+    const bookmarksChannel = supabase
+      .channel("bookmarks-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "bookmarks",
+        },
+        () => {
+          // Refresh the page to show updated bookmark counts
+          router.refresh();
+        }
+      )
+      .subscribe();
+
+    // Subscribe to reposts
+    const repostsChannel = supabase
+      .channel("reposts-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reposts",
+        },
+        () => {
+          // Refresh the page to show updated repost counts
+          router.refresh();
+        }
+      )
+      .subscribe();
+
     // Cleanup subscriptions
     return () => {
       supabase.removeChannel(likesChannel);
       supabase.removeChannel(commentsChannel);
       supabase.removeChannel(postsChannel);
+      supabase.removeChannel(bookmarksChannel);
+      supabase.removeChannel(repostsChannel);
     };
   }, [router]);
 

@@ -3,13 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createPostSchema, updatePostSchema } from "@/lib/validations/post";
+import { notifyMentionedUsers } from "./mentions";
 
 const RATE_LIMIT_POSTS_PER_HOUR = 10;
 
 export type PostResult = { success: true; postId?: string } | { success: false; error: string };
 
 export async function createPost(
-  input: { content: string; image_url?: string | null }
+  input: { content: string; image_url?: string | null; media_type?: string | null }
 ): Promise<PostResult> {
   const parsed = createPostSchema.safeParse(input);
   if (!parsed.success) {
@@ -33,17 +34,37 @@ export async function createPost(
     return { success: false, error: "Rate limit: try again later." };
   }
 
+  // Determine media type
+  let mediaType = "text";
+  if (parsed.data.media_type) {
+    mediaType = parsed.data.media_type;
+  } else if (parsed.data.image_url) {
+    const url = parsed.data.image_url.toLowerCase();
+    if (url.includes(".gif") || url.includes("gif")) {
+      mediaType = "gif";
+    } else if (url.includes(".mp4") || url.includes(".webm") || url.includes("video")) {
+      mediaType = "video";
+    } else {
+      mediaType = "image";
+    }
+  }
+
   const { data: post, error } = await supabase
     .from("posts")
     .insert({
       user_id: user.id,
       content: parsed.data.content.trim(),
       image_url: parsed.data.image_url ?? null,
+      media_type: mediaType,
     })
     .select("id")
     .single();
 
   if (error) return { success: false, error: error.message };
+
+  // Notify mentioned users
+  await notifyMentionedUsers(post.id, parsed.data.content, user.id);
+
   revalidatePath("/dashboard");
   revalidatePath("/profile");
   return { success: true, postId: post.id };

@@ -118,6 +118,32 @@ export default async function PublicProfilePage({
     commentCountMap.set(c.post_id, (commentCountMap.get(c.post_id) ?? 0) + 1)
   );
 
+  // Get bookmarks for posts
+  const { data: bookmarks } = await supabase
+    .from("bookmarks")
+    .select("post_id, user_id")
+    .in("post_id", postIds);
+
+  const bookmarkCountMap = new Map<string, number>();
+  const userBookmarkedSet = new Set<string>();
+  bookmarks?.forEach((b) => {
+    bookmarkCountMap.set(b.post_id, (bookmarkCountMap.get(b.post_id) ?? 0) + 1);
+    if (b.user_id === currentUser.id) userBookmarkedSet.add(b.post_id);
+  });
+
+  // Get reposts for posts
+  const { data: reposts } = await supabase
+    .from("reposts")
+    .select("post_id, user_id")
+    .in("post_id", postIds);
+
+  const repostCountMap = new Map<string, number>();
+  const userRepostedSet = new Set<string>();
+  reposts?.forEach((r) => {
+    repostCountMap.set(r.post_id, (repostCountMap.get(r.post_id) ?? 0) + 1);
+    if (r.user_id === currentUser.id) userRepostedSet.add(r.post_id);
+  });
+
   const isOwnProfile = currentUser.id === userId;
 
   return (
@@ -258,7 +284,11 @@ export default async function PublicProfilePage({
                 author={{ name: profile.name, avatar_url: profile.avatar_url }}
                 likeCount={likeCountMap.get(post.id) ?? 0}
                 commentCount={commentCountMap.get(post.id) ?? 0}
+                bookmarkCount={bookmarkCountMap.get(post.id) ?? 0}
+                repostCount={repostCountMap.get(post.id) ?? 0}
                 currentUserLiked={userLikedSet.has(post.id)}
+                currentUserBookmarked={userBookmarkedSet.has(post.id)}
+                currentUserReposted={userRepostedSet.has(post.id)}
                 comments={commentsByPost.get(post.id) ?? []}
                 currentUserId={currentUser.id}
                 likers={[]}

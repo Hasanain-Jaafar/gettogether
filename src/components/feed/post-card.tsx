@@ -17,6 +17,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { LikeButton } from "@/components/feed/like-button";
 import { CommentSection } from "@/components/feed/comment-section";
+import { BookmarkButton } from "@/components/feed/bookmark-button";
+import { ShareButton } from "@/components/feed/share-button";
+import { VerifiedBadge } from "@/components/feed/verified-badge";
+import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/(dashboard)/actions/posts";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,9 +42,15 @@ export type PostCardProps = {
     user_id: string;
   };
   author: { name: string | null; avatar_url: string | null };
+  isVerified?: boolean;
+  verificationType?: "individual" | "organization" | "government" | null;
   likeCount: number;
   commentCount: number;
+  bookmarkCount: number;
+  repostCount: number;
   currentUserLiked: boolean;
+  currentUserBookmarked: boolean;
+  currentUserReposted: boolean;
   comments: CommentWithAuthor[];
   currentUserId: string;
   likers: { name: string | null; avatar_url: string | null }[];
@@ -57,9 +67,15 @@ function getInitials(name: string | null): string {
 export function PostCard({
   post,
   author,
+  isVerified = false,
+  verificationType = "individual",
   likeCount,
   commentCount,
+  bookmarkCount,
+  repostCount,
   currentUserLiked,
+  currentUserBookmarked,
+  currentUserReposted,
   comments,
   currentUserId,
   likers,
@@ -114,8 +130,11 @@ export function PostCard({
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="font-semibold text-foreground truncate">
+              <p className="flex items-center gap-1 font-semibold text-foreground truncate">
                 {author.name ?? "Someone"}
+                {isVerified && (
+                  <VerifiedBadge type={verificationType} size="sm" />
+                )}
               </p>
               <p className="text-xs text-muted-foreground">
                 {relativeTime(post.created_at)}
@@ -153,7 +172,7 @@ export function PostCard({
               <Textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="min-h-[100px] rounded-xl"
+                className="min-h-25 rounded-xl"
                 maxLength={2000}
                 disabled={saving}
               />
@@ -211,6 +230,17 @@ export function PostCard({
             initialComments={comments}
             commentCount={commentCount}
           />
+          <RepostButton
+            postId={post.id}
+            initialCount={repostCount}
+            initialReposted={currentUserReposted}
+          />
+          <BookmarkButton
+            postId={post.id}
+            initialCount={bookmarkCount}
+            initialBookmarked={currentUserBookmarked}
+          />
+          <ShareButton postId={post.id} />
         </div>
       </CardContent>
     </Card>

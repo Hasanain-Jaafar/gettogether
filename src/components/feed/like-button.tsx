@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Heart, Check } from "lucide-react";
+import { Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { toggleLike } from "@/app/(dashboard)/actions/likes";
 import { Button } from "@/components/ui/button";
