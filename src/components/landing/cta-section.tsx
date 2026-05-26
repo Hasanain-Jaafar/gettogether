@@ -29,7 +29,7 @@ export function CtaSection() {
         >
           <div className="relative">
             <Heart className="size-16 text-primary fill-primary/10" />
-            <Coffee className="absolute -bottom-1 -right-1 size-6 text-accent bg-background rounded-full p-0.5" />
+            
           </div>
         </motion.div>
 

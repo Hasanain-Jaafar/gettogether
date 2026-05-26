@@ -42,7 +42,7 @@ export function MarketingHeader() {
           <Link href="/sign-in">Sign in</Link>
         </Button>
         <Button asChild className="rounded-full shadow-lg shadow-primary/20">
-          <Link href="/sign-up">Get started</Link>
+          <Link href="/sign-up">Sign up</Link>
         </Button>
       </nav>
     </header>

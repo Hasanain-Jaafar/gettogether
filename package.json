@@ -2,6 +2,18 @@
   "name": "gettogether",
   "version": "0.1.0",
   "private": true,
+  "description": "A production-ready full-stack SaaS app with Next.js (App Router), Supabase (Auth + Postgres + Storage), ShadCN UI, and Netlify deployment.",
+  "homepage": "https://github.com/Hasanain-Jaafar/gettogether#readme",
+  "bugs": {
+    "url": "https://github.com/Hasanain-Jaafar/gettogether/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hasanain-Jaafar/gettogether.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
