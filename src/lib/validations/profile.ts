@@ -26,12 +26,13 @@ export const profileSchema = z.object({
   birthday: z.string().optional().refine((val) => {
     if (!val) return true;
     const date = new Date(val);
+    if (Number.isNaN(date.getTime())) return false;
     const today = new Date();
-    const minAge = new Date();
-    minAge.setFullYear(today.getFullYear() - 120);
-    const maxAge = new Date();
-    maxAge.setFullYear(today.getFullYear() - 13);
-    return date <= minAge && date >= maxAge;
+    const oldestAllowed = new Date();
+    oldestAllowed.setFullYear(today.getFullYear() - 120);
+    const youngestAllowed = new Date();
+    youngestAllowed.setFullYear(today.getFullYear() - 13);
+    return date >= oldestAllowed && date <= youngestAllowed;
   }, "You must be between 13 and 120 years old"),
   relationship_status: z.enum([...RELATIONSHIP_STATUS]).optional(),
   show_birthday: z.boolean().optional(),
