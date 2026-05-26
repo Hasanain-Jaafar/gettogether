@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { createTestNotification } from "./actions/test-notifications";
+import { createTestNotification } from "../actions/test-notifications";
 import { redirect } from "next/navigation";
 
 export default async function TestNotificationsPage() {
