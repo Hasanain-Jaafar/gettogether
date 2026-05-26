@@ -1,3 +1,5 @@
+"use client";
+
 import { MessageSquare, Users, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -5,13 +7,13 @@ import { Card } from "@/components/ui/card";
 type EmptyStateProps = {
   type?: "no-posts" | "no-results" | "welcome";
   actionLabel?: string;
-  onAction?: () => void;
+  actionTarget?: "focus-create-post" | "scroll-who-to-follow";
 };
 
 export function EmptyState({
   type = "no-posts",
   actionLabel,
-  onAction,
+  actionTarget,
 }: EmptyStateProps) {
   const states = {
     "no-posts": {
@@ -33,6 +35,16 @@ export function EmptyState({
 
   const { icon: Icon, title, description } = states[type];
 
+  const handleAction = () => {
+    if (actionTarget === "scroll-who-to-follow") {
+      document
+        .getElementById("who-to-follow")
+        ?.scrollIntoView({ behavior: "smooth" });
+    } else if (actionTarget === "focus-create-post") {
+      document.querySelector<HTMLTextAreaElement>("textarea")?.focus();
+    }
+  };
+
   return (
     <Card className="border-border/80 bg-card p-12 shadow-sm">
       <div className="flex flex-col items-center justify-center text-center space-y-4">
@@ -45,8 +57,8 @@ export function EmptyState({
             {description}
           </p>
         </div>
-        {actionLabel && onAction && (
-          <Button onClick={onAction} className="rounded-xl mt-2">
+        {actionLabel && actionTarget && (
+          <Button onClick={handleAction} className="rounded-xl mt-2">
             {actionLabel}
           </Button>
         )}

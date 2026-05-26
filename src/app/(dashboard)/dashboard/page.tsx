@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CreatePostForm } from "@/components/feed/create-post-form";
 import { PostCard } from "@/components/feed/post-card";
@@ -52,15 +53,7 @@ export default async function DashboardPage({
             <EmptyState
               type={tab === "following" ? "no-results" : "welcome"}
               actionLabel={tab === "following" ? "Find people to follow" : "Create your first post"}
-              onAction={() => {
-                if (tab === "following") {
-                  // Scroll to who to follow section
-                  document.getElementById("who-to-follow")?.scrollIntoView({ behavior: "smooth" });
-                } else {
-                  // Focus on create post form
-                  document.querySelector("textarea")?.focus();
-                }
-              }}
+              actionTarget={tab === "following" ? "scroll-who-to-follow" : "focus-create-post"}
             />
           </div>
           <div className="lg:col-span-1 hidden lg:block">
@@ -183,14 +176,12 @@ export default async function DashboardPage({
           {hashtag && (
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">#{hashtag}</h2>
-              <button
-                onClick={() => {
-                  window.location.href = "/dashboard";
-                }}
+              <Link
+                href="/dashboard"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 Clear filter
-              </button>
+              </Link>
             </div>
           )}
           <ul className="space-y-4">
