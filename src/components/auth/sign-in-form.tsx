@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { signInSchema, type SignInInput } from "@/lib/validations/auth";
+import { resolveLoginIdentifier } from "@/app/[locale]/(auth)/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,14 +35,19 @@ export function SignInForm() {
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { identifier: "", password: "" },
   });
 
   async function onSubmit(values: SignInInput) {
     setError(null);
+    const { email } = await resolveLoginIdentifier(values.identifier);
+    if (!email) {
+      setError(t("invalidCredentials"));
+      return;
+    }
     const supabase = createClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: values.email,
+      email,
       password: values.password,
     });
     if (signInError) {
@@ -77,14 +83,14 @@ export function SignInForm() {
             )}
             <FormField
               control={form.control}
-              name="email"
+              name="identifier"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("email")}</FormLabel>
+                  <FormLabel>{t("identifier")}</FormLabel>
                   <FormControl>
                     <Input
-                      type="email"
-                      placeholder={t("emailPlaceholder")}
+                      autoComplete="username"
+                      placeholder={t("identifierPlaceholder")}
                       className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />

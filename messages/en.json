@@ -111,7 +111,9 @@
   "auth": {
     "signIn": {
       "title": "Sign in",
-      "description": "Enter your email and password to sign in.",
+      "description": "Enter your username or email and password to sign in.",
+      "identifier": "Username or email",
+      "identifierPlaceholder": "username or you@example.com",
       "email": "Email",
       "emailPlaceholder": "you@example.com",
       "password": "Password",
@@ -129,6 +131,9 @@
       "description": "Enter your details to sign up.",
       "name": "Name (optional)",
       "namePlaceholder": "Your name",
+      "username": "Username",
+      "usernamePlaceholder": "yourusername",
+      "usernameTaken": "That username is already taken.",
       "email": "Email",
       "emailPlaceholder": "you@example.com",
       "password": "Password",

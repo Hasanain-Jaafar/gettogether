@@ -34,7 +34,7 @@ export function SignUpForm() {
 
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: { email: "", password: "", name: "" },
+    defaultValues: { email: "", username: "", password: "", name: "" },
   });
 
   async function onSubmit(values: SignUpInput) {
@@ -47,6 +47,7 @@ export function SignUpForm() {
         data: {
           name: values.name || undefined,
           full_name: values.name || undefined,
+          username: values.username.toLowerCase(),
         },
       },
     });
@@ -56,6 +57,9 @@ export function SignUpForm() {
         msg.toLowerCase().includes("rate limit") ||
         msg.toLowerCase().includes("rate_limit")
           ? t("rateLimit")
+          : msg.toLowerCase().includes("duplicate") ||
+            msg.toLowerCase().includes("unique")
+          ? t("usernameTaken")
           : t("genericError");
       setError(friendly);
       return;
@@ -88,6 +92,24 @@ export function SignUpForm() {
                   <FormControl>
                     <Input
                       placeholder={t("namePlaceholder")}
+                      className="bg-muted/50 border-border focus-visible:ring-primary/30"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("username")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoComplete="username"
+                      placeholder={t("usernamePlaceholder")}
                       className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />

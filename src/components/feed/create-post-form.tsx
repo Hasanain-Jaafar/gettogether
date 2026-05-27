@@ -185,6 +185,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 variant="outline"
                 size="sm"
                 className="rounded-xl"
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => inputRef.current?.click()}
                 disabled={submitting}
               >
@@ -193,6 +194,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               </Button>
               <Button
                 type="submit"
+                onMouseDown={(e) => e.preventDefault()}
                 className="rounded-xl"
                 disabled={submitting || !content.trim()}
               >
