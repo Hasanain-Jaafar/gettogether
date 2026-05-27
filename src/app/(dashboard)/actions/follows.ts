@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createNotification } from "./notifications";
 
 export type FollowResult =
   | { success: true; following: boolean }
@@ -45,6 +46,13 @@ export async function toggleFollow(targetUserId: string): Promise<FollowResult> 
     following_id: targetUserId,
   });
   if (error) return { success: false, error: error.message };
+
+  await createNotification({
+    userId: targetUserId,
+    type: "follow",
+    actorId: user.id,
+  });
+
   revalidatePath("/dashboard");
   revalidatePath("/profile");
   return { success: true, following: true };

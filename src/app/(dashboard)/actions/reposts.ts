@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createNotification } from "./notifications";
 
 export type RepostResult =
   | { success: true; repostId: string; count: number }
@@ -32,7 +33,7 @@ export async function createRepost(
   // Check if original post exists
   const { data: originalPost } = await supabase
     .from("posts")
-    .select("id")
+    .select("id, user_id")
     .eq("id", postId)
     .single();
 
@@ -57,6 +58,15 @@ export async function createRepost(
     .from("reposts")
     .select("id", { count: "exact", head: true })
     .eq("post_id", postId);
+
+  if (originalPost.user_id !== user.id) {
+    await createNotification({
+      userId: originalPost.user_id,
+      type: "repost",
+      actorId: user.id,
+      postId,
+    });
+  }
 
   revalidatePath("/dashboard");
   revalidatePath("/profile");

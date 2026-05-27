@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createNotification } from "./notifications";
 
 export type LikeResult =
   | { success: true; liked: boolean; count: number }
@@ -46,6 +47,21 @@ export async function toggleLike(postId: string): Promise<LikeResult> {
     .from("likes")
     .select("id", { count: "exact", head: true })
     .eq("post_id", postId);
+
+  const { data: post } = await supabase
+    .from("posts")
+    .select("user_id")
+    .eq("id", postId)
+    .maybeSingle();
+  if (post && post.user_id !== user.id) {
+    await createNotification({
+      userId: post.user_id,
+      type: "like",
+      actorId: user.id,
+      postId,
+    });
+  }
+
   revalidatePath("/dashboard");
   revalidatePath("/profile");
   return { success: true, liked: true, count: count ?? 0 };

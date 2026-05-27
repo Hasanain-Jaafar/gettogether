@@ -60,7 +60,8 @@ export async function searchUsersByUsername(
 export async function notifyMentionedUsers(
   postId: string,
   content: string,
-  authorId: string
+  authorId: string,
+  options: { createNotifications?: boolean } = { createNotifications: true }
 ): Promise<{ success: boolean; notified: string[]; error?: string }> {
   const supabase = await createClient();
 
@@ -104,8 +105,20 @@ export async function notifyMentionedUsers(
     return { success: true, notified: [] };
   }
 
-  // Create notifications (we'll implement this in a future phase)
-  // For now, just return the list of users who would be notified
+  if (options.createNotifications !== false) {
+    const { createNotification } = await import("./notifications");
+    await Promise.all(
+      uniqueUserIds.map((uid) =>
+        createNotification({
+          userId: uid,
+          type: "mention",
+          actorId: authorId,
+          postId,
+        })
+      )
+    );
+  }
+
   return { success: true, notified: uniqueUserIds };
 }
 
