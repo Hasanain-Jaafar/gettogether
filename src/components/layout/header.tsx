@@ -194,16 +194,15 @@ export function Header({ user, profile }: HeaderProps) {
           })}
 
           {/* Notifications with badge */}
-          <Button variant="ghost" size="icon" className="rounded-lg relative">
-            <Link href="/notifications">
+          <Button variant="ghost" size="icon" asChild className="rounded-lg relative">
+            <Link href="/notifications" aria-label="Notifications">
               <Bell className="size-5" />
-              <span className="sr-only">Notifications</span>
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
+              )}
             </Link>
-            {unreadCount > 0 && (
-              <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-xs bg-primary text-primary-foreground">
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </Badge>
-            )}
           </Button>
 
           {/* Theme toggle */}
@@ -247,6 +246,7 @@ export function Header({ user, profile }: HeaderProps) {
         onClose={() => setMobileNavOpen(false)}
         onLogout={handleLogout}
         userId={userId}
+        unreadCount={unreadCount}
       />
     </>
   );

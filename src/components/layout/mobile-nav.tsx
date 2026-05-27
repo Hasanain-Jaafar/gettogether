@@ -5,15 +5,17 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Home, User, UserCircle, X, Search, MessageSquare, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type MobileNavProps = {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
   userId?: string;
+  unreadCount?: number;
 };
 
-export function MobileNav({ isOpen, onClose, onLogout, userId }: MobileNavProps) {
+export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }: MobileNavProps) {
   const navItems = [
     { href: "/dashboard", label: "Feed", icon: Home },
     { href: "/explore", label: "Explore", icon: Search },
@@ -75,7 +77,12 @@ export function MobileNav({ isOpen, onClose, onLogout, userId }: MobileNavProps)
                 )}
               >
                 <Icon className="size-4 shrink-0" />
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {item.href === "/notifications" && unreadCount > 0 && (
+                  <Badge className="bg-primary text-primary-foreground text-[10px] px-1.5 h-5">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
               </Link>
             );
           })}
