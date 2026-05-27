@@ -85,8 +85,15 @@ export function NotificationItem({
   const [marking, setMarking] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
-    // Don't prevent default navigation for the actor link
+    // Let the actor avatar/name link navigate normally
     if ((e.target as HTMLElement).closest("a[href*='/u/']")) return;
+
+    const target = (e.currentTarget as HTMLElement).querySelector<HTMLAnchorElement>(
+      "a[data-nav-target]"
+    );
+    const href = target?.getAttribute("href");
+
+    e.preventDefault();
 
     if (!isRead && !marking) {
       setMarking(true);
@@ -98,6 +105,10 @@ export function NotificationItem({
         toast.error(result.error || "Failed to mark as read");
       }
       setMarking(false);
+    }
+
+    if (href && href !== "#") {
+      router.push(href);
     }
   };
 
@@ -120,6 +131,8 @@ export function NotificationItem({
     >
       <Link
         href={postLink ? `${postLink}${commentLink}` : "#"}
+        data-nav-target
+        onClick={(e) => e.preventDefault()}
         className="flex items-start gap-3 flex-1"
       >
       <div className="mt-0.5 shrink-0">
