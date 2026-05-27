@@ -1,10 +1,19 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Cropper, { type Area } from "react-easy-crop";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { cropImageToBlob } from "@/lib/crop-image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 const ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
@@ -41,51 +50,78 @@ export function AvatarUpload({
 }: AvatarUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [rawSrc, setRawSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [areaPx, setAreaPx] = useState<Area | null>(null);
   const initials = getInitials(name, email);
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  useEffect(() => {
+    return () => {
+      if (rawSrc) URL.revokeObjectURL(rawSrc);
+    };
+  }, [rawSrc]);
+
+  const onCropComplete = useCallback((_: Area, px: Area) => {
+    setAreaPx(px);
+  }, []);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       toast.error(`File must be under ${MAX_SIZE_MB}MB`);
+      e.target.value = "";
       return;
     }
-    const type = file.type as string;
-    if (!ACCEPT.split(",").some((t) => t.trim() === type)) return;
-
-    setUploading(true);
-    setPreview(URL.createObjectURL(file));
-    const supabase = createClient();
-    const ext = file.name.split(".").pop() || "png";
-    const path = `${userId}/avatar.${ext}`;
-
-    const { error } = await supabase.storage
-      .from("avatars")
-      .upload(path, file, {
-        upsert: true,
-      });
-
-    if (error) {
-      setPreview(null);
-      setUploading(false);
-      toast.error(error.message ?? "Upload failed.");
+    if (!ACCEPT.split(",").some((t) => t.trim() === file.type)) {
+      toast.error("Unsupported file type.");
+      e.target.value = "";
       return;
     }
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("avatars").getPublicUrl(path);
-    onUploadComplete(publicUrl);
-    setUploading(false);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setAreaPx(null);
+    setRawSrc(URL.createObjectURL(file));
+    // Reset input so picking the same file again still fires onChange
+    e.target.value = "";
   }
 
-  const displayUrl = preview || avatarUrl;
+  function closeDialog() {
+    if (rawSrc) URL.revokeObjectURL(rawSrc);
+    setRawSrc(null);
+    setAreaPx(null);
+  }
+
+  async function handleSave() {
+    if (!rawSrc || !areaPx) return;
+    setUploading(true);
+    try {
+      const blob = await cropImageToBlob(rawSrc, areaPx);
+      const supabase = createClient();
+      const path = `${userId}/avatar.jpg`;
+      const { error } = await supabase.storage
+        .from("avatars")
+        .upload(path, blob, { upsert: true, contentType: "image/jpeg" });
+      if (error) throw error;
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(path);
+      onUploadComplete(`${publicUrl}?t=${Date.now()}`);
+      closeDialog();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Upload failed."
+      );
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <div className={cn("flex items-center gap-4", className)}>
       <Avatar className="size-20">
-        <AvatarImage src={displayUrl ?? undefined} alt={name ?? "Avatar"} />
+        <AvatarImage src={avatarUrl ?? undefined} alt={name ?? "Avatar"} />
         <AvatarFallback className="text-lg">{initials}</AvatarFallback>
       </Avatar>
       <div className="space-y-2">
@@ -110,6 +146,64 @@ export function AvatarUpload({
           JPG, PNG, WebP or GIF. Max {MAX_SIZE_MB}MB.
         </p>
       </div>
+
+      <Dialog open={!!rawSrc} onOpenChange={(o) => !o && !uploading && closeDialog()}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Adjust your avatar</DialogTitle>
+          </DialogHeader>
+
+          <div className="relative h-72 w-full overflow-hidden rounded-md bg-muted">
+            {rawSrc && (
+              <Cropper
+                image={rawSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                cropShape="round"
+                showGrid={false}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+            )}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground">Zoom</span>
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.01}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="flex-1 accent-primary"
+              aria-label="Zoom"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={closeDialog}
+              disabled={uploading}
+              className="rounded-full"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSave}
+              disabled={uploading || !areaPx}
+              className="rounded-full"
+            >
+              {uploading ? "Saving…" : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
