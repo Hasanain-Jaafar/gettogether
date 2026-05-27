@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PostCard } from "@/components/feed/post-card";
 import { getFollowers, getFollowing } from "@/app/(dashboard)/actions/follows";
-import { Users } from "lucide-react";
+import { FollowButton } from "@/components/profile/follow-button";
+import { FollowListDialog } from "@/components/profile/follow-list-dialog";
 import {
   MapPin,
   Calendar,
@@ -152,33 +153,24 @@ export default async function PublicProfilePage({
 
   const isOwnProfile = currentUser.id === userId;
 
+  let isFollowing = false;
+  if (!isOwnProfile) {
+    const { data: followRow } = await supabase
+      .from("follows")
+      .select("id")
+      .eq("follower_id", currentUser.id)
+      .eq("following_id", userId)
+      .maybeSingle();
+    isFollowing = !!followRow;
+  }
+
   return (
     <div className="space-y-6">
       {/* Followers / Following Stats */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
         <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-3">
-            <Users className="size-5 text-primary" />
-            <div>
-              <p className="text-lg font-semibold text-foreground">
-                {followers.length}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Follower{followers.length !== 1 ? "s" : ""}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Users className="size-5 text-primary" />
-            <div>
-              <p className="text-lg font-semibold text-foreground">
-                {following.length}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Following
-              </p>
-            </div>
-          </div>
+          <FollowListDialog label="Follower" users={followers} />
+          <FollowListDialog label="Following" users={following} />
         </div>
       </div>
 
@@ -287,11 +279,16 @@ export default async function PublicProfilePage({
               </div>
             )}
 
-            {/* Edit Button */}
-            {isOwnProfile && (
+            {/* Edit / Follow Button */}
+            {isOwnProfile ? (
               <Button asChild className="rounded-full" variant="outline">
                 <Link href="/profile">Edit profile</Link>
               </Button>
+            ) : (
+              <FollowButton
+                targetUserId={userId}
+                initialFollowing={isFollowing}
+              />
             )}
 
             {/* Stats */}
