@@ -1,23 +1,33 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLocale, useTranslations } from "next-intl";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Heart, Menu, X } from "lucide-react";
-
-const navLinks = [
-  { hash: "#features", label: "Features" },
-  { hash: "#about", label: "About" },
-  { hash: "#faq", label: "FAQ" },
-];
+import { Heart, Menu, X, Languages } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function MarketingHeader() {
   const pathname = usePathname();
+  const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("marketing.header");
+  const tLang = useTranslations("language");
   const onHome = pathname === "/";
   const [open, setOpen] = useState(false);
+
+  const navLinks = [
+    { hash: "#features", label: t("features") },
+    { hash: "#about", label: t("about") },
+    { hash: "#faq", label: t("faq") },
+  ];
 
   useEffect(() => {
     setOpen(false);
@@ -34,10 +44,14 @@ export function MarketingHeader() {
   const linkHref = (hash: string) => (onHome ? hash : `/${hash}`);
   const close = () => setOpen(false);
 
+  function switchLocale(next: "en" | "ar") {
+    if (next === locale) return;
+    router.replace(pathname, { locale: next });
+  }
+
   return (
     <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="flex h-16 items-center justify-between px-4">
-        {/* Logo */}
         <Link
           href="/"
           onClick={handleLogoClick}
@@ -47,7 +61,6 @@ export function MarketingHeader() {
           <span>GetTogether</span>
         </Link>
 
-        {/* Navigation links - desktop */}
         <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
@@ -60,27 +73,43 @@ export function MarketingHeader() {
           ))}
         </nav>
 
-        {/* Right side */}
         <nav className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full" aria-label={tLang("label")}>
+                <Languages className="size-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => switchLocale("en")}>
+                {tLang("english")}
+                {locale === "en" && <span className="ms-auto text-primary">✓</span>}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => switchLocale("ar")}>
+                {tLang("arabic")}
+                {locale === "ar" && <span className="ms-auto text-primary">✓</span>}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <ThemeToggle />
 
           <Button variant="ghost" asChild className="hidden sm:flex rounded-full">
-            <Link href="/sign-in">Sign in</Link>
+            <Link href="/sign-in">{t("signIn")}</Link>
           </Button>
           <Button
             asChild
             className="hidden sm:flex rounded-full shadow-lg shadow-primary/20"
           >
-            <Link href="/sign-up">Sign up</Link>
+            <Link href="/sign-up">{t("signUp")}</Link>
           </Button>
 
-          {/* Mobile hamburger */}
           <Button
             variant="ghost"
             size="icon"
             className="sm:hidden size-9"
             onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? t("closeMenu") : t("openMenu")}
             aria-expanded={open}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -112,7 +141,6 @@ export function MarketingHeader() {
         </nav>
       </div>
 
-      {/* Mobile slide-down panel */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -156,7 +184,7 @@ export function MarketingHeader() {
                   className="w-full rounded-full"
                   onClick={close}
                 >
-                  <Link href="/sign-in">Sign in</Link>
+                  <Link href="/sign-in">{t("signIn")}</Link>
                 </Button>
               </motion.div>
               <motion.div
@@ -169,7 +197,7 @@ export function MarketingHeader() {
                   className="w-full rounded-full shadow-lg shadow-primary/20"
                   onClick={close}
                 >
-                  <Link href="/sign-up">Sign up</Link>
+                  <Link href="/sign-up">{t("signUp")}</Link>
                 </Button>
               </motion.div>
             </nav>

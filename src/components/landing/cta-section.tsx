@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Heart, Coffee, MessageCircle } from "lucide-react";
 
 export function CtaSection() {
+  const t = useTranslations("marketing.cta");
   return (
     <motion.section
       className="relative overflow-hidden border-t bg-muted/40 px-4 py-20 sm:py-24"
@@ -41,7 +43,7 @@ export function CtaSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          Ready to find your people?
+          {t("title")}
         </motion.h2>
 
         {/* Description */}
@@ -52,8 +54,7 @@ export function CtaSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
         >
-          Join our warm community in seconds. No credit card required — just bring
-          your authentic self and let the connections begin.
+          {t("subtitle")}
         </motion.p>
 
         {/* Features */}
@@ -68,19 +69,19 @@ export function CtaSection() {
             <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <MessageCircle className="size-6" />
             </div>
-            <span className="text-sm font-medium">Share & Connect</span>
+            <span className="text-sm font-medium">{t("share")}</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Heart className="size-6" />
             </div>
-            <span className="text-sm font-medium">Find Kindred Spirits</span>
+            <span className="text-sm font-medium">{t("kindred")}</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Coffee className="size-6" />
             </div>
-            <span className="text-sm font-medium">Grow Together</span>
+            <span className="text-sm font-medium">{t("grow")}</span>
           </div>
         </motion.div>
 
@@ -97,7 +98,7 @@ export function CtaSection() {
             size="lg"
             className="rounded-full shadow-lg shadow-primary/30 px-10 text-base"
           >
-            <Link href="/sign-up">Start your journey</Link>
+            <Link href="/sign-up">{t("button")}</Link>
           </Button>
         </motion.div>
 
@@ -109,7 +110,7 @@ export function CtaSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.6 }}
         >
-          Join thousands who've already found their place
+          {t("footer")}
         </motion.p>
       </div>
     </motion.section>

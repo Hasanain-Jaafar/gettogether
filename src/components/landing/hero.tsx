@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Heart, Users, Flame, Sparkles } from "lucide-react";
 
 export function Hero() {
+  const t = useTranslations("marketing.hero");
   return (
     <motion.section
       className="relative overflow-hidden px-4 py-24 sm:py-32 md:py-40"
@@ -50,9 +52,9 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Where <span className="text-primary">hearts connect</span>{" "}
+          {t("headline1")} <span className="text-primary">{t("headline2")}</span>{" "}
           <br className="hidden sm:block" />
-          in <span className="text-[#c73c7c]">warm embrace</span>
+          {t("headline3")} <span className="text-[#c73c7c]">{t("headline4")}</span>
         </motion.h1>
 
         {/* Subheading */}
@@ -62,9 +64,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
-          A cozy gathering place where love blossoms and relationships grow.
-          Share your journey, connect with kindred spirits, and build meaningful
-          connections in a warm, welcoming space.
+          {t("subheading")}
         </motion.p>
 
         {/* Feature highlights */}
@@ -76,15 +76,15 @@ export function Hero() {
         >
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Users className="size-5 text-primary" />
-            <span>Find your community</span>
+            <span>{t("findCommunity")}</span>
           </div>
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Flame className="size-5 text-[#e85a91]" />
-            <span>Ignite connections</span>
+            <span>{t("ignite")}</span>
           </div>
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Heart className="size-5 text-primary" />
-            <span>Build lasting bonds</span>
+            <span>{t("buildBonds")}</span>
           </div>
         </motion.div>
 
@@ -100,7 +100,7 @@ export function Hero() {
             size="lg"
             className="w-full sm:w-auto rounded-full shadow-lg shadow-primary/30 px-8 text-base"
           >
-            <Link href="/sign-up">Join our gathering</Link>
+            <Link href="/sign-up">{t("joinCta")}</Link>
           </Button>
           <Button
             asChild
@@ -108,7 +108,7 @@ export function Hero() {
             size="lg"
             className="w-full sm:w-auto rounded-full text-base"
           >
-            <Link href="/sign-in">Welcome back</Link>
+            <Link href="/sign-in">{t("welcomeBack")}</Link>
           </Button>
         </motion.div>
 
@@ -119,7 +119,7 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7, duration: 0.5 }}
         >
-          ✓ Free to join • ✓ Safe & welcoming • ✓ Built with ❤️
+          {t("trust")}
         </motion.p>
       </div>
     </motion.section>

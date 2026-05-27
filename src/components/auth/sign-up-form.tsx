@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import {
 
 export function SignUpForm() {
   const router = useRouter();
+  const t = useTranslations("auth.signUp");
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<SignUpInput>({
@@ -53,8 +55,8 @@ export function SignUpForm() {
       const friendly =
         msg.toLowerCase().includes("rate limit") ||
         msg.toLowerCase().includes("rate_limit")
-          ? "Too many sign-up attempts. Please wait a few minutes and try again."
-          : msg || "Could not create account.";
+          ? t("rateLimit")
+          : t("genericError");
       setError(friendly);
       return;
     }
@@ -64,11 +66,9 @@ export function SignUpForm() {
   return (
     <Card className="border-border/80 bg-card/95 shadow-xl shadow-primary/5 dark:shadow-primary/10 backdrop-blur-sm">
       <CardHeader className="space-y-1.5 pb-2">
-        <CardTitle className="text-2xl tracking-tight">
-          Create an account
-        </CardTitle>
+        <CardTitle className="text-2xl tracking-tight">{t("title")}</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Enter your details to sign up.
+          {t("description")}
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -84,10 +84,10 @@ export function SignUpForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name (optional)</FormLabel>
+                  <FormLabel>{t("name")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Your name"
+                      placeholder={t("namePlaceholder")}
                       className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
@@ -101,11 +101,11 @@ export function SignUpForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t("email")}</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="you@example.com"
+                      placeholder={t("emailPlaceholder")}
                       className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
@@ -119,11 +119,11 @@ export function SignUpForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t("password")}</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="At least 6 characters"
+                      placeholder={t("passwordPlaceholder")}
                       className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
@@ -139,15 +139,15 @@ export function SignUpForm() {
               className="w-full h-11 font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20"
               disabled={form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? "Creating account…" : "Sign up"}
+              {form.formState.isSubmitting ? t("submitting") : t("submit")}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              Already have an account?{" "}
+              {t("hasAccount")}{" "}
               <Link
                 href="/sign-in"
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
-                Sign in
+                {t("signInLink")}
               </Link>
             </p>
           </CardFooter>

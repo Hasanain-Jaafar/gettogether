@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { signInSchema, type SignInInput } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import {
 
 export function SignInForm() {
   const router = useRouter();
+  const t = useTranslations("auth.signIn");
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<SignInInput>({
@@ -47,10 +49,10 @@ export function SignInForm() {
       const friendly =
         msg.toLowerCase().includes("invalid login credentials") ||
         msg.toLowerCase().includes("invalid_credentials")
-          ? "Invalid email or password."
+          ? t("invalidCredentials")
           : msg.toLowerCase().includes("email not confirmed")
-          ? "Check your inbox and confirm your email before signing in."
-          : msg || "Invalid email or password.";
+          ? t("emailNotConfirmed")
+          : t("genericError");
       setError(friendly);
       return;
     }
@@ -60,9 +62,9 @@ export function SignInForm() {
   return (
     <Card className="border-border/80 bg-card/95 shadow-xl shadow-primary/5 dark:shadow-primary/10 backdrop-blur-sm">
       <CardHeader className="space-y-1.5 pb-2">
-        <CardTitle className="text-2xl tracking-tight">Sign in</CardTitle>
+        <CardTitle className="text-2xl tracking-tight">{t("title")}</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Enter your email and password to sign in.
+          {t("description")}
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -78,11 +80,11 @@ export function SignInForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t("email")}</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="you@example.com"
+                      placeholder={t("emailPlaceholder")}
                       className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
@@ -96,11 +98,11 @@ export function SignInForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t("password")}</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={t("passwordPlaceholder")}
                       className="bg-muted/50 border-border focus-visible:ring-primary/30"
                       {...field}
                     />
@@ -116,15 +118,15 @@ export function SignInForm() {
               className="w-full h-11 font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20"
               disabled={form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? "Signing in…" : "Sign in"}
+              {form.formState.isSubmitting ? t("submitting") : t("submit")}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              Don&apos;t have an account?{" "}
+              {t("noAccount")}{" "}
               <Link
                 href="/sign-up"
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
-                Sign up
+                {t("signUpLink")}
               </Link>
             </p>
           </CardFooter>
