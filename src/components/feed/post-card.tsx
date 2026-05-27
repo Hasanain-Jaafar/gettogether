@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
@@ -205,13 +204,13 @@ export function PostCard({
                 {post.content}
               </p>
               {post.image_url && (
-                <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-xl bg-muted">
-                  <Image
+                <div className="mt-3 overflow-hidden rounded-xl bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={post.image_url}
                     alt="Post image"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 600px, 800px"
+                    loading="lazy"
+                    className="mx-auto block h-auto max-h-[600px] w-full object-contain"
                   />
                 </div>
               )}

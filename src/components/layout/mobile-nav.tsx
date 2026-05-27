@@ -3,24 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, User, X, Search, MessageSquare, Bell, LogOut } from "lucide-react";
+import { Home, User, UserCircle, X, Search, MessageSquare, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type MobileNavProps = {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
+  userId?: string;
 };
 
-const navItems = [
-  { href: "/dashboard", label: "Feed", icon: Home },
-  { href: "/explore", label: "Explore", icon: Search },
-  { href: "/messages", label: "Messages", icon: MessageSquare },
-  { href: "/notifications", label: "Notifications", icon: Bell },
-  { href: "/profile", label: "Profile", icon: User },
-];
+export function MobileNav({ isOpen, onClose, onLogout, userId }: MobileNavProps) {
+  const navItems = [
+    { href: "/dashboard", label: "Feed", icon: Home },
+    { href: "/explore", label: "Explore", icon: Search },
+    { href: "/messages", label: "Messages", icon: MessageSquare },
+    { href: "/notifications", label: "Notifications", icon: Bell },
+    ...(userId
+      ? [{ href: `/u/${userId}`, label: "View profile", icon: UserCircle }]
+      : []),
+    { href: "/profile", label: "Edit profile", icon: User },
+  ];
 
-export function MobileNav({ isOpen, onClose, onLogout }: MobileNavProps) {
   const pathname = usePathname();
 
   return (

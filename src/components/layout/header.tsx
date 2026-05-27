@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { Home, User, LogOut, Menu, Bell, MessageSquare, Search } from "lucide-react";
+import { Home, User, UserCircle, LogOut, Menu, Bell, MessageSquare, Search } from "lucide-react";
 
 function getInitials(name: string | null, email: string | undefined): string {
   if (name?.trim()) {
@@ -221,9 +221,15 @@ export function Header({ user, profile }: HeaderProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem asChild>
+                <Link href={`/u/${userId}`} className="flex items-center gap-2">
+                  <UserCircle className="size-4" />
+                  View profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href="/profile" className="flex items-center gap-2">
                   <User className="size-4" />
-                  Profile
+                  Edit profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
@@ -240,6 +246,7 @@ export function Header({ user, profile }: HeaderProps) {
         isOpen={mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}
         onLogout={handleLogout}
+        userId={userId}
       />
     </>
   );
