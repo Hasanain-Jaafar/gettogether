@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { UserPlus, UserCheck } from "lucide-react";
 import { motion } from "framer-motion";
-import { toggleFollow } from "@/app/(dashboard)/actions/follows";
+import { toggleFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ export function FollowButton({
   variant = "outline",
   className,
 }: FollowButtonProps) {
+  const t = useTranslations("feed.buttons");
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +39,7 @@ export function FollowButton({
       setFollowing(!nextFollowing);
       toast.error(result.error);
     } else {
-      toast.success(nextFollowing ? "Following" : "Unfollowed");
+      toast.success(nextFollowing ? t("followed") : t("unfollowed"));
     }
   }
 
@@ -64,7 +66,7 @@ export function FollowButton({
             className="flex items-center gap-1.5"
           >
             <UserCheck className="size-4" />
-            <span className="hidden sm:inline">Following</span>
+            <span className="hidden sm:inline">{t("following")}</span>
           </motion.span>
         </>
       ) : (
@@ -75,7 +77,7 @@ export function FollowButton({
           className="flex items-center gap-1.5"
         >
           <UserPlus className="size-4" />
-          <span className="hidden sm:inline">Follow</span>
+          <span className="hidden sm:inline">{t("follow")}</span>
         </motion.span>
       )}
     </Button>

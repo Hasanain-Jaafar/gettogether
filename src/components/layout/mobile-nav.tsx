@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { Home, User, UserCircle, X, Search, MessageSquare, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,22 +16,22 @@ type MobileNavProps = {
 };
 
 export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }: MobileNavProps) {
-  const navItems = [
-    { href: "/dashboard", label: "Feed", icon: Home },
-    { href: "/explore", label: "Explore", icon: Search },
-    { href: "/messages", label: "Messages", icon: MessageSquare },
-    { href: "/notifications", label: "Notifications", icon: Bell },
-    ...(userId
-      ? [{ href: `/u/${userId}`, label: "View profile", icon: UserCircle }]
-      : []),
-    { href: "/profile", label: "Edit profile", icon: User },
-  ];
-
+  const t = useTranslations("nav");
   const pathname = usePathname();
+
+  const navItems = [
+    { href: "/dashboard", label: t("feed"), icon: Home },
+    { href: "/explore", label: t("explore"), icon: Search },
+    { href: "/messages", label: t("messages"), icon: MessageSquare },
+    { href: "/notifications", label: t("notifications"), icon: Bell },
+    ...(userId
+      ? [{ href: `/u/${userId}`, label: t("viewProfile"), icon: UserCircle }]
+      : []),
+    { href: "/profile", label: t("editProfile"), icon: User },
+  ];
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className={cn(
           "fixed inset-0 z-50 bg-black/50 transition-opacity md:hidden",
@@ -40,23 +40,23 @@ export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }
         onClick={onClose}
       />
 
-      {/* Slide-out menu */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 transform bg-card border-r shadow-xl transition-transform duration-300 ease-in-out md:hidden",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 start-0 z-50 w-72 transform bg-card border-e shadow-xl transition-transform duration-300 ease-in-out md:hidden",
+          isOpen ? "translate-x-0" : "rtl:translate-x-full ltr:-translate-x-full"
         )}
       >
         <div className="flex h-14 items-center justify-between border-b px-4">
-          <span className="text-lg font-semibold">Menu</span>
+          <span className="text-lg font-semibold">{t("menu")}</span>
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
             className="rounded-full"
+            aria-label={t("closeMenu")}
           >
             <X className="size-5" />
-            <span className="sr-only">Close menu</span>
+            <span className="sr-only">{t("closeMenu")}</span>
           </Button>
         </div>
 
@@ -94,7 +94,7 @@ export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="size-4 shrink-0" />
-            Log out
+            {t("logout")}
           </button>
         </nav>
       </div>

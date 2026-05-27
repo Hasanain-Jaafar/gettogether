@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { CheckCircle2, Circle, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { votePoll, type Poll } from "@/app/(dashboard)/actions/polls";
+import { votePoll, type Poll } from "@/app/[locale]/(dashboard)/actions/polls";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { relativeTime } from "@/lib/utils";
@@ -15,6 +16,7 @@ type PollCardProps = {
 };
 
 export function PollCard({ poll, className }: PollCardProps) {
+  const t = useTranslations("poll");
   const [voting, setVoting] = useState(false);
   const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
 
@@ -45,7 +47,7 @@ export function PollCard({ poll, className }: PollCardProps) {
     if (!result.success) {
       toast.error(result.error);
     } else {
-      toast.success("Vote recorded!");
+      toast.success(t("voteRecorded"));
       // The parent component will need to refresh the poll data
     }
   }
@@ -62,7 +64,7 @@ export function PollCard({ poll, className }: PollCardProps) {
         {isExpired && (
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Lock className="size-3" />
-            Closed
+            {t("closed")}
           </span>
         )}
       </div>
@@ -158,16 +160,16 @@ export function PollCard({ poll, className }: PollCardProps) {
             disabled={voting}
             className="w-full rounded-xl"
           >
-            {voting ? "Voting..." : "Vote"}
+            {voting ? t("voting") : t("vote")}
           </Button>
         </motion.div>
       )}
 
       {/* Footer info */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>{poll.total_votes} {poll.total_votes === 1 ? "vote" : "votes"}</span>
+        <span>{t("votes", { count: poll.total_votes })}</span>
         {poll.expires_at && !isExpired && (
-          <span>Ends {relativeTime(poll.expires_at)}</span>
+          <span>{t("ends", { time: relativeTime(poll.expires_at) })}</span>
         )}
       </div>
     </div>

@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { Search, Users } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SearchInput } from "@/components/explore/search-input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,6 +27,7 @@ export default async function ExplorePage({
 }) {
   const { q: qParam } = await searchParams;
   const q = (qParam ?? "").trim();
+  const t = await getTranslations("explore");
   const supabase = await createClient();
 
   let people: Array<{
@@ -78,10 +80,8 @@ export default async function ExplorePage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Explore</h1>
-        <p className="text-muted-foreground">
-          Find people and posts across the community.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       <SearchInput />
@@ -92,10 +92,9 @@ export default async function ExplorePage({
             <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10">
               <Search className="size-8 text-primary" />
             </div>
-            <h2 className="text-lg font-semibold">Start searching</h2>
+            <h2 className="text-lg font-semibold">{t("startSearching")}</h2>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">
-              Type a name, a word from a post, or a topic. Results update as
-              you type.
+              {t("startSearchingDescription")}
             </p>
           </CardContent>
         </Card>
@@ -105,9 +104,9 @@ export default async function ExplorePage({
             <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
               <Search className="size-8 text-muted-foreground" />
             </div>
-            <h2 className="text-lg font-semibold">No results for &ldquo;{q}&rdquo;</h2>
+            <h2 className="text-lg font-semibold">{t("noResults", { query: q })}</h2>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">
-              Try a different name or keyword.
+              {t("noResultsHint")}
             </p>
           </CardContent>
         </Card>
@@ -118,7 +117,7 @@ export default async function ExplorePage({
               <div className="flex items-center gap-2">
                 <Users className="size-4 text-muted-foreground" />
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  People
+                  {t("people")}
                 </h2>
               </div>
               <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -157,7 +156,7 @@ export default async function ExplorePage({
               <div className="flex items-center gap-2">
                 <Search className="size-4 text-muted-foreground" />
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  Posts
+                  {t("posts")}
                 </h2>
               </div>
               <ul className="space-y-3">

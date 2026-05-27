@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { TrendingSidebar } from "./trending-sidebar";
 import { WhoToFollow } from "./who-to-follow";
-import type { TrendingTopic } from "@/app/(dashboard)/actions/hashtags";
+import type { TrendingTopic } from "@/app/[locale]/(dashboard)/actions/hashtags";
 
 type WhoToFollowUser = {
   user: {

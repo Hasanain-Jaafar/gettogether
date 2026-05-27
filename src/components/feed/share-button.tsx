@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Share, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ type ShareButtonProps = {
 };
 
 export function ShareButton({ postId, className }: ShareButtonProps) {
+  const t = useTranslations("feed.buttons");
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -19,10 +21,10 @@ export function ShareButton({ postId, className }: ShareButtonProps) {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      toast.success("Link copied to clipboard!");
+      toast.success(t("linkCopied"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Failed to copy link");
+      toast.error(t("shareFailed"));
     }
   }
 
@@ -35,7 +37,7 @@ export function ShareButton({ postId, className }: ShareButtonProps) {
         className
       )}
       onClick={handleShare}
-      title="Copy link"
+      title={t("copyLink")}
     >
       {copied ? (
         <Check className="size-4" strokeWidth={2.5} />

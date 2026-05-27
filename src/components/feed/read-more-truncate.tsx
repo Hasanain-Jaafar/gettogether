@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ export function ReadMoreTruncate({
   maxLength = 300,
   className,
 }: ReadMoreTruncateProps) {
+  const t = useTranslations("feed");
   const [expanded, setExpanded] = useState(false);
 
   if (!text || text.length <= maxLength) {
@@ -37,7 +39,7 @@ export function ReadMoreTruncate({
           className="h-auto p-0 text-primary hover:bg-transparent"
           onClick={() => setExpanded(true)}
         >
-          Read more
+          {t("readMore")}
         </Button>
       )}
     </>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWhoToFollow } from "@/app/(dashboard)/actions/follows";
+import { getWhoToFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 
 export async function GET() {
   const supabase = await createClient();

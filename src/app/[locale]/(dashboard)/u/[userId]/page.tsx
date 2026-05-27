@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PostCard } from "@/components/feed/post-card";
-import { getFollowers, getFollowing } from "@/app/(dashboard)/actions/follows";
+import { getFollowers, getFollowing } from "@/app/[locale]/(dashboard)/actions/follows";
 import { FollowButton } from "@/components/profile/follow-button";
 import { FollowListDialog } from "@/components/profile/follow-list-dialog";
 import {
@@ -23,8 +24,8 @@ function getInitials(name: string | null): string {
   return name.slice(0, 2).toUpperCase();
 }
 
-function formatJoinDate(created_at: string): string {
-  return new Date(created_at).toLocaleDateString("en-US", {
+function formatJoinDate(created_at: string, locale: string): string {
+  return new Date(created_at).toLocaleDateString(locale === "ar" ? "ar" : "en-US", {
     month: "long",
     year: "numeric",
   });
@@ -42,9 +43,9 @@ function calculateAge(birthday: string): number | null {
   return age;
 }
 
-function formatBirthday(birthday: string): string {
+function formatBirthday(birthday: string, locale: string): string {
   const date = new Date(birthday);
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(locale === "ar" ? "ar" : "en-US", {
     month: "long",
     day: "numeric",
   });
@@ -56,6 +57,10 @@ export default async function PublicProfilePage({
   params: Promise<{ userId: string }>;
 }) {
   const { userId } = await params;
+  const locale = await getLocale();
+  const t = await getTranslations("profile");
+  const tFeed = await getTranslations("feed");
+  const tSidebar = await getTranslations("sidebar");
   const supabase = await createClient();
   const {
     data: { user: currentUser },
@@ -169,8 +174,8 @@ export default async function PublicProfilePage({
       {/* Followers / Following Stats */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
         <div className="grid grid-cols-2 gap-4">
-          <FollowListDialog label="Follower" users={followers} />
-          <FollowListDialog label="Following" users={following} />
+          <FollowListDialog label={t("followers")} users={followers} />
+          <FollowListDialog label={t("following")} users={following} />
         </div>
       </div>
 
@@ -191,10 +196,10 @@ export default async function PublicProfilePage({
           <div className="flex-1 space-y-4 text-center sm:text-left">
             <div>
               <h1 className="text-2xl font-semibold text-foreground">
-                {profile.name ?? "Someone"}
+                {profile.name ?? tFeed("post.someone")}
               </h1>
               <p className="text-sm text-muted-foreground">
-                Joined {formatJoinDate(profile.created_at)}
+                {t("joined", { date: formatJoinDate(profile.created_at, locale) })}
               </p>
             </div>
 
@@ -220,13 +225,13 @@ export default async function PublicProfilePage({
                 <Calendar className="size-4 shrink-0 text-primary" />
                 <span className="text-sm text-foreground">
                   {profile.show_birthday
-                    ? formatBirthday(profile.birthday)
+                    ? formatBirthday(profile.birthday, locale)
                     : null}
                   {profile.show_birthday && profile.show_age
                     ? " • "
                     : null}
                   {profile.show_age
-                    ? `${calculateAge(profile.birthday)} years old`
+                    ? t("agePreview", { age: calculateAge(profile.birthday) ?? 0 }).replace(/^.*?: /, "")
                     : null}
                 </span>
               </div>
@@ -238,7 +243,7 @@ export default async function PublicProfilePage({
                 <div className="flex items-center gap-2">
                   <Hash className="size-4 shrink-0 text-primary" />
                   <span className="text-sm font-medium text-foreground">
-                    Interests
+                    {t("interestsSection")}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -282,7 +287,7 @@ export default async function PublicProfilePage({
             {/* Edit / Follow Button */}
             {isOwnProfile ? (
               <Button asChild className="rounded-full" variant="outline">
-                <Link href="/profile">Edit profile</Link>
+                <Link href="/profile">{t("editProfile")}</Link>
               </Button>
             ) : (
               <FollowButton
@@ -294,7 +299,7 @@ export default async function PublicProfilePage({
             {/* Stats */}
             <div className="text-sm">
               <p className="font-medium text-foreground">
-                {posts?.length ?? 0} post{(posts?.length ?? 0) !== 1 ? "s" : ""}
+                {tSidebar("postCount", { count: posts?.length ?? 0 })}
               </p>
             </div>
           </div>
@@ -304,7 +309,7 @@ export default async function PublicProfilePage({
       {/* Posts */}
       {!posts?.length ? (
         <div className="rounded-2xl border border-border/80 bg-card p-8 text-center text-muted-foreground shadow-sm">
-          <p>No posts yet.</p>
+          <p>{tFeed("empty.noPostsTitle")}</p>
         </div>
       ) : (
         <ul className="space-y-4">

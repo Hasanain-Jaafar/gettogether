@@ -1,9 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "@/components/profile/profile-form";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
+  const t = await getTranslations("profile");
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -18,10 +20,7 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Profile</h1>
-        <p className="text-muted-foreground">
-          Share more about yourself to help others connect with you.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("editProfile")}</h1>
       </div>
       <ProfileForm
         userId={user.id}

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { CheckCircle2, ShieldCheck, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +19,7 @@ export function VerifiedBadge({
   className,
   showText = false,
 }: VerifiedBadgeProps) {
+  const t = useTranslations("verified");
   if (!type) return null;
 
   const sizeClasses = {
@@ -41,7 +45,7 @@ export function VerifiedBadge({
         )}
       >
         {icon}
-        <span className="capitalize">{type === "organization" ? "Org" : type}</span>
+        <span className="capitalize">{t(type)}</span>
       </span>
     );
   }

@@ -3,9 +3,10 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { UserPlus, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toggleFollow } from "@/app/(dashboard)/actions/follows";
+import { toggleFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 
 type FollowButtonProps = {
   targetUserId: string;
@@ -17,6 +18,7 @@ export function FollowButton({
   initialFollowing,
 }: FollowButtonProps) {
   const router = useRouter();
+  const t = useTranslations("feed.buttons");
   const [following, setFollowing] = useState(initialFollowing);
   const [isPending, startTransition] = useTransition();
 
@@ -45,11 +47,11 @@ export function FollowButton({
     >
       {following ? (
         <>
-          <UserCheck className="size-4" /> Following
+          <UserCheck className="size-4" /> {t("following")}
         </>
       ) : (
         <>
-          <UserPlus className="size-4" /> Follow
+          <UserPlus className="size-4" /> {t("follow")}
         </>
       )}
     </Button>

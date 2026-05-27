@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { getForYouFeed, getFollowingFeed, type FeedResult } from "@/app/(dashboard)/actions/feed";
+import { getForYouFeed, getFollowingFeed, type FeedResult } from "@/app/[locale]/(dashboard)/actions/feed";
 
 type PostWithMeta = {
   id: string;

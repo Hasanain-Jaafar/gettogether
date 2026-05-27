@@ -5,23 +5,29 @@ import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-const LOCALIZED_PATHS = ["/", "/sign-in", "/sign-up"];
-
-function isLocalized(pathname: string): boolean {
-  // Strip locale prefix when checking
-  const stripped = pathname.replace(/^\/(en|ar)(?=\/|$)/, "") || "/";
-  return (
-    LOCALIZED_PATHS.includes(stripped) ||
-    stripped.startsWith("/sign-in") ||
-    stripped.startsWith("/sign-up")
-  );
+function detectLocale(pathname: string): "en" | "ar" {
+  if (pathname === "/ar" || pathname.startsWith("/ar/")) return "ar";
+  return "en";
 }
 
 export async function proxy(request: NextRequest) {
-  if (isLocalized(request.nextUrl.pathname)) {
-    return intlMiddleware(request);
+  const locale = detectLocale(request.nextUrl.pathname);
+  request.headers.set("x-locale", locale);
+
+  const intlResponse = intlMiddleware(request);
+  if (intlResponse.status === 307 || intlResponse.status === 308) {
+    intlResponse.headers.set("x-locale", locale);
+    return intlResponse;
   }
-  return await updateSession(request);
+
+  const sessionResponse = await updateSession(request);
+  intlResponse.headers.forEach((value, key) => {
+    if (!sessionResponse.headers.has(key)) {
+      sessionResponse.headers.set(key, value);
+    }
+  });
+  sessionResponse.headers.set("x-locale", locale);
+  return sessionResponse;
 }
 
 export const config = {

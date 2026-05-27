@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getTrendingTopics } from "@/app/(dashboard)/actions/hashtags";
+import { getTrendingTopics } from "@/app/[locale]/(dashboard)/actions/hashtags";
 
 export async function GET() {
   const supabase = await createClient();

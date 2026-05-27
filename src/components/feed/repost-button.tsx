@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Repeat2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { createRepost, deleteRepost } from "@/app/(dashboard)/actions/reposts";
+import { createRepost, deleteRepost } from "@/app/[locale]/(dashboard)/actions/reposts";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export function RepostButton({
   initialReposted,
   className,
 }: RepostButtonProps) {
+  const t = useTranslations("feed.buttons");
   const [reposted, setReposted] = useState(initialReposted);
   const [count, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
@@ -41,7 +43,7 @@ export function RepostButton({
       setCount(nextReposted ? count - 1 : count + 1);
       toast.error(result.error);
     } else {
-      toast.success(nextReposted ? "Reposted" : "Repost removed");
+      toast.success(nextReposted ? t("reposted") : t("repostRemoved"));
     }
   }
 
@@ -56,7 +58,7 @@ export function RepostButton({
       )}
       onClick={handleRepost}
       disabled={loading}
-      title={reposted ? "Remove repost" : "Repost"}
+      title={reposted ? t("undoRepost") : t("repost")}
     >
       <motion.span
         animate={reposted ? { rotate: [0, 180] } : {}}

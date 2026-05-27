@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { MessageSquare, Users, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,21 +16,23 @@ export function EmptyState({
   actionLabel,
   actionTarget,
 }: EmptyStateProps) {
+  const t = useTranslations("feed.empty");
+
   const states = {
     "no-posts": {
       icon: MessageSquare,
-      title: "No posts yet",
-      description: "Be the first to share something with the community!",
+      title: t("noPostsTitle"),
+      description: t("noPostsDescription"),
     },
     "no-results": {
       icon: Sparkles,
-      title: "No results found",
-      description: "Try adjusting your search or filters.",
+      title: t("noResultsTitle"),
+      description: t("noResultsDescription"),
     },
     "welcome": {
       icon: Users,
-      title: "Welcome to the community!",
-      description: "Start by creating your first post or explore what others are sharing.",
+      title: t("welcomeTitle"),
+      description: t("welcomeDescription"),
     },
   };
 

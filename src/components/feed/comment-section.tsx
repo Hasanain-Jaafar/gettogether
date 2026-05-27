@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { MessageCircle } from "lucide-react";
-import { createComment } from "@/app/(dashboard)/actions/comments";
+import { createComment } from "@/app/[locale]/(dashboard)/actions/comments";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -38,6 +39,8 @@ export function CommentSection({
   commentCount,
 }: CommentSectionProps) {
   const router = useRouter();
+  const t = useTranslations("feed.comments");
+  const tPost = useTranslations("feed.post");
   const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -72,7 +75,7 @@ export function CommentSection({
         <div className="w-full flex-[1_1_100%] space-y-3 pt-3">
           <form onSubmit={handleSubmit} className="flex gap-2">
             <Textarea
-              placeholder="Add a comment…"
+              placeholder={t("placeholder")}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="min-h-[80px] flex-1 resize-y rounded-xl border-border bg-muted/30 text-sm"
@@ -85,7 +88,7 @@ export function CommentSection({
               className="rounded-xl shrink-0"
               disabled={submitting || !content.trim()}
             >
-              {submitting ? "…" : "Post"}
+              {submitting ? "…" : t("submit")}
             </Button>
           </form>
           <ul className="space-y-2">
@@ -99,7 +102,7 @@ export function CommentSection({
                 </Avatar>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-foreground">
-                    {c.author?.name ?? "Someone"}
+                    {c.author?.name ?? tPost("someone")}
                   </p>
                   <p className="text-muted-foreground whitespace-pre-wrap wrap-break-word">
                     {c.content}

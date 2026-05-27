@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Smile } from "lucide-react";
 import { motion } from "framer-motion";
-import { setReaction, COMMON_REACTIONS, type PostReaction } from "@/app/(dashboard)/actions/reactions";
+import { setReaction, COMMON_REACTIONS, type PostReaction } from "@/app/[locale]/(dashboard)/actions/reactions";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -28,6 +29,7 @@ export function ReactionPicker({
   onReactionChange,
   className,
 }: ReactionPickerProps) {
+  const t = useTranslations("feed.reactions");
   const [loading, setLoading] = useState<string | null>(null);
 
   async function handleReaction(emoji: string) {
@@ -40,9 +42,9 @@ export function ReactionPicker({
       toast.error(result.error);
     } else {
       if (result.reaction) {
-        toast.success(`Reacted with ${emoji}`);
+        toast.success(t("reacted", { emoji }));
       } else {
-        toast.success("Reaction removed");
+        toast.success(t("removed"));
       }
       onReactionChange?.();
     }

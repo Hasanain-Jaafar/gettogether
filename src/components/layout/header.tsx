@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter as useNextRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { Home, User, UserCircle, LogOut, Menu, Bell, MessageSquare, Search } from "lucide-react";
+import { Home, User, UserCircle, LogOut, Menu, Bell, MessageSquare, Search, Languages } from "lucide-react";
 
 function getInitials(name: string | null, email: string | undefined): string {
   if (name?.trim()) {
@@ -31,15 +32,6 @@ function getInitials(name: string | null, email: string | undefined): string {
   return "U";
 }
 
-const mainNavItems = [
-  { href: "/dashboard", label: "Feed", icon: Home },
-  { href: "/profile", label: "Profile", icon: User },
-];
-
-const secondaryNavItems = [
-  { href: "/explore", label: "Explore", icon: Search },
-  { href: "/messages", label: "Messages", icon: MessageSquare },
-];
 
 type HeaderProps = {
   user: {
@@ -51,10 +43,29 @@ type HeaderProps = {
 };
 
 export function Header({ user, profile }: HeaderProps) {
+  const nextRouter = useNextRouter();
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const tLang = useTranslations("language");
+  const locale = useLocale();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  function switchLocale(next: "en" | "ar") {
+    if (next === locale) return;
+    router.replace(pathname, { locale: next });
+  }
+
+  const mainNavItems = [
+    { href: "/dashboard", label: t("feed"), icon: Home },
+    { href: "/profile", label: t("profile"), icon: User },
+  ];
+
+  const secondaryNavItems = [
+    { href: "/explore", label: t("explore"), icon: Search },
+    { href: "/messages", label: t("messages"), icon: MessageSquare },
+  ];
 
   const name =
     profile?.name ??
@@ -130,7 +141,7 @@ export function Header({ user, profile }: HeaderProps) {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/");
-    router.refresh();
+    nextRouter.refresh();
   }
 
   if (!user) return null;
@@ -146,7 +157,7 @@ export function Header({ user, profile }: HeaderProps) {
           onClick={() => setMobileNavOpen(true)}
         >
           <Menu className="size-5" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{t("openMenu")}</span>
         </Button>
 
         {/* Main navigation - desktop */}
@@ -195,7 +206,7 @@ export function Header({ user, profile }: HeaderProps) {
 
           {/* Notifications with badge */}
           <Button variant="ghost" size="icon" asChild className="rounded-lg relative">
-            <Link href="/notifications" aria-label="Notifications">
+            <Link href="/notifications" aria-label={t("notifications")}>
               <Bell className="size-5" />
               {unreadCount > 0 && (
                 <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
@@ -204,6 +215,25 @@ export function Header({ user, profile }: HeaderProps) {
               )}
             </Link>
           </Button>
+
+          {/* Language switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-lg" aria-label={tLang("label")}>
+                <Languages className="size-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => switchLocale("en")}>
+                {tLang("english")}
+                {locale === "en" && <span className="ms-auto text-primary">✓</span>}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => switchLocale("ar")}>
+                {tLang("arabic")}
+                {locale === "ar" && <span className="ms-auto text-primary">✓</span>}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Theme toggle */}
           <ThemeToggle />
@@ -222,18 +252,18 @@ export function Header({ user, profile }: HeaderProps) {
               <DropdownMenuItem asChild>
                 <Link href={`/u/${userId}`} className="flex items-center gap-2">
                   <UserCircle className="size-4" />
-                  View profile
+                  {t("viewProfile")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/profile" className="flex items-center gap-2">
                   <User className="size-4" />
-                  Edit profile
+                  {t("editProfile")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
                 <LogOut className="size-4" />
-                Log out
+                {t("logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

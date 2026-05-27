@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -17,6 +18,7 @@ type TopicFilterBarProps = {
 export function TopicFilterBar({ topics, className }: TopicFilterBarProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const tCommon = useTranslations("feed");
   const currentTopic = searchParams.get("topic");
 
   const setTopic = (topicId: string | null) => {
@@ -41,7 +43,7 @@ export function TopicFilterBar({ topics, className }: TopicFilterBarProps) {
             onClick={() => setTopic(null)}
             className="rounded-full shrink-0"
           >
-            All
+            {tCommon("all")}
           </Button>
           {topics.map((topic) => (
             <Button

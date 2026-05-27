@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import {
@@ -21,7 +22,7 @@ import { ShareButton } from "@/components/feed/share-button";
 import { VerifiedBadge } from "@/components/feed/verified-badge";
 import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
-import { deletePost, updatePost } from "@/app/(dashboard)/actions/posts";
+import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -88,6 +89,7 @@ export function PostCard({
   likers,
 }: PostCardProps) {
   const router = useRouter();
+  const t = useTranslations("feed.post");
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [saving, setSaving] = useState(false);
@@ -146,7 +148,7 @@ export function PostCard({
             </Avatar>
             <div className="min-w-0">
               <p className="flex items-center gap-1 font-semibold text-foreground truncate">
-                {author.name ?? "Someone"}
+                {author.name ?? t("someone")}
                 {isVerified && (
                   <VerifiedBadge type={verificationType} size="sm" />
                 )}
@@ -169,13 +171,13 @@ export function PostCard({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setEditing(true)}>
-                  <Pencil className="mr-2 size-4" /> Edit
+                  <Pencil className="me-2 size-4" /> {t("edit")}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleDelete}
                   className="text-destructive"
                 >
-                  <Trash2 className="mr-2 size-4" /> Delete
+                  <Trash2 className="me-2 size-4" /> {t("delete")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -198,7 +200,7 @@ export function PostCard({
                   onClick={handleSaveEdit}
                   disabled={saving || !editContent.trim()}
                 >
-                  {saving ? "Saving…" : "Save"}
+                  {saving ? t("saving") : t("save")}
                 </Button>
                 <Button
                   size="sm"
@@ -210,7 +212,7 @@ export function PostCard({
                   }}
                   disabled={saving}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               </div>
             </div>
@@ -265,10 +267,9 @@ export function PostCard({
       >
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Delete this post?</DialogTitle>
+            <DialogTitle>{t("confirmDeleteTitle")}</DialogTitle>
             <DialogDescription>
-              This can&apos;t be undone. Your post and its comments, likes, and
-              reposts will be permanently removed.
+              {t("confirmDeleteDescription")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -279,7 +280,7 @@ export function PostCard({
               disabled={deleting}
               onClick={() => setConfirmDeleteOpen(false)}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               type="button"
@@ -288,7 +289,7 @@ export function PostCard({
               disabled={deleting}
               onClick={confirmDelete}
             >
-              {deleting ? "Deleting…" : "Delete post"}
+              {deleting ? t("deleting") : t("delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

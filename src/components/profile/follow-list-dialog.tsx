@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Users } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ function getInitials(name: string | null) {
 }
 
 export function FollowListDialog({ label, users }: FollowListDialogProps) {
+  const t = useTranslations("feed.post");
   const [open, setOpen] = useState(false);
   const count = users.length;
 
@@ -41,32 +43,23 @@ export function FollowListDialog({ label, users }: FollowListDialogProps) {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="flex items-center gap-3 rounded-xl px-2 py-1 -mx-2 hover:bg-accent transition-colors text-left"
+          className="flex items-center gap-3 rounded-xl px-2 py-1 -mx-2 hover:bg-accent transition-colors text-start"
         >
           <Users className="size-5 text-primary" />
           <div>
             <p className="text-lg font-semibold text-foreground">{count}</p>
-            <p className="text-sm text-muted-foreground">
-              {label}
-              {label === "Follower" && count !== 1 ? "s" : ""}
-            </p>
+            <p className="text-sm text-muted-foreground">{label}</p>
           </div>
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>
-            {label === "Follower"
-              ? `${count} Follower${count !== 1 ? "s" : ""}`
-              : `Following ${count}`}
+            {label} · {count}
           </DialogTitle>
         </DialogHeader>
         {count === 0 ? (
-          <p className="py-4 text-center text-sm text-muted-foreground">
-            {label === "Follower"
-              ? "No followers yet."
-              : "Not following anyone yet."}
-          </p>
+          <p className="py-4 text-center text-sm text-muted-foreground">—</p>
         ) : (
           <ul className="max-h-80 space-y-1 overflow-y-auto">
             {users.map((u) => (
@@ -83,7 +76,7 @@ export function FollowListDialog({ label, users }: FollowListDialogProps) {
                     </AvatarFallback>
                   </Avatar>
                   <span className="truncate font-medium">
-                    {u.name ?? "Unnamed"}
+                    {u.name ?? t("someone")}
                   </span>
                 </Link>
               </li>

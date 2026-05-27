@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Hash, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -13,16 +16,17 @@ type TrendingSidebarProps = {
 };
 
 export function TrendingSidebar({ trending, className }: TrendingSidebarProps) {
+  const t = useTranslations("sidebar");
   return (
     <Card className={className}>
       <div className="p-4">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="size-5 text-primary" />
-          <h2 className="font-semibold">Trending Topics</h2>
+          <h2 className="font-semibold">{t("trendingTopics")}</h2>
         </div>
         {trending.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            No trending topics yet
+            {t("noTrending")}
           </p>
         ) : (
           <ul className="space-y-3">
@@ -43,7 +47,7 @@ export function TrendingSidebar({ trending, className }: TrendingSidebarProps) {
                       </p>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {topic.count} {topic.count === 1 ? "post" : "posts"}
+                      {t("postCount", { count: topic.count })}
                     </p>
                   </div>
                 </a>

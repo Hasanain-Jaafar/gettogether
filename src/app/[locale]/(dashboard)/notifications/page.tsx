@@ -1,11 +1,13 @@
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { getNotifications, markAllAsRead } from "@/app/(dashboard)/actions/notifications";
+import { getNotifications, markAllAsRead } from "@/app/[locale]/(dashboard)/actions/notifications";
 import { NotificationItem } from "@/components/notifications/notification-item";
 import { Button } from "@/components/ui/button";
 import { CheckCheck, Bell } from "lucide-react";
 
 export default async function NotificationsPage() {
   const supabase = await createClient();
+  const t = await getTranslations("notifications");
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -24,24 +26,20 @@ export default async function NotificationsPage() {
         <div className="flex size-20 items-center justify-center rounded-full bg-primary/10 mb-6">
           <Bell className="size-10 text-primary" />
         </div>
-        <h1 className="text-2xl font-semibold mb-3">No notifications yet</h1>
-        <p className="text-muted-foreground max-w-md">
-          Stay updated on what matters most. We'll notify you about likes,
-          comments, follows, and more so you never miss a moment.
-        </p>
+        <h1 className="text-2xl font-semibold mb-3">{t("emptyTitle")}</h1>
+        <p className="text-muted-foreground max-w-md">{t("emptyDescription")}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Notifications</h1>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
           {unreadCount > 0 && (
             <p className="text-sm text-muted-foreground">
-              {unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}
+              {t("unread", { count: unreadCount })}
             </p>
           )}
         </div>
@@ -54,14 +52,13 @@ export default async function NotificationsPage() {
                 className="gap-2 rounded-full"
               >
                 <CheckCheck className="size-4" />
-                Mark all as read
+                {t("markAllAsRead")}
               </Button>
             </form>
           )}
         </div>
       </div>
 
-      {/* Notifications list */}
       <div className="space-y-3">
         {notifications.map((notification) => (
           <NotificationItem

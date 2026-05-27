@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { cropImageToBlob } from "@/lib/crop-image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,6 +49,8 @@ export function AvatarUpload({
   onUploadComplete,
   className,
 }: AvatarUploadProps) {
+  const t = useTranslations("profile");
+  const tCommon = useTranslations("feed.post");
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [rawSrc, setRawSrc] = useState<string | null>(null);
@@ -70,12 +73,12 @@ export function AvatarUpload({
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(`File must be under ${MAX_SIZE_MB}MB`);
+      toast.error(t("fileTooLarge", { size: MAX_SIZE_MB }));
       e.target.value = "";
       return;
     }
-    if (!ACCEPT.split(",").some((t) => t.trim() === file.type)) {
-      toast.error("Unsupported file type.");
+    if (!ACCEPT.split(",").some((mime) => mime.trim() === file.type)) {
+      toast.error(t("unsupportedFile"));
       e.target.value = "";
       return;
     }
@@ -110,9 +113,7 @@ export function AvatarUpload({
       onUploadComplete(`${publicUrl}?t=${Date.now()}`);
       closeDialog();
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Upload failed."
-      );
+      toast.error(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -140,17 +141,17 @@ export function AvatarUpload({
           disabled={uploading}
           onClick={() => inputRef.current?.click()}
         >
-          {uploading ? "Uploading…" : "Change avatar"}
+          {uploading ? t("uploading") : t("changeAvatar")}
         </Button>
         <p className="text-xs text-muted-foreground">
-          JPG, PNG, WebP or GIF. Max {MAX_SIZE_MB}MB.
+          {t("avatarHint", { size: MAX_SIZE_MB })}
         </p>
       </div>
 
       <Dialog open={!!rawSrc} onOpenChange={(o) => !o && !uploading && closeDialog()}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Adjust your avatar</DialogTitle>
+            <DialogTitle>{t("adjustAvatar")}</DialogTitle>
           </DialogHeader>
 
           <div className="relative h-72 w-full overflow-hidden rounded-md bg-muted">
@@ -170,7 +171,7 @@ export function AvatarUpload({
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs text-muted-foreground">Zoom</span>
+            <span className="text-xs text-muted-foreground">{t("zoom")}</span>
             <input
               type="range"
               min={1}
@@ -179,7 +180,7 @@ export function AvatarUpload({
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
               className="flex-1 accent-primary"
-              aria-label="Zoom"
+              aria-label={t("zoom")}
             />
           </div>
 
@@ -191,7 +192,7 @@ export function AvatarUpload({
               disabled={uploading}
               className="rounded-full"
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="button"
@@ -199,7 +200,7 @@ export function AvatarUpload({
               disabled={uploading || !areaPx}
               className="rounded-full"
             >
-              {uploading ? "Saving…" : "Save"}
+              {uploading ? tCommon("saving") : tCommon("save")}
             </Button>
           </DialogFooter>
         </DialogContent>

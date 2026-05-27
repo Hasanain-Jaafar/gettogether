@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { createPost } from "@/app/(dashboard)/actions/posts";
+import { createPost } from "@/app/[locale]/(dashboard)/actions/posts";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +28,7 @@ function initialsFor(name: string | null | undefined): string {
 }
 
 export function CreatePostForm({ userId }: CreatePostFormProps) {
+  const t = useTranslations("feed.createPost");
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -50,7 +52,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     e.preventDefault();
     const trimmed = content.trim();
     if (!trimmed) {
-      toast.error("Write something to post.");
+      toast.error(t("writeSomething"));
       return;
     }
     setSubmitting(true);
@@ -66,8 +68,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         const message =
           error.message?.toLowerCase().includes("bucket") &&
           error.message?.toLowerCase().includes("not found")
-            ? "Post images bucket missing. Create a bucket named post-images in Supabase Storage (see STORAGE.md)."
-            : error.message ?? "Image upload failed.";
+            ? t("bucketMissing")
+            : error.message ?? t("uploadFailed");
         toast.error(message);
         setSubmitting(false);
         return;
@@ -82,7 +84,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       setImageFile(null);
       setPreview(null);
       setExpanded(false);
-      toast.success("Posted!");
+      toast.success(t("posted"));
     } else {
       toast.error(result.error);
     }
@@ -92,7 +94,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(`Image must be under ${MAX_SIZE_MB}MB`);
+      toast.error(t("imageTooLarge", { size: MAX_SIZE_MB }));
       return;
     }
     setImageFile(file);
@@ -123,9 +125,9 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="flex-1 rounded-full bg-muted/40 px-4 py-2.5 text-left text-muted-foreground hover:bg-muted/60 transition-colors"
+              className="flex-1 rounded-full bg-muted/40 px-4 py-2.5 text-start text-muted-foreground hover:bg-muted/60 transition-colors"
             >
-              What&apos;s on your mind?
+              {t("placeholder")}
             </button>
             <Button
               type="button"
@@ -133,7 +135,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               size="icon"
               className="rounded-full shrink-0"
               onClick={() => inputRef.current?.click()}
-              aria-label="Add image"
+              aria-label={t("addImage")}
             >
               <ImageIcon className="size-5 text-muted-foreground" />
             </Button>
@@ -147,7 +149,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               </Avatar>
               <Textarea
                 ref={textareaRef}
-                placeholder="What's on your mind?"
+                placeholder={t("placeholder")}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 onBlur={collapse}
@@ -170,8 +172,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                     setImageFile(null);
                     setPreview(null);
                   }}
-                  className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
-                  aria-label="Remove image"
+                  className="absolute end-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                  aria-label={t("removeImage")}
                 >
                   <X className="size-3" />
                 </button>
@@ -186,15 +188,15 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 onClick={() => inputRef.current?.click()}
                 disabled={submitting}
               >
-                <ImageIcon className="size-4 mr-1.5" />
-                Add image
+                <ImageIcon className="size-4 me-1.5" />
+                {t("addImage")}
               </Button>
               <Button
                 type="submit"
                 className="rounded-xl"
                 disabled={submitting || !content.trim()}
               >
-                {submitting ? "Posting…" : "Post"}
+                {submitting ? t("posting") : t("post")}
               </Button>
             </div>
           </form>

@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { PostCard } from "@/components/feed/post-card";
 
@@ -10,6 +11,7 @@ export default async function PostPage({
   params: Promise<{ postId: string }>;
 }) {
   const { postId } = await params;
+  const t = await getTranslations("postPage");
   const supabase = await createClient();
   const {
     data: { user },
@@ -78,8 +80,9 @@ export default async function PostPage({
         href="/dashboard"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="size-4" />
-        Back
+        <ArrowLeft className="size-4 rtl:hidden" />
+        <ArrowRight className="size-4 ltr:hidden" />
+        {t("back")}
       </Link>
       <PostCard
         post={post}

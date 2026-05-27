@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { motion } from "framer-motion";
-import { toggleBookmark } from "@/app/(dashboard)/actions/bookmarks";
+import { toggleBookmark } from "@/app/[locale]/(dashboard)/actions/bookmarks";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export function BookmarkButton({
   initialBookmarked,
   className,
 }: BookmarkButtonProps) {
+  const t = useTranslations("feed.buttons");
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [count, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
@@ -39,7 +41,7 @@ export function BookmarkButton({
       setCount(count);
       toast.error(result.error);
     } else {
-      toast.success(nextBookmarked ? "Post saved" : "Post removed from saved");
+      toast.success(nextBookmarked ? t("postSaved") : t("postUnsaved"));
     }
   }
 
@@ -54,7 +56,7 @@ export function BookmarkButton({
       )}
       onClick={handleClick}
       disabled={loading}
-      title={bookmarked ? "Remove from saved" : "Save post"}
+      title={bookmarked ? t("removeBookmark") : t("bookmark")}
     >
       <motion.span
         animate={bookmarked ? { scale: [1, 1.2, 1] } : {}}

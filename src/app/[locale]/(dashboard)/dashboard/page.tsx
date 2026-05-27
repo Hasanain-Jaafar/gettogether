@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CreatePostForm } from "@/components/feed/create-post-form";
 import { PostCard } from "@/components/feed/post-card";
@@ -6,23 +7,26 @@ import { DashboardRealtime } from "@/components/feed/dashboard-realtime";
 import { DashboardSidebar } from "@/components/feed/dashboard-sidebar";
 import { FeedTabs } from "@/components/feed/feed-tabs";
 import { EmptyState } from "@/components/feed/empty-state";
-import { getForYouFeed, getFollowingFeed } from "@/app/(dashboard)/actions/feed";
+import { getForYouFeed, getFollowingFeed } from "@/app/[locale]/(dashboard)/actions/feed";
 
 const POSTS_PAGE_SIZE = 20;
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { tab?: string; hashtag?: string };
+  searchParams: Promise<{ tab?: string; hashtag?: string }>;
 }) {
   const supabase = await createClient();
+  const tSidebar = await getTranslations("sidebar");
+  const tFeed = await getTranslations("feed.empty");
+  const { tab: tabParam, hashtag: hashtagParam } = await searchParams;
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const tab = searchParams.tab === "following" ? "following" : "foryou";
-  const hashtag = searchParams.hashtag;
+  const tab = tabParam === "following" ? "following" : "foryou";
+  const hashtag = hashtagParam;
 
   // Get posts based on tab
   let posts: any[] = [];
@@ -52,7 +56,7 @@ export default async function DashboardPage({
             {!hashtag && <FeedTabs />}
             <EmptyState
               type={tab === "following" ? "no-results" : "welcome"}
-              actionLabel={tab === "following" ? "Find people to follow" : "Create your first post"}
+              actionLabel={tab === "following" ? tFeed("findPeople") : tFeed("createFirst")}
               actionTarget={tab === "following" ? "scroll-who-to-follow" : "focus-create-post"}
             />
           </div>
@@ -180,7 +184,7 @@ export default async function DashboardPage({
                 href="/dashboard"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                Clear filter
+                {tSidebar("clearFilter")}
               </Link>
             </div>
           )}

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { UserPlus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,6 +29,8 @@ function getInitials(name: string | null): string {
 }
 
 export function WhoToFollow({ users, className }: WhoToFollowProps) {
+  const t = useTranslations("sidebar");
+  const tPost = useTranslations("feed.post");
   if (users.length === 0) return null;
 
   return (
@@ -33,7 +38,7 @@ export function WhoToFollow({ users, className }: WhoToFollowProps) {
       <div className="p-4">
         <div className="flex items-center gap-2 mb-4">
           <UserPlus className="size-5 text-primary" />
-          <h2 className="font-semibold">Who to Follow</h2>
+          <h2 className="font-semibold">{t("whoToFollow")}</h2>
         </div>
         <ul className="space-y-3">
           {users.map(({ user, mutualFollowers }) => (
@@ -47,11 +52,11 @@ export function WhoToFollow({ users, className }: WhoToFollowProps) {
                 </Avatar>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-sm truncate text-foreground">
-                    {user.name ?? "Someone"}
+                    {user.name ?? tPost("someone")}
                   </p>
                   {mutualFollowers > 0 && (
                     <p className="text-xs text-muted-foreground">
-                      {mutualFollowers} mutual {mutualFollowers === 1 ? "follower" : "followers"}
+                      {t("mutualFollowers", { count: mutualFollowers })}
                     </p>
                   )}
                 </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,7 @@ function getInitials(name: string | null): string {
 }
 
 export function StoryBar({ stories, className }: StoryBarProps) {
+  const t = useTranslations("feed.post");
   return (
     <div className={cn("flex gap-4 overflow-x-auto pb-4 scrollbar-hide", className)}>
       {/* Add story button */}
@@ -49,7 +51,7 @@ export function StoryBar({ stories, className }: StoryBarProps) {
             <Plus className="size-3" />
           </div>
         </div>
-        <span className="text-xs text-muted-foreground">Add story</span>
+        <span className="text-xs text-muted-foreground">{t("addStory")}</span>
       </Link>
 
       {/* Story items */}
@@ -73,7 +75,7 @@ export function StoryBar({ stories, className }: StoryBarProps) {
             </Avatar>
           </div>
           <span className="w-16 truncate text-center text-xs text-foreground group-hover:text-primary transition-colors">
-            {story.author?.name ?? "Someone"}
+            {story.author?.name ?? t("someone")}
           </span>
         </Link>
       ))}
@@ -91,6 +93,7 @@ export function StoryPreview({
   story,
   className,
 }: StoryPreviewProps) {
+  const t = useTranslations("feed.post");
   return (
     <div className={cn("relative aspect-9/16 rounded-2xl overflow-hidden bg-muted", className)}>
       {/* Story content would go here */}
@@ -105,7 +108,7 @@ export function StoryPreview({
           </AvatarFallback>
         </Avatar>
         <span className="text-sm font-semibold text-white">
-          {story.author?.name ?? "Someone"}
+          {story.author?.name ?? t("someone")}
         </span>
       </div>
 

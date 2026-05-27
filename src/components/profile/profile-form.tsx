@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { updateProfile } from "@/app/(dashboard)/profile/actions";
+import { useTranslations } from "next-intl";
+import { updateProfile } from "@/app/[locale]/(dashboard)/profile/actions";
 import { profileSchema, type ProfileInput } from "@/lib/validations/profile";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { Button } from "@/components/ui/button";
@@ -71,6 +72,7 @@ export function ProfileForm({
   initialShowLocation,
 }: ProfileFormProps) {
   const router = useRouter();
+  const t = useTranslations("profile");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialAvatarUrl);
   const [interestInput, setInterestInput] = useState("");
 
@@ -128,7 +130,7 @@ export function ProfileForm({
       avatar_url: avatarUrl,
     });
     if (result.success) {
-      toast.success("Profile updated.");
+      toast.success(t("updated"));
       router.push(`/u/${userId}`);
     } else {
       toast.error(result.error);
@@ -138,10 +140,8 @@ export function ProfileForm({
   return (
     <Card className="rounded-2xl">
       <CardHeader className="px-6 py-5">
-        <CardTitle>Profile</CardTitle>
-        <CardDescription>
-          Update your profile information to help others get to know you better.
-        </CardDescription>
+        <CardTitle>{t("cardTitle")}</CardTitle>
+        <CardDescription>{t("cardDescription")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 px-6 pb-6">
         <AvatarUpload
@@ -154,11 +154,10 @@ export function ProfileForm({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            {/* Basic Info Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <User className="size-4" />
-                Basic Information
+                {t("basicInfo")}
               </h3>
 
               <FormField
@@ -166,9 +165,9 @@ export function ProfileForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("name")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your name" {...field} />
+                      <Input placeholder={t("namePlaceholder")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -180,17 +179,17 @@ export function ProfileForm({
                 name="pronouns"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Pronouns</FormLabel>
+                    <FormLabel>{t("pronouns")}</FormLabel>
                     <FormControl>
                       <select
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         {...field}
                       >
-                        <option value="">Prefer not to say</option>
-                        <option value="she/her">She/Her</option>
-                        <option value="he/him">He/Him</option>
-                        <option value="they/them">They/Them</option>
-                        <option value="any pronouns">Any pronouns</option>
+                        <option value="">{t("preferNotToSay")}</option>
+                        <option value="she/her">{t("sheHer")}</option>
+                        <option value="he/him">{t("heHim")}</option>
+                        <option value="they/them">{t("theyThem")}</option>
+                        <option value="any pronouns">{t("anyPronouns")}</option>
                       </select>
                     </FormControl>
                     <FormMessage />
@@ -203,21 +202,17 @@ export function ProfileForm({
                 name="relationship_status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Relationship Status</FormLabel>
+                    <FormLabel>{t("relationshipStatus")}</FormLabel>
                     <FormControl>
                       <select
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         {...field}
                       >
-                        <option value="">Prefer not to say</option>
-                        <option value="single">Single</option>
-                        <option value="in a relationship">
-                          In a relationship
-                        </option>
-                        <option value="it&apos;s complicated">
-                          It&apos;s complicated
-                        </option>
-                        <option value="married">Married</option>
+                        <option value="">{t("preferNotToSay")}</option>
+                        <option value="single">{t("single")}</option>
+                        <option value="in a relationship">{t("inRelationship")}</option>
+                        <option value="it&apos;s complicated">{t("complicated")}</option>
+                        <option value="married">{t("married")}</option>
                       </select>
                     </FormControl>
                     <FormMessage />
@@ -226,11 +221,10 @@ export function ProfileForm({
               />
             </div>
 
-            {/* Location Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <MapPin className="size-4" />
-                Location
+                {t("locationSection")}
               </h3>
 
               <FormField
@@ -238,9 +232,9 @@ export function ProfileForm({
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City & Country</FormLabel>
+                    <FormLabel>{t("cityCountry")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., New York, USA" {...field} />
+                      <Input placeholder={t("cityPlaceholder")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -260,19 +254,16 @@ export function ProfileForm({
                         onChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel className="text-sm">
-                      Show location on my profile
-                    </FormLabel>
+                    <FormLabel className="text-sm">{t("showLocation")}</FormLabel>
                   </FormItem>
                 )}
               />
             </div>
 
-            {/* Birthday Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Calendar className="size-4" />
-                Birthday
+                {t("birthdaySection")}
               </h3>
 
               <FormField
@@ -280,7 +271,7 @@ export function ProfileForm({
                 name="birthday"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Birthday</FormLabel>
+                    <FormLabel>{t("birthday")}</FormLabel>
                     <FormControl>
                       <Input
                         type="date"
@@ -307,7 +298,7 @@ export function ProfileForm({
                           onChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel className="text-sm">Show birthday</FormLabel>
+                      <FormLabel className="text-sm">{t("showBirthday")}</FormLabel>
                     </FormItem>
                   )}
                 />
@@ -325,7 +316,7 @@ export function ProfileForm({
                           onChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel className="text-sm">Show age only</FormLabel>
+                      <FormLabel className="text-sm">{t("showAge")}</FormLabel>
                     </FormItem>
                   )}
                 />
@@ -333,21 +324,20 @@ export function ProfileForm({
 
               {birthday && showAge && (
                 <p className="text-sm text-muted-foreground">
-                  Your age will be displayed as: <strong>{calculateAge(birthday)} years old</strong>
+                  {t("agePreview", { age: calculateAge(birthday) ?? 0 })}
                 </p>
               )}
             </div>
 
-            {/* Interests Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Hash className="size-4" />
-                Interests
+                {t("interestsSection")}
               </h3>
 
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add an interest (e.g., music, travel)"
+                  placeholder={t("addInterest")}
                   value={interestInput}
                   onChange={(e) => setInterestInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -388,16 +378,13 @@ export function ProfileForm({
                   ))}
                 </div>
               )}
-              <p className="text-xs text-muted-foreground">
-                Add up to 10 interests to help others connect with you
-              </p>
+              <p className="text-xs text-muted-foreground">{t("interestsHint")}</p>
             </div>
 
-            {/* Website Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Globe className="size-4" />
-                Website
+                {t("websiteSection")}
               </h3>
 
               <FormField
@@ -405,11 +392,11 @@ export function ProfileForm({
                 name="website"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Personal Website</FormLabel>
+                    <FormLabel>{t("personalWebsite")}</FormLabel>
                     <FormControl>
                       <Input
                         type="url"
-                        placeholder="https://yourwebsite.com"
+                        placeholder={t("websitePlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -419,11 +406,10 @@ export function ProfileForm({
               />
             </div>
 
-            {/* Bio Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Heart className="size-4" />
-                About Me
+                {t("aboutMe")}
               </h3>
 
               <FormField
@@ -431,10 +417,10 @@ export function ProfileForm({
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bio</FormLabel>
+                    <FormLabel>{t("bio")}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tell others a bit about yourself..."
+                        placeholder={t("bioPlaceholder")}
                         className="min-h-30 resize-y"
                         maxLength={500}
                         {...field}
@@ -447,7 +433,7 @@ export function ProfileForm({
             </div>
 
             <Button type="submit" disabled={form.formState.isSubmitting} className="rounded-full">
-              {form.formState.isSubmitting ? "Saving…" : "Save changes"}
+              {form.formState.isSubmitting ? t("saving") : t("save")}
             </Button>
           </form>
         </Form>

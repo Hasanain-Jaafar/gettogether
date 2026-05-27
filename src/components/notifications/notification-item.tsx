@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Heart, MessageCircle, Repeat2, User2, Hash, BarChart3 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { relativeTime } from "@/lib/utils";
-import { markAsRead } from "@/app/(dashboard)/actions/notifications";
+import { markAsRead } from "@/app/[locale]/(dashboard)/actions/notifications";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 type NotificationItemProps = {
   notification: {
@@ -48,24 +48,6 @@ function getNotificationIcon(type: string) {
   }
 }
 
-function getNotificationText(type: string, actorName: string | null) {
-  switch (type) {
-    case "like":
-      return `${actorName ?? "Someone"} liked your post`;
-    case "comment":
-      return `${actorName ?? "Someone"} commented on your post`;
-    case "follow":
-      return `${actorName ?? "Someone"} followed you`;
-    case "repost":
-      return `${actorName ?? "Someone"} reposted your post`;
-    case "mention":
-      return `${actorName ?? "Someone"} mentioned you`;
-    case "poll":
-      return `A poll you voted on has ended`;
-    default:
-      return "New notification";
-  }
-}
 
 function getInitials(name: string | null): string {
   if (!name?.trim()) return "?";
@@ -81,6 +63,7 @@ export function NotificationItem({
   className,
 }: NotificationItemProps) {
   const router = useRouter();
+  const t = useTranslations("notifications");
   const [isRead, setIsRead] = useState(notification.read);
   const [marking, setMarking] = useState(false);
 
@@ -102,7 +85,7 @@ export function NotificationItem({
         setIsRead(true);
         onMarkAsRead?.(notification.id);
       } else {
-        toast.error(result.error || "Failed to mark as read");
+        toast.error(result.error || t("failedToMark"));
       }
       setMarking(false);
     }
@@ -113,7 +96,15 @@ export function NotificationItem({
   };
 
   const icon = getNotificationIcon(notification.type);
-  const text = getNotificationText(notification.type, notification.actor?.name ?? null);
+  const someone = t("text.someone");
+  const actorName = notification.actor?.name ?? someone;
+  const textKey = `text.${notification.type}` as const;
+  let text: string;
+  try {
+    text = t(textKey, { name: actorName });
+  } catch {
+    text = t("text.fallback");
+  }
   const postLink = notification.post_id ? `/post/${notification.post_id}` : null;
   const commentLink = notification.comment_id ? `#comment-${notification.comment_id}` : "";
   const actorLink = notification.actor ? `/u/${notification.actor.id}` : null;
@@ -148,14 +139,12 @@ export function NotificationItem({
                 onClick={(e) => e.stopPropagation()}
                 className="font-semibold text-foreground hover:text-primary transition-colors"
               >
-                {notification.actor?.name ?? "Someone"}
+                {actorName}
               </Link>
             ) : (
-              <span className="font-semibold">
-                {notification.actor?.name ?? "Someone"}
-              </span>
+              <span className="font-semibold">{actorName}</span>
             )}{" "}
-            <span className="text-muted-foreground">{text.replace(notification.actor?.name ?? "Someone", "")}</span>
+            <span className="text-muted-foreground">{text.replace(actorName, "").trim()}</span>
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
             {relativeTime(notification.created_at)}

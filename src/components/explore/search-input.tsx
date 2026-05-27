@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export function SearchInput() {
+  const t = useTranslations("explore");
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQ = searchParams.get("q") ?? "";
@@ -34,12 +36,12 @@ export function SearchInput() {
 
   return (
     <div className="relative">
-      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Search people, posts, hashtags…"
-        className="pl-10 pr-10 rounded-full h-11"
+        placeholder={t("placeholder")}
+        className="ps-10 pe-10 rounded-full h-11"
         autoFocus
       />
       {value && (
@@ -48,8 +50,8 @@ export function SearchInput() {
           variant="ghost"
           size="icon"
           onClick={() => setValue("")}
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 size-8 rounded-full"
-          aria-label="Clear search"
+          className="absolute end-1.5 top-1/2 -translate-y-1/2 size-8 rounded-full"
+          aria-label={t("clearSearch")}
         >
           <X className="size-4" />
         </Button>

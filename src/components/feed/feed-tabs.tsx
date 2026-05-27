@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Sparkles, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -9,6 +10,7 @@ type FeedTab = "foryou" | "following";
 export function FeedTabs() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations("feed.tabs");
   const currentTab = (searchParams.get("tab") as FeedTab) || "foryou";
 
   const setTab = (tab: FeedTab) => {
@@ -26,7 +28,7 @@ export function FeedTabs() {
         className="rounded-lg gap-2"
       >
         <Sparkles className="size-4" />
-        For You
+        {t("forYou")}
       </Button>
       <Button
         variant={currentTab === "following" ? "default" : "ghost"}
@@ -35,7 +37,7 @@ export function FeedTabs() {
         className="rounded-lg gap-2"
       >
         <Users className="size-4" />
-        Following
+        {t("following")}
       </Button>
     </div>
   );

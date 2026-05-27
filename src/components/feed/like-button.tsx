@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Heart } from "lucide-react";
 import { motion } from "framer-motion";
-import { toggleLike } from "@/app/(dashboard)/actions/likes";
+import { toggleLike } from "@/app/[locale]/(dashboard)/actions/likes";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -29,6 +30,8 @@ export function LikeButton({
   likers,
   className,
 }: LikeButtonProps) {
+  const t = useTranslations("feed.likes");
+  const tPost = useTranslations("feed.post");
   const [liked, setLiked] = useState(initialLiked);
   const [count, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
@@ -82,10 +85,10 @@ export function LikeButton({
       >
         <h3 className="text-sm font-semibold mb-3">
           {count === 0
-            ? "No likes yet"
+            ? t("none")
             : count === 1
-              ? `${count} like`
-              : `${count} likes`}
+              ? t("one")
+              : t("many", { count })}
         </h3>
         {likers.length > 0 ? (
           <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -103,19 +106,19 @@ export function LikeButton({
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm text-foreground">
-                  {liker.name ?? "Someone"}
+                  {liker.name ?? tPost("someone")}
                 </span>
               </div>
             ))}
             {likers.length > 10 && (
               <p className="text-xs text-muted-foreground text-center">
-                +{likers.length - 10} more
+                {t("more", { count: likers.length - 10 })}
               </p>
             )}
           </div>
         ) : (
           <p className="text-sm text-muted-foreground text-center py-2">
-            Be the first to like this post! 💖
+            {t("firstToLike")}
           </p>
         )}
       </PopoverContent>
