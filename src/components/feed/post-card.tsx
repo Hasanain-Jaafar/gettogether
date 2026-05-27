@@ -23,6 +23,14 @@ import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/(dashboard)/actions/posts";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type CommentWithAuthor = {
   id: string;
@@ -83,6 +91,8 @@ export function PostCard({
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [saving, setSaving] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const isOwn = currentUserId === post.user_id;
 
   async function handleSaveEdit() {
@@ -104,10 +114,16 @@ export function PostCard({
     }
   }
 
-  async function handleDelete() {
-    if (!confirm("Delete this post?")) return;
+  function handleDelete() {
+    setConfirmDeleteOpen(true);
+  }
+
+  async function confirmDelete() {
+    setDeleting(true);
     const result = await deletePost(post.id);
+    setDeleting(false);
     if (result.success) {
+      setConfirmDeleteOpen(false);
       router.refresh();
     } else {
       toast.error(result.error);
@@ -242,6 +258,41 @@ export function PostCard({
           <ShareButton postId={post.id} />
         </div>
       </CardContent>
+
+      <Dialog
+        open={confirmDeleteOpen}
+        onOpenChange={(o) => !deleting && setConfirmDeleteOpen(o)}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete this post?</DialogTitle>
+            <DialogDescription>
+              This can&apos;t be undone. Your post and its comments, likes, and
+              reposts will be permanently removed.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              className="rounded-full"
+              disabled={deleting}
+              onClick={() => setConfirmDeleteOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              className="rounded-full"
+              disabled={deleting}
+              onClick={confirmDelete}
+            >
+              {deleting ? "Deleting…" : "Delete post"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
