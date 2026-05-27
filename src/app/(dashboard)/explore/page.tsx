@@ -22,9 +22,10 @@ function initials(name: string | null) {
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }) {
-  const q = (searchParams.q ?? "").trim();
+  const { q: qParam } = await searchParams;
+  const q = (qParam ?? "").trim();
   const supabase = await createClient();
 
   let people: Array<{
