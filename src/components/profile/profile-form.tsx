@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -69,6 +70,7 @@ export function ProfileForm({
   initialShowAge,
   initialShowLocation,
 }: ProfileFormProps) {
+  const router = useRouter();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialAvatarUrl);
   const [interestInput, setInterestInput] = useState("");
 
@@ -127,6 +129,7 @@ export function ProfileForm({
     });
     if (result.success) {
       toast.success("Profile updated.");
+      router.push(`/u/${userId}`);
     } else {
       toast.error(result.error);
     }
