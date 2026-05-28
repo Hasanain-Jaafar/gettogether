@@ -19,7 +19,10 @@ export function MessageButton({ targetUserId }: { targetUserId: string }) {
     const result = await getOrCreateConversation(targetUserId);
     setLoading(false);
     if (!result.success) {
-      toast.error(result.error);
+      const msg = /can only message/i.test(result.error)
+        ? t("followGateError")
+        : result.error;
+      toast.error(msg);
       return;
     }
     router.push(`/messages/${result.conversationId}`);

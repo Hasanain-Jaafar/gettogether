@@ -375,7 +375,14 @@
     "seen": "Seen",
     "typing": "typing…",
     "startConversation": "Say hi to start the conversation.",
-    "message": "Message"
+    "message": "Message",
+    "newMessage": "New message",
+    "searchPeople": "Search people…",
+    "noMatches": "No matches",
+    "followFirstTitle": "Follow people to message them",
+    "followFirstHint": "Visit Explore to find people you'd like to chat with.",
+    "goToExplore": "Go to Explore",
+    "followGateError": "You can only message people you follow or who follow you."
   },
   "poll": {
     "vote": "Vote",

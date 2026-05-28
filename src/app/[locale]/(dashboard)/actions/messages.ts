@@ -11,6 +11,53 @@ export type ConversationResult =
   | { success: true; conversationId: string }
   | { success: false; error: string };
 
+export type MessageableUser = {
+  id: string;
+  name: string | null;
+  avatar_url: string | null;
+};
+
+function escapeIlike(input: string) {
+  return input.replace(/[\\%_]/g, (m) => `\\${m}`);
+}
+
+export async function listMessageableUsers(
+  query?: string,
+): Promise<MessageableUser[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data: edges } = await supabase
+    .from("follows")
+    .select("follower_id, following_id")
+    .or(`follower_id.eq.${user.id},following_id.eq.${user.id}`);
+
+  const otherIds = new Set<string>();
+  edges?.forEach((e) => {
+    if (e.follower_id !== user.id) otherIds.add(e.follower_id);
+    if (e.following_id !== user.id) otherIds.add(e.following_id);
+  });
+  const ids = [...otherIds];
+  if (ids.length === 0) return [];
+
+  let q = supabase
+    .from("profiles")
+    .select("id, name, avatar_url")
+    .in("id", ids)
+    .limit(50);
+
+  const trimmed = query?.trim();
+  if (trimmed) {
+    q = q.ilike("name", `%${escapeIlike(trimmed)}%`);
+  }
+
+  const { data: profiles } = await q;
+  return profiles ?? [];
+}
+
 export async function getOrCreateConversation(
   otherUserId: string,
 ): Promise<ConversationResult> {

@@ -375,7 +375,14 @@
     "seen": "تمت القراءة",
     "typing": "يكتب…",
     "startConversation": "ابدأ المحادثة بتحية.",
-    "message": "مراسلة"
+    "message": "مراسلة",
+    "newMessage": "رسالة جديدة",
+    "searchPeople": "ابحث عن أشخاص…",
+    "noMatches": "لا توجد نتائج",
+    "followFirstTitle": "تابع أشخاصاً لمراسلتهم",
+    "followFirstHint": "اذهب إلى الاستكشاف للعثور على أشخاص لمراسلتهم.",
+    "goToExplore": "اذهب إلى الاستكشاف",
+    "followGateError": "يمكنك فقط مراسلة الأشخاص الذين تتابعهم أو يتابعونك."
   },
   "poll": {
     "vote": "تصويت",

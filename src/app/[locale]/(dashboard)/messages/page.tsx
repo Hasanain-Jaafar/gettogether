@@ -3,6 +3,7 @@ import { MessageSquare } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { NewMessageDialog } from "@/components/messages/new-message-dialog";
 
 function initials(name: string | null): string {
   if (!name?.trim()) return "?";
@@ -35,7 +36,15 @@ export default async function MessagesPage({
   );
 
   if (conversationIds.length === 0) {
-    return <EmptyState title={t("title")} hint={t("empty")} />;
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+          <NewMessageDialog />
+        </div>
+        <EmptyState title={t("title")} hint={t("empty")} />
+      </div>
+    );
   }
 
   const { data: convs } = await supabase
@@ -77,7 +86,10 @@ export default async function MessagesPage({
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-semibold tracking-tight mb-4">{t("title")}</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <NewMessageDialog />
+      </div>
       <ul className="divide-y divide-border/60 rounded-2xl border border-border/80 bg-card">
         {convs?.map((c) => {
           const otherId = otherByConv.get(c.id);
