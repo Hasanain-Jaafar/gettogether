@@ -4,8 +4,10 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useLocale, useTranslations } from "next-intl";
-import { MessageCircle } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import { createComment } from "@/app/[locale]/(dashboard)/actions/comments";
+import { toggleCommentLike } from "@/app/[locale]/(dashboard)/actions/likes";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,6 +19,8 @@ type Comment = {
   created_at: string;
   user_id: string;
   parent_id?: string | null;
+  like_count?: number;
+  liked_by_me?: boolean;
   author?: { name: string | null; avatar_url: string | null } | null;
 };
 
@@ -49,6 +53,37 @@ export function CommentSection({
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [replySubmitting, setReplySubmitting] = useState(false);
+  const [likeState, setLikeState] = useState<
+    Record<string, { liked: boolean; count: number } | undefined>
+  >({});
+
+  function getLike(c: Comment) {
+    return (
+      likeState[c.id] ?? {
+        liked: c.liked_by_me ?? false,
+        count: c.like_count ?? 0,
+      }
+    );
+  }
+
+  async function handleToggleLike(c: Comment) {
+    const current = getLike(c);
+    const next = {
+      liked: !current.liked,
+      count: current.count + (current.liked ? -1 : 1),
+    };
+    setLikeState((s) => ({ ...s, [c.id]: next }));
+    const result = await toggleCommentLike(c.id);
+    if (!result.success) {
+      setLikeState((s) => ({ ...s, [c.id]: current }));
+      toast.error(result.error);
+      return;
+    }
+    setLikeState((s) => ({
+      ...s,
+      [c.id]: { liked: result.liked, count: result.count },
+    }));
+  }
 
   const { roots, repliesByParent } = useMemo(() => {
     const roots: Comment[] = [];
@@ -121,6 +156,21 @@ export function CommentSection({
               <p className="text-xs text-muted-foreground">
                 {relativeTime(c.created_at, locale)}
               </p>
+              <button
+                type="button"
+                onClick={() => handleToggleLike(c)}
+                className={cn(
+                  "flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary",
+                  getLike(c).liked && "text-primary",
+                )}
+                aria-label={t("like")}
+              >
+                <Heart
+                  className={cn("size-3.5", getLike(c).liked && "fill-primary")}
+                  strokeWidth={getLike(c).liked ? 2.5 : 2}
+                />
+                {getLike(c).count > 0 && <span>{getLike(c).count}</span>}
+              </button>
               <button
                 type="button"
                 onClick={() => {

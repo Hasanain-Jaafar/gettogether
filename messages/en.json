@@ -207,7 +207,8 @@
       "hideComments": "Hide comments",
       "reply": "Reply",
       "cancelReply": "Cancel",
-      "replyPlaceholder": "Write a reply…"
+      "replyPlaceholder": "Write a reply…",
+      "like": "Like"
     },
     "buttons": {
       "like": "Like",

@@ -123,8 +123,24 @@ export default async function DashboardPage({
     commentProfiles?.map((p) => [p.id, p]) ?? []
   );
 
+  const commentIds = comments?.map((c) => c.id) ?? [];
+  const { data: commentLikes } = commentIds.length
+    ? await supabase
+        .from("comment_likes")
+        .select("comment_id, user_id")
+        .in("comment_id", commentIds)
+    : { data: [] as { comment_id: string; user_id: string }[] };
+  const commentLikeCount = new Map<string, number>();
+  const commentLikedByMe = new Set<string>();
+  commentLikes?.forEach((l) => {
+    commentLikeCount.set(l.comment_id, (commentLikeCount.get(l.comment_id) ?? 0) + 1);
+    if (l.user_id === user.id) commentLikedByMe.add(l.comment_id);
+  });
+
   type CommentWithAuthor = NonNullable<typeof comments>[0] & {
     author: { name: string | null; avatar_url: string | null } | null;
+    like_count: number;
+    liked_by_me: boolean;
   };
   const commentsByPost = new Map<string, CommentWithAuthor[]>();
   comments?.forEach((c) => {
@@ -132,6 +148,8 @@ export default async function DashboardPage({
     list.push({
       ...c,
       author: commentProfileMap.get(c.user_id) ?? null,
+      like_count: commentLikeCount.get(c.id) ?? 0,
+      liked_by_me: commentLikedByMe.has(c.id),
     });
     commentsByPost.set(c.post_id, list);
   });

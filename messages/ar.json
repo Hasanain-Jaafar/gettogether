@@ -207,7 +207,8 @@
       "hideComments": "إخفاء التعليقات",
       "reply": "رد",
       "cancelReply": "إلغاء",
-      "replyPlaceholder": "اكتب رداً…"
+      "replyPlaceholder": "اكتب رداً…",
+      "like": "إعجاب"
     },
     "buttons": {
       "like": "إعجاب",

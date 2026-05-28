@@ -39,6 +39,8 @@ type CommentWithAuthor = {
   created_at: string;
   user_id: string;
   parent_id?: string | null;
+  like_count?: number;
+  liked_by_me?: boolean;
   author?: { name: string | null; avatar_url: string | null } | null;
 };
 
