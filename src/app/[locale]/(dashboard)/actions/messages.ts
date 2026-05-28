@@ -15,50 +15,13 @@ export async function getOrCreateConversation(
   otherUserId: string,
 ): Promise<ConversationResult> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: "Not authenticated." };
-  if (user.id === otherUserId) {
-    return { success: false, error: "Cannot message yourself." };
+  const { data, error } = await supabase.rpc("start_conversation", {
+    other_user_id: otherUserId,
+  });
+  if (error || !data) {
+    return { success: false, error: error?.message ?? "Failed." };
   }
-
-  // Find an existing 1:1 conversation containing both users.
-  const { data: mine } = await supabase
-    .from("conversation_participants")
-    .select("conversation_id")
-    .eq("user_id", user.id);
-  const myIds = mine?.map((m) => m.conversation_id) ?? [];
-
-  if (myIds.length > 0) {
-    const { data: shared } = await supabase
-      .from("conversation_participants")
-      .select("conversation_id")
-      .eq("user_id", otherUserId)
-      .in("conversation_id", myIds);
-    if (shared && shared.length > 0) {
-      return { success: true, conversationId: shared[0].conversation_id };
-    }
-  }
-
-  const { data: conv, error: convErr } = await supabase
-    .from("conversations")
-    .insert({})
-    .select("id")
-    .single();
-  if (convErr || !conv) {
-    return { success: false, error: convErr?.message ?? "Failed." };
-  }
-
-  const { error: partErr } = await supabase
-    .from("conversation_participants")
-    .insert([
-      { conversation_id: conv.id, user_id: user.id },
-      { conversation_id: conv.id, user_id: otherUserId },
-    ]);
-  if (partErr) return { success: false, error: partErr.message };
-
-  return { success: true, conversationId: conv.id };
+  return { success: true, conversationId: data as string };
 }
 
 export async function sendMessage(
