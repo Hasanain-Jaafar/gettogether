@@ -1,11 +1,17 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getNotifications, markAllAsRead } from "@/app/[locale]/(dashboard)/actions/notifications";
 import { NotificationItem } from "@/components/notifications/notification-item";
 import { Button } from "@/components/ui/button";
 import { CheckCheck, Bell } from "lucide-react";
 
-export default async function NotificationsPage() {
+export default async function NotificationsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const supabase = await createClient();
   const t = await getTranslations("notifications");
   const {

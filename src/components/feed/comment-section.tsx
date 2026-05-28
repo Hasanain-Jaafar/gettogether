@@ -121,18 +121,16 @@ export function CommentSection({
               <p className="text-xs text-muted-foreground">
                 {relativeTime(c.created_at, locale)}
               </p>
-              {!isReply && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setReplyTo(isReplying ? null : c.id);
-                    setReplyContent("");
-                  }}
-                  className="text-xs font-medium text-muted-foreground hover:text-foreground"
-                >
-                  {isReplying ? t("cancelReply") : t("reply")}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setReplyTo(isReplying ? null : c.id);
+                  setReplyContent("");
+                }}
+                className="text-xs font-medium text-muted-foreground hover:text-foreground"
+              >
+                {isReplying ? t("cancelReply") : t("reply")}
+              </button>
             </div>
             {isReplying && (
               <form
@@ -164,7 +162,7 @@ export function CommentSection({
           </div>
         </div>
         {replies.length > 0 && (
-          <ul className="ms-9 space-y-2 border-s border-border/60 ps-3">
+          <ul className="ms-6 space-y-2 border-s border-border/60 ps-3">
             {replies.map((r) => renderComment(r, true))}
           </ul>
         )}

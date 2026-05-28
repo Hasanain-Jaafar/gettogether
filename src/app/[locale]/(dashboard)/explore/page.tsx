@@ -1,5 +1,5 @@
 import { Search, Users } from "lucide-react";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SearchInput } from "@/components/explore/search-input";
@@ -21,14 +21,17 @@ function initials(name: string | null) {
 }
 
 export default async function ExplorePage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string }>;
 }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const { q: qParam } = await searchParams;
   const q = (qParam ?? "").trim();
   const t = await getTranslations("explore");
-  const locale = await getLocale();
   const supabase = await createClient();
 
   let people: Array<{

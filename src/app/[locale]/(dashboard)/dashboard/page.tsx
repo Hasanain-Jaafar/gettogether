@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CreatePostForm } from "@/components/feed/create-post-form";
@@ -12,10 +12,14 @@ import { getForYouFeed, getFollowingFeed } from "@/app/[locale]/(dashboard)/acti
 const POSTS_PAGE_SIZE = 20;
 
 export default async function DashboardPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ tab?: string; hashtag?: string }>;
 }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const supabase = await createClient();
   const tSidebar = await getTranslations("sidebar");
   const tFeed = await getTranslations("feed.empty");

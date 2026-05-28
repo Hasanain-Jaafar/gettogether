@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
@@ -54,10 +54,10 @@ function formatBirthday(birthday: string, locale: string): string {
 export default async function PublicProfilePage({
   params,
 }: {
-  params: Promise<{ userId: string }>;
+  params: Promise<{ locale: string; userId: string }>;
 }) {
-  const { userId } = await params;
-  const locale = await getLocale();
+  const { locale, userId } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations("profile");
   const tFeed = await getTranslations("feed");
   const tSidebar = await getTranslations("sidebar");

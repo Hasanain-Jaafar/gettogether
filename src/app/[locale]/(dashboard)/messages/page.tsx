@@ -1,7 +1,13 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MessageSquare, Heart } from "lucide-react";
 
-export default async function MessagesPage() {
+export default async function MessagesPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations("messages");
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center">
