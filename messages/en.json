@@ -177,6 +177,7 @@
       "posting": "Posting…",
       "writeSomething": "Write something to post.",
       "imageTooLarge": "Image must be under {size}MB",
+      "videoTooLarge": "Video must be under {size}MB",
       "bucketMissing": "Post images bucket missing. Create a bucket named post-images in Supabase Storage (see STORAGE.md).",
       "uploadFailed": "Image upload failed.",
       "posted": "Posted!"
@@ -203,7 +204,10 @@
       "cancel": "Cancel",
       "noComments": "No comments yet. Be the first!",
       "showAll": "Show all {count} comments",
-      "hideComments": "Hide comments"
+      "hideComments": "Hide comments",
+      "reply": "Reply",
+      "cancelReply": "Cancel",
+      "replyPlaceholder": "Write a reply…"
     },
     "buttons": {
       "like": "Like",

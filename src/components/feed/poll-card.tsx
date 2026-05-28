@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, Circle, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { votePoll, type Poll } from "@/app/[locale]/(dashboard)/actions/polls";
@@ -17,6 +17,7 @@ type PollCardProps = {
 
 export function PollCard({ poll, className }: PollCardProps) {
   const t = useTranslations("poll");
+  const locale = useLocale();
   const [voting, setVoting] = useState(false);
   const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
 
@@ -169,7 +170,7 @@ export function PollCard({ poll, className }: PollCardProps) {
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{t("votes", { count: poll.total_votes })}</span>
         {poll.expires_at && !isExpired && (
-          <span>{t("ends", { time: relativeTime(poll.expires_at) })}</span>
+          <span>{t("ends", { time: relativeTime(poll.expires_at, locale) })}</span>
         )}
       </div>
     </div>

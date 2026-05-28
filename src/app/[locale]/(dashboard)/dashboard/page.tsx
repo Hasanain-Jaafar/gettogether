@@ -106,7 +106,7 @@ export default async function DashboardPage({
 
   const { data: comments } = await supabase
     .from("comments")
-    .select("id, post_id, content, created_at, user_id")
+    .select("id, post_id, content, created_at, user_id, parent_id")
     .in("post_id", postIds)
     .order("created_at", { ascending: true });
 

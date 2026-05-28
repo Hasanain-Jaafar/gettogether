@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -8,9 +8,10 @@ import { PostCard } from "@/components/feed/post-card";
 export default async function PostPage({
   params,
 }: {
-  params: Promise<{ postId: string }>;
+  params: Promise<{ locale: string; postId: string }>;
 }) {
-  const { postId } = await params;
+  const { locale, postId } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations("postPage");
   const supabase = await createClient();
   const {
@@ -41,7 +42,7 @@ export default async function PostPage({
     supabase.from("likes").select("user_id").eq("post_id", postId),
     supabase
       .from("comments")
-      .select("id, post_id, content, created_at, user_id")
+      .select("id, post_id, content, created_at, user_id, parent_id")
       .eq("post_id", postId)
       .order("created_at", { ascending: true }),
     supabase.from("bookmarks").select("user_id").eq("post_id", postId),

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import { relativeTime, cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
@@ -42,6 +43,7 @@ export function CompactPostCard({
   currentUserBookmarked,
   className,
 }: CompactPostCardProps) {
+  const locale = useLocale();
   const truncateContent = (content: string, maxLength: number = 120) => {
     if (content.length <= maxLength) return content;
     return content.slice(0, maxLength) + "...";
@@ -81,7 +83,7 @@ export function CompactPostCard({
             {author.name ?? "Someone"}
           </Link>
           <span className="text-xs text-muted-foreground">
-            {relativeTime(post.created_at)}
+            {relativeTime(post.created_at, locale)}
           </span>
         </div>
 
@@ -114,12 +116,22 @@ export function CompactPostCard({
       {/* Thumbnail */}
       {post.image_url && (
         <div className="relative size-20 shrink-0 rounded-lg overflow-hidden bg-muted">
-          <Image
-            src={post.image_url}
-            alt=""
-            fill
-            className="object-cover"
-          />
+          {/\.(mp4|webm|mov|m4v)(\?|$)/i.test(post.image_url) ? (
+            <video
+              src={post.image_url}
+              preload="metadata"
+              muted
+              playsInline
+              className="size-full object-cover"
+            />
+          ) : (
+            <Image
+              src={post.image_url}
+              alt=""
+              fill
+              className="object-cover"
+            />
+          )}
         </div>
       )}
     </Link>

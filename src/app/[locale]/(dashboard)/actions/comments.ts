@@ -10,7 +10,7 @@ export type CommentResult = { success: true } | { success: false; error: string 
 
 export async function createComment(
   postId: string,
-  input: { content: string }
+  input: { content: string; parent_id?: string | null }
 ): Promise<CommentResult> {
   const parsed = createCommentSchema.safeParse(input);
   if (!parsed.success) {
@@ -24,12 +24,26 @@ export async function createComment(
   } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Not authenticated." };
 
+  let parentAuthorId: string | null = null;
+  if (parsed.data.parent_id) {
+    const { data: parent } = await supabase
+      .from("comments")
+      .select("user_id, post_id")
+      .eq("id", parsed.data.parent_id)
+      .maybeSingle();
+    if (!parent || parent.post_id !== postId) {
+      return { success: false, error: "Invalid parent comment." };
+    }
+    parentAuthorId = parent.user_id;
+  }
+
   const { data: inserted, error } = await supabase
     .from("comments")
     .insert({
       post_id: postId,
       user_id: user.id,
       content: parsed.data.content.trim(),
+      parent_id: parsed.data.parent_id ?? null,
     })
     .select("id")
     .single();
@@ -40,7 +54,18 @@ export async function createComment(
     .select("user_id")
     .eq("id", postId)
     .maybeSingle();
-  if (post && post.user_id !== user.id) {
+  const notified = new Set<string>([user.id]);
+  if (parentAuthorId && !notified.has(parentAuthorId)) {
+    await createNotification({
+      userId: parentAuthorId,
+      type: "comment",
+      actorId: user.id,
+      postId,
+      commentId: inserted?.id,
+    });
+    notified.add(parentAuthorId);
+  }
+  if (post && !notified.has(post.user_id)) {
     await createNotification({
       userId: post.user_id,
       type: "comment",
@@ -48,15 +73,14 @@ export async function createComment(
       postId,
       commentId: inserted?.id,
     });
+    notified.add(post.user_id);
   }
 
   const mentioned = await notifyMentionedUsers(postId, parsed.data.content, user.id, {
     createNotifications: false,
   });
-  const skip = new Set<string>([user.id]);
-  if (post?.user_id) skip.add(post.user_id);
   for (const uid of mentioned.notified) {
-    if (skip.has(uid)) continue;
+    if (notified.has(uid)) continue;
     await createNotification({
       userId: uid,
       type: "mention",

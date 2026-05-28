@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Heart, MessageCircle, Repeat2, User2, Hash, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -64,6 +64,7 @@ export function NotificationItem({
 }: NotificationItemProps) {
   const router = useRouter();
   const t = useTranslations("notifications");
+  const locale = useLocale();
   const [isRead, setIsRead] = useState(notification.read);
   const [marking, setMarking] = useState(false);
 
@@ -147,7 +148,7 @@ export function NotificationItem({
             <span className="text-muted-foreground">{text.replace(actorName, "").trim()}</span>
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {relativeTime(notification.created_at)}
+            {relativeTime(notification.created_at, locale)}
           </p>
         </div>
 

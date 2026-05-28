@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
@@ -38,6 +38,7 @@ type CommentWithAuthor = {
   content: string;
   created_at: string;
   user_id: string;
+  parent_id?: string | null;
   author?: { name: string | null; avatar_url: string | null } | null;
 };
 
@@ -90,6 +91,7 @@ export function PostCard({
 }: PostCardProps) {
   const router = useRouter();
   const t = useTranslations("feed.post");
+  const locale = useLocale();
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [saving, setSaving] = useState(false);
@@ -154,7 +156,7 @@ export function PostCard({
                 )}
               </p>
               <p className="text-xs text-muted-foreground">
-                {relativeTime(post.created_at)}
+                {relativeTime(post.created_at, locale)}
               </p>
             </div>
           </Link>
@@ -223,13 +225,23 @@ export function PostCard({
               </p>
               {post.image_url && (
                 <div className="mt-3 overflow-hidden rounded-xl bg-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={post.image_url}
-                    alt="Post image"
-                    loading="lazy"
-                    className="mx-auto block h-auto max-h-[600px] w-full object-contain"
-                  />
+                  {/\.(mp4|webm|mov|m4v)(\?|$)/i.test(post.image_url) ? (
+                    <video
+                      src={post.image_url}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="mx-auto block h-auto max-h-[600px] w-full"
+                    />
+                  ) : (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={post.image_url}
+                      alt="Post image"
+                      loading="lazy"
+                      className="mx-auto block h-auto max-h-[600px] w-full object-contain"
+                    />
+                  )}
                 </div>
               )}
             </>

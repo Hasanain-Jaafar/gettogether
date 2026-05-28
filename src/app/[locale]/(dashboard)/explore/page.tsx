@@ -1,5 +1,5 @@
 import { Search, Users } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SearchInput } from "@/components/explore/search-input";
@@ -28,6 +28,7 @@ export default async function ExplorePage({
   const { q: qParam } = await searchParams;
   const q = (qParam ?? "").trim();
   const t = await getTranslations("explore");
+  const locale = await getLocale();
   const supabase = await createClient();
 
   let people: Array<{
@@ -184,7 +185,7 @@ export default async function ExplorePage({
                                 {author?.name ?? "Someone"}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {relativeTime(post.created_at)}
+                                {relativeTime(post.created_at, locale)}
                               </p>
                             </div>
                           </Link>

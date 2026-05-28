@@ -177,6 +177,7 @@
       "posting": "جارٍ النشر…",
       "writeSomething": "اكتب شيئاً لنشره.",
       "imageTooLarge": "يجب أن تكون الصورة أقل من {size} ميغابايت",
+      "videoTooLarge": "يجب أن يكون الفيديو أقل من {size} ميغابايت",
       "bucketMissing": "حاوية صور المنشورات مفقودة. أنشئ حاوية باسم post-images في تخزين Supabase (انظر STORAGE.md).",
       "uploadFailed": "فشل رفع الصورة.",
       "posted": "تم النشر!"
@@ -203,7 +204,10 @@
       "cancel": "إلغاء",
       "noComments": "لا توجد تعليقات بعد. كن الأول!",
       "showAll": "عرض كل التعليقات ({count})",
-      "hideComments": "إخفاء التعليقات"
+      "hideComments": "إخفاء التعليقات",
+      "reply": "رد",
+      "cancelReply": "إلغاء",
+      "replyPlaceholder": "اكتب رداً…"
     },
     "buttons": {
       "like": "إعجاب",

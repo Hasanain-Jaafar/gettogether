@@ -12,8 +12,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/use-profile";
 import { ImageIcon, X } from "lucide-react";
 
-const ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
-const MAX_SIZE_MB = 4;
+const ACCEPT =
+  "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime";
+const MAX_IMAGE_MB = 4;
+const MAX_VIDEO_MB = 50;
 
 type CreatePostFormProps = {
   userId: string;
@@ -32,6 +34,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const isVideo = imageFile?.type.startsWith("video/") ?? false;
   const [submitting, setSubmitting] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,19 +54,23 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = content.trim();
-    if (!trimmed) {
+    if (!trimmed && !imageFile) {
       toast.error(t("writeSomething"));
       return;
     }
     setSubmitting(true);
     let imageUrl: string | null = null;
+    let mediaType: "image" | "video" | "gif" | null = null;
     if (imageFile) {
       const supabase = createClient();
-      const ext = imageFile.name.split(".").pop() || "jpg";
+      const ext = imageFile.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
       const path = `${userId}/${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage
         .from("post-images")
-        .upload(path, imageFile, { upsert: false });
+        .upload(path, imageFile, {
+          upsert: false,
+          contentType: imageFile.type || undefined,
+        });
       if (error) {
         const message =
           error.message?.toLowerCase().includes("bucket") &&
@@ -76,8 +83,17 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       }
       const { data } = supabase.storage.from("post-images").getPublicUrl(path);
       imageUrl = data.publicUrl;
+      mediaType = isVideo
+        ? "video"
+        : imageFile.type === "image/gif"
+          ? "gif"
+          : "image";
     }
-    const result = await createPost({ content: trimmed, image_url: imageUrl });
+    const result = await createPost({
+      content: trimmed,
+      image_url: imageUrl,
+      media_type: mediaType,
+    });
     setSubmitting(false);
     if (result.success) {
       setContent("");
@@ -93,8 +109,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(t("imageTooLarge", { size: MAX_SIZE_MB }));
+    const fileIsVideo = file.type.startsWith("video/");
+    const limit = fileIsVideo ? MAX_VIDEO_MB : MAX_IMAGE_MB;
+    if (file.size > limit * 1024 * 1024) {
+      toast.error(
+        t(fileIsVideo ? "videoTooLarge" : "imageTooLarge", { size: limit }),
+      );
       return;
     }
     setImageFile(file);
@@ -160,12 +180,20 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
             </div>
             {preview && (
               <div className="relative inline-block">
-                {/* eslint-disable-next-line @next/next/no-img-element -- blob URL preview, not optimizable by next/image */}
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="block max-h-64 w-auto max-w-full rounded-xl object-contain"
-                />
+                {isVideo ? (
+                  <video
+                    src={preview}
+                    controls
+                    className="block max-h-64 w-auto max-w-full rounded-xl"
+                  />
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element -- blob URL preview, not optimizable by next/image */
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="block max-h-64 w-auto max-w-full rounded-xl object-contain"
+                  />
+                )}
                 <button
                   type="button"
                   onClick={() => {
@@ -196,7 +224,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 type="submit"
                 onMouseDown={(e) => e.preventDefault()}
                 className="rounded-xl"
-                disabled={submitting || !content.trim()}
+                disabled={submitting || (!content.trim() && !imageFile)}
               >
                 {submitting ? t("posting") : t("post")}
               </Button>
