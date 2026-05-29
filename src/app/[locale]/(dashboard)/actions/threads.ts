@@ -21,6 +21,7 @@ export type Reply = {
     id: string;
     name: string | null;
     avatar_url: string | null;
+    level?: number | null;
   } | null;
 };
 
@@ -84,7 +85,7 @@ export async function getThread(
   // Get author info
   const { data: author } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .eq("id", post.user_id)
     .single();
 
@@ -110,7 +111,7 @@ export async function getThread(
   const replyUserIds = [...new Set(replies?.map((r) => r.user_id) ?? [])];
   const { data: replyAuthors } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", replyUserIds);
 
   const authorMap = new Map(
@@ -157,7 +158,7 @@ export async function getReplies(
   const replyUserIds = [...new Set(replies?.map((r) => r.user_id) ?? [])];
   const { data: replyAuthors } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", replyUserIds);
 
   const authorMap = new Map(
@@ -195,7 +196,7 @@ export async function getRecentThreads(limit: number = 10): Promise<Reply[]> {
   const userIds = [...new Set(data?.map((p) => p.user_id) ?? [])];
   const { data: authors } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", userIds);
 
   const authorMap = new Map(authors?.map((a) => [a.id, a]) ?? []);

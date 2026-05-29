@@ -85,7 +85,7 @@ export default async function DashboardPage({
   const userIds = [...new Set(posts.map((p) => p.user_id))];
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", userIds);
 
   const profileMap = new Map(profiles?.map((pr) => [pr.id, pr]) ?? []);
@@ -112,7 +112,7 @@ export default async function DashboardPage({
   const likerUserIds = [...new Set(likes?.map((l) => l.user_id) ?? [])];
   const { data: likerProfiles } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", likerUserIds);
   const likerProfileMap = new Map(
     likerProfiles?.map((p) => [p.id, p]) ?? []
@@ -127,7 +127,7 @@ export default async function DashboardPage({
   const commentUserIds = [...new Set(comments?.map((c) => c.user_id) ?? [])];
   const { data: commentProfiles } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", commentUserIds);
   const commentProfileMap = new Map(
     commentProfiles?.map((p) => [p.id, p]) ?? []
@@ -242,7 +242,7 @@ export default async function DashboardPage({
                       .get(post.id)
                       ?.map((userId) => likerProfileMap.get(userId))
                       .filter(
-                        (profile): profile is { id: string; name: string | null; avatar_url: string | null } =>
+                        (profile): profile is { id: string; name: string | null; avatar_url: string | null; level: number | null } =>
                           profile !== undefined
                       )
                       .map(({ name, avatar_url }) => ({ name, avatar_url })) ?? []

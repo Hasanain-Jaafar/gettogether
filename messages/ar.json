@@ -155,6 +155,7 @@
     "feed": "الرئيسية",
     "profile": "الملف الشخصي",
     "explore": "استكشف",
+    "leaderboard": "المتصدرون",
     "messages": "الرسائل",
     "notifications": "الإشعارات",
     "viewProfile": "عرض الملف الشخصي",
@@ -299,6 +300,9 @@
     "basicInfo": "المعلومات الأساسية",
     "locationSection": "الموقع",
     "birthdaySection": "تاريخ الميلاد",
+    "badges": "الشارات",
+    "noBadges": "لا توجد شارات بعد",
+    "xpProgress": "{current} / {next} نقطة",
     "interestsSection": "الاهتمامات",
     "websiteSection": "الموقع الإلكتروني",
     "aboutMe": "نبذة عني",
@@ -408,5 +412,48 @@
     "retry": "حاول مرة أخرى",
     "close": "إغلاق",
     "ok": "حسناً"
+  },
+  "level": {
+    "label": "المستوى {n}"
+  },
+  "leaderboard": {
+    "title": "المتصدرون",
+    "subtitle": "أعلى الأعضاء بالنقاط.",
+    "empty": "لا يوجد متصدرون بعد. ابدأ بالنشر لتتصدر القائمة.",
+    "xpSuffix": "نقطة"
+  },
+  "badges": {
+    "first_post": {
+      "name": "أول منشور",
+      "description": "أنشأت أول منشور."
+    },
+    "prolific_5": {
+      "name": "انطلاقة",
+      "description": "نشرت ٥ مرات."
+    },
+    "prolific_25": {
+      "name": "نشيط",
+      "description": "نشرت ٢٥ مرة."
+    },
+    "commentator_10": {
+      "name": "معلِّق",
+      "description": "أضفت ١٠ تعليقات."
+    },
+    "liked_10": {
+      "name": "محبوب",
+      "description": "تلقيت ١٠ إعجابات على منشوراتك."
+    },
+    "liked_100": {
+      "name": "ذو شعبية",
+      "description": "تلقيت ١٠٠ إعجاب."
+    },
+    "liked_1000": {
+      "name": "نجم",
+      "description": "تلقيت ١٠٠٠ إعجاب."
+    },
+    "reposted_10": {
+      "name": "صدى",
+      "description": "أُعيد نشر منشوراتك ١٠ مرات."
+    }
   }
 }

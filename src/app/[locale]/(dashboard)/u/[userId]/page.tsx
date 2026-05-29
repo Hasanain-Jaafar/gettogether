@@ -9,6 +9,8 @@ import { getFollowers, getFollowing } from "@/app/[locale]/(dashboard)/actions/f
 import { FollowButton } from "@/components/profile/follow-button";
 import { MessageButton } from "@/components/messages/message-button";
 import { FollowListDialog } from "@/components/profile/follow-list-dialog";
+import { LevelBadge } from "@/components/profile/level-badge";
+import { BadgeGrid, type BadgeRow } from "@/components/profile/badge-grid";
 import {
   MapPin,
   Calendar,
@@ -75,6 +77,30 @@ export default async function PublicProfilePage({
     .single();
 
   if (!profile) notFound();
+
+  const userXp: number = profile.xp ?? 0;
+  const userLevel: number = profile.level ?? 1;
+  const xpForCurrent = (userLevel - 1) * (userLevel - 1) * 50;
+  const xpForNext = userLevel * userLevel * 50;
+  const xpProgress = Math.min(
+    100,
+    Math.max(
+      0,
+      Math.round(((userXp - xpForCurrent) / Math.max(1, xpForNext - xpForCurrent)) * 100),
+    ),
+  );
+
+  const { data: userBadgesRaw } = await supabase
+    .from("user_badges")
+    .select("badge_key, badges(key, name, description, icon, tier)")
+    .eq("user_id", userId)
+    .order("awarded_at", { ascending: false });
+  const userBadges: BadgeRow[] = (userBadgesRaw ?? [])
+    .map((row: { badges: BadgeRow | BadgeRow[] | null }) => {
+      const b = Array.isArray(row.badges) ? row.badges[0] : row.badges;
+      return b ?? null;
+    })
+    .filter((b): b is BadgeRow => b != null);
 
   const { data: posts } = await supabase
     .from("posts")
@@ -212,12 +238,24 @@ export default async function PublicProfilePage({
           {/* Profile Details */}
           <div className="flex-1 space-y-4 text-center sm:text-left">
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">
+              <h1 className="flex items-center justify-center gap-2 text-2xl font-semibold text-foreground sm:justify-start">
                 {profile.name ?? tFeed("post.someone")}
+                <LevelBadge level={userLevel} />
               </h1>
               <p className="text-sm text-muted-foreground">
                 {t("joined", { date: formatJoinDate(profile.created_at, locale) })}
               </p>
+              <div className="mt-3">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{t("xpProgress", { current: userXp, next: xpForNext })}</span>
+                </div>
+                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{ width: `${xpProgress}%` }}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Bio */}
@@ -326,6 +364,14 @@ export default async function PublicProfilePage({
         </div>
       </div>
 
+      {/* Badges */}
+      <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
+        <h2 className="mb-4 text-base font-semibold text-foreground">
+          {t("badges")}
+        </h2>
+        <BadgeGrid badges={userBadges} emptyLabel={t("noBadges")} />
+      </div>
+
       {/* Posts */}
       {!posts?.length ? (
         <div className="rounded-2xl border border-border/80 bg-card p-8 text-center text-muted-foreground shadow-sm">
@@ -337,7 +383,7 @@ export default async function PublicProfilePage({
             <li key={post.id}>
               <PostCard
                 post={post}
-                author={{ name: profile.name, avatar_url: profile.avatar_url }}
+                author={{ name: profile.name, avatar_url: profile.avatar_url, level: profile.level }}
                 likeCount={likeCountMap.get(post.id) ?? 0}
                 commentCount={commentCountMap.get(post.id) ?? 0}
                 bookmarkCount={bookmarkCountMap.get(post.id) ?? 0}

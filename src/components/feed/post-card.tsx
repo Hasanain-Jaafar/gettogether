@@ -20,6 +20,7 @@ import { CommentSection } from "@/components/feed/comment-section";
 import { BookmarkButton } from "@/components/feed/bookmark-button";
 import { ShareButton } from "@/components/feed/share-button";
 import { VerifiedBadge } from "@/components/feed/verified-badge";
+import { LevelBadge } from "@/components/profile/level-badge";
 import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
@@ -55,7 +56,7 @@ export type PostCardProps = {
     created_at: string;
     user_id: string;
   };
-  author: { name: string | null; avatar_url: string | null };
+  author: { name: string | null; avatar_url: string | null; level?: number | null };
   isVerified?: boolean;
   verificationType?: "individual" | "organization" | "government" | null;
   likeCount: number;
@@ -204,6 +205,9 @@ export function PostCard({
                 {author.name ?? t("someone")}
                 {isVerified && (
                   <VerifiedBadge type={verificationType} size="sm" />
+                )}
+                {author.level != null && author.level > 1 && (
+                  <LevelBadge level={author.level} size="sm" />
                 )}
               </p>
               <p className="text-xs text-muted-foreground">

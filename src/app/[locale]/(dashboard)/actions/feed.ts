@@ -13,6 +13,7 @@ export type PostWithUser = {
     id: string;
     name: string | null;
     avatar_url: string | null;
+    level?: number | null;
   } | null;
 };
 
@@ -41,7 +42,7 @@ export async function getForYouFeed(
   const userIds = [...new Set(posts.map((p) => p.user_id))];
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", userIds);
 
   const profileMap = new Map(profiles?.map((pr) => [pr.id, pr]) ?? []);
@@ -92,7 +93,7 @@ export async function getFollowingFeed(
   const userIds = [...new Set(posts.map((p) => p.user_id))];
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", userIds);
 
   const profileMap = new Map(profiles?.map((pr) => [pr.id, pr]) ?? []);
@@ -149,7 +150,7 @@ export async function getFilteredFeed(
   const userIds = [...new Set(posts.map((p) => p.user_id))];
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", userIds);
 
   const profileMap = new Map(profiles?.map((pr) => [pr.id, pr]) ?? []);

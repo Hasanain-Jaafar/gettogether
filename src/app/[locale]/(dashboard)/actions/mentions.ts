@@ -28,7 +28,7 @@ export async function searchUsers(
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .ilike("name", `%${query}%`)
     .limit(limit);
 
@@ -48,7 +48,7 @@ export async function searchUsersByUsername(
   // Search by username (which we'll store as part of the name or add a separate column)
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .or(`name.ilike.%${query}%,id.eq.${query}`)
     .limit(limit);
 
@@ -143,7 +143,7 @@ export async function getUserMentions(
   const postUserIds = [...new Set(data?.map((p) => p.user_id) ?? [])];
   const { data: authors } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url")
+    .select("id, name, avatar_url, level")
     .in("id", postUserIds);
 
   const authorMap = new Map(authors?.map((a) => [a.id, a]) ?? []);

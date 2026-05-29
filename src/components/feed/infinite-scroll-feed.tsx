@@ -16,6 +16,7 @@ type PostWithFullData = Omit<PostCardProps, "post" | "author"> & {
     id: string;
     name: string | null;
     avatar_url: string | null;
+    level?: number | null;
   } | null;
 };
 

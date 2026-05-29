@@ -155,6 +155,7 @@
     "feed": "Feed",
     "profile": "Profile",
     "explore": "Explore",
+    "leaderboard": "Leaderboard",
     "messages": "Messages",
     "notifications": "Notifications",
     "viewProfile": "View profile",
@@ -299,6 +300,9 @@
     "basicInfo": "Basic Information",
     "locationSection": "Location",
     "birthdaySection": "Birthday",
+    "badges": "Badges",
+    "noBadges": "No badges yet",
+    "xpProgress": "{current} / {next} XP",
     "interestsSection": "Interests",
     "websiteSection": "Website",
     "aboutMe": "About Me",
@@ -408,5 +412,48 @@
     "retry": "Try again",
     "close": "Close",
     "ok": "OK"
+  },
+  "level": {
+    "label": "Level {n}"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Top members by XP.",
+    "empty": "No ranked members yet. Start posting to climb the board.",
+    "xpSuffix": "XP"
+  },
+  "badges": {
+    "first_post": {
+      "name": "First Post",
+      "description": "Created your first post."
+    },
+    "prolific_5": {
+      "name": "Getting Started",
+      "description": "Posted 5 times."
+    },
+    "prolific_25": {
+      "name": "Prolific",
+      "description": "Posted 25 times."
+    },
+    "commentator_10": {
+      "name": "Commentator",
+      "description": "Made 10 comments."
+    },
+    "liked_10": {
+      "name": "Liked",
+      "description": "Received 10 likes on your posts."
+    },
+    "liked_100": {
+      "name": "Well Loved",
+      "description": "Received 100 likes."
+    },
+    "liked_1000": {
+      "name": "Adored",
+      "description": "Received 1000 likes."
+    },
+    "reposted_10": {
+      "name": "Echoed",
+      "description": "Your posts were reposted 10 times."
+    }
   }
 }
