@@ -228,7 +228,7 @@ export function ConversationView({
               >
                 <div
                   className={cn(
-                    "max-w-[75%] rounded-2xl px-4 py-2 text-base whitespace-pre-wrap wrap-break-word",
+                    "max-w-[75%] rounded-2xl px-4 py-2 text-lg whitespace-pre-wrap wrap-break-word",
                     mine
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-foreground",
@@ -237,7 +237,7 @@ export function ConversationView({
                   <p>{m.content}</p>
                   <p
                     className={cn(
-                      "mt-1 text-xs opacity-70",
+                      "mt-1 text-sm opacity-70",
                       mine ? "text-end" : "text-start",
                     )}
                   >
@@ -270,7 +270,7 @@ export function ConversationView({
             }
           }}
           placeholder={labels.placeholder}
-          className="min-h-[44px] max-h-32 flex-1 resize-y rounded-2xl border-border bg-muted/30 text-base"
+          className="min-h-[44px] max-h-32 flex-1 resize-y rounded-2xl border-border bg-muted/30 text-lg"
           maxLength={2000}
           disabled={sending}
         />

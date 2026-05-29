@@ -76,7 +76,7 @@ export function NewMessageDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="rounded-full text-base" size="sm">
+        <Button variant="outline" className="rounded-full text-lg" size="sm">
           <PenSquare className="size-4 me-1.5" />
           {t("newMessage")}
         </Button>

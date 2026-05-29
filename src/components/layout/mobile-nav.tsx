@@ -70,7 +70,7 @@ export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium transition-colors",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-lg font-medium transition-colors",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -91,7 +91,7 @@ export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }
               onLogout();
               onClose();
             }}
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-lg font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="size-4 shrink-0" />
             {t("logout")}
