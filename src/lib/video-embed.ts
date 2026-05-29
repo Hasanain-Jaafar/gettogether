@@ -31,7 +31,10 @@ export function getVideoEmbed(rawUrl: string): VideoEmbed | null {
   // TikTok
   if (host === "tiktok.com" || host.endsWith(".tiktok.com")) {
     const m = url.pathname.match(/\/video\/(\d+)/);
-    if (m) return { kind: "tiktok", embedSrc: `https://www.tiktok.com/embed/v2/${m[1]}` };
+    if (m) {
+      const params = "music_info=0&description=0&closed_caption=0&native_context_menu=0";
+      return { kind: "tiktok", embedSrc: `https://www.tiktok.com/player/v1/${m[1]}?${params}` };
+    }
     // vm.tiktok.com / vt.tiktok.com short links — fall through to plain link (we can't resolve them client-side)
   }
 
