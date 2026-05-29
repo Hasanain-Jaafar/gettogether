@@ -40,7 +40,9 @@ export function getVideoEmbed(rawUrl: string): VideoEmbed | null {
   }
 
   // Bunny Stream embed (iframe player)
-  if (host === "iframe.mediadelivery.net") {
+  // Official format: https://iframe.mediadelivery.net/embed/{libraryId}/{videoId}
+  // Some accounts/regions use player.mediadelivery.net — accept both.
+  if (host === "iframe.mediadelivery.net" || host === "player.mediadelivery.net") {
     return { kind: "iframe", embedSrc: url.toString() };
   }
 
