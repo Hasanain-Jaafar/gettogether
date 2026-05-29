@@ -362,6 +362,7 @@
     "noResultsHint": "جرّب اسماً أو كلمة أخرى.",
     "people": "الأشخاص",
     "posts": "المنشورات",
+    "hashtagResults": "المنشورات الموسومة بـ #{tag}",
     "clearSearch": "مسح البحث"
   },
   "postPage": {

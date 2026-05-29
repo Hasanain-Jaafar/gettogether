@@ -1,4 +1,4 @@
-import { Search, Users } from "lucide-react";
+import { Hash, Search, Users } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -6,6 +6,9 @@ import { SearchInput } from "@/components/explore/search-input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { relativeTime } from "@/lib/utils";
+import { getTrendingTopics } from "@/app/[locale]/(dashboard)/actions/hashtags";
+import { TrendingSidebar } from "@/components/feed/trending-sidebar";
+import { linkifyHashtags } from "@/lib/linkify-hashtags";
 
 function escapeIlike(input: string) {
   return input.replace(/[\\%_]/g, (m) => `\\${m}`);
@@ -34,6 +37,9 @@ export default async function ExplorePage({
   const t = await getTranslations("explore");
   const supabase = await createClient();
 
+  const hashtagQuery = q.startsWith("#") ? q.slice(1).trim() : "";
+  const isHashtagSearch = hashtagQuery.length > 0;
+
   let people: Array<{
     id: string;
     name: string | null;
@@ -52,8 +58,18 @@ export default async function ExplorePage({
     string,
     { name: string | null; avatar_url: string | null }
   >();
+  let trending: Array<{ name: string; count: number; last_trending_at: string }> = [];
 
-  if (q) {
+  if (isHashtagSearch) {
+    const pattern = `%#${escapeIlike(hashtagQuery)}%`;
+    const { data: postsRes } = await supabase
+      .from("posts")
+      .select("id, user_id, content, created_at, image_url, video_url")
+      .ilike("content", pattern)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    posts = postsRes ?? [];
+  } else if (q) {
     const pattern = `%${escapeIlike(q)}%`;
     const [peopleRes, postsRes] = await Promise.all([
       supabase
@@ -71,15 +87,17 @@ export default async function ExplorePage({
 
     people = peopleRes.data ?? [];
     posts = postsRes.data ?? [];
+  } else {
+    trending = await getTrendingTopics(10);
+  }
 
-    const authorIds = [...new Set(posts.map((p) => p.user_id))];
-    if (authorIds.length) {
-      const { data: authors } = await supabase
-        .from("profiles")
-        .select("id, name, avatar_url")
-        .in("id", authorIds);
-      postAuthors = new Map(authors?.map((a) => [a.id, a]) ?? []);
-    }
+  const authorIds = [...new Set(posts.map((p) => p.user_id))];
+  if (authorIds.length) {
+    const { data: authors } = await supabase
+      .from("profiles")
+      .select("id, name, avatar_url")
+      .in("id", authorIds);
+    postAuthors = new Map(authors?.map((a) => [a.id, a]) ?? []);
   }
 
   return (
@@ -92,17 +110,20 @@ export default async function ExplorePage({
       <SearchInput />
 
       {!q ? (
-        <Card className="rounded-2xl">
-          <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-            <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10">
-              <Search className="size-8 text-primary" />
-            </div>
-            <h2 className="text-lg font-semibold">{t("startSearching")}</h2>
-            <p className="mt-2 max-w-md text-sm text-muted-foreground">
-              {t("startSearchingDescription")}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          {trending.length > 0 && <TrendingSidebar trending={trending} />}
+          <Card className="rounded-2xl">
+            <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+              <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10">
+                <Search className="size-8 text-primary" />
+              </div>
+              <h2 className="text-lg font-semibold">{t("startSearching")}</h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                {t("startSearchingDescription")}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       ) : people.length === 0 && posts.length === 0 ? (
         <Card className="rounded-2xl">
           <CardContent className="flex flex-col items-center justify-center p-12 text-center">
@@ -117,7 +138,7 @@ export default async function ExplorePage({
         </Card>
       ) : (
         <div className="space-y-8">
-          {people.length > 0 && (
+          {!isHashtagSearch && people.length > 0 && (
             <section className="space-y-3">
               <div className="flex items-center gap-2">
                 <Users className="size-4 text-muted-foreground" />
@@ -159,9 +180,15 @@ export default async function ExplorePage({
           {posts.length > 0 && (
             <section className="space-y-3">
               <div className="flex items-center gap-2">
-                <Search className="size-4 text-muted-foreground" />
+                {isHashtagSearch ? (
+                  <Hash className="size-4 text-muted-foreground" />
+                ) : (
+                  <Search className="size-4 text-muted-foreground" />
+                )}
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t("posts")}
+                  {isHashtagSearch
+                    ? t("hashtagResults", { tag: hashtagQuery })
+                    : t("posts")}
                 </h2>
               </div>
               <ul className="space-y-3">
@@ -194,7 +221,7 @@ export default async function ExplorePage({
                             </div>
                           </Link>
                           <p className="whitespace-pre-wrap wrap-break-word text-sm">
-                            {post.content}
+                            {linkifyHashtags(post.content)}
                           </p>
                           {post.image_url && (
                             <div className="overflow-hidden rounded-xl bg-muted">

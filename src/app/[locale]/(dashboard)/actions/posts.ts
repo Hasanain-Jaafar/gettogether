@@ -71,6 +71,11 @@ export async function createPost(
   // Notify mentioned users (non-blocking - fire and forget)
   notifyMentionedUsers(post.id, parsed.data.content, user.id).catch(console.error);
 
+  // Update trending topics if the post contains any hashtag (non-blocking)
+  if (/#\w+/.test(parsed.data.content)) {
+    void Promise.resolve(supabase.rpc("update_trending_topics")).catch(console.error);
+  }
+
   revalidatePath("/dashboard");
   revalidatePath("/profile");
   return { success: true, postId: post.id };

@@ -362,6 +362,7 @@
     "noResultsHint": "Try a different name or keyword.",
     "people": "People",
     "posts": "Posts",
+    "hashtagResults": "Posts tagged #{tag}",
     "clearSearch": "Clear search"
   },
   "postPage": {

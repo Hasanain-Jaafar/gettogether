@@ -24,6 +24,7 @@ import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
 import { getVideoEmbed } from "@/lib/video-embed";
+import { linkifyHashtags } from "@/lib/linkify-hashtags";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -271,7 +272,7 @@ export function PostCard({
           ) : (
             <>
               <p className="whitespace-pre-wrap wrap-break-word text-foreground">
-                {post.content}
+                {linkifyHashtags(post.content)}
               </p>
               {post.image_url && (
                 <div className="mt-3 overflow-hidden rounded-xl bg-muted">
