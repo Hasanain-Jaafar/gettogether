@@ -61,7 +61,7 @@ export function LeveledAvatar({
       </span>
       <span
         className={cn(
-          "absolute -bottom-0.5 -end-0.5 inline-flex items-center justify-center rounded-full font-bold leading-none ring-2 ring-background",
+          "absolute -bottom-0.5 -end-0.5 grid place-items-center rounded-full font-bold tabular-nums text-center ring-2 ring-background",
           chipSize,
           tierChipClasses(safeLevel),
         )}
