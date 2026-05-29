@@ -52,9 +52,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     if (expanded) textareaRef.current?.focus();
   }, [expanded]);
 
-  function collapse() {
+  function collapse(e?: React.FocusEvent<HTMLElement>) {
     if (submitting) return;
-    if (content.trim() || imageFile || trimmedVideoUrl) return;
+    if (content.trim() || imageFile || trimmedVideoUrl || showUrlField) return;
+    // Don't collapse when focus is moving to another element inside the form
+    const next = e?.relatedTarget as Node | null;
+    if (next && e?.currentTarget.closest("form")?.contains(next)) return;
     setExpanded(false);
   }
 
