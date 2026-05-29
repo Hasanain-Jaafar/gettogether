@@ -1,6 +1,7 @@
 export type VideoEmbed =
   | { kind: "youtube"; embedSrc: string }
   | { kind: "tiktok"; embedSrc: string }
+  | { kind: "iframe"; embedSrc: string }
   | { kind: "direct"; src: string }
   | { kind: "link"; href: string };
 
@@ -38,8 +39,18 @@ export function getVideoEmbed(rawUrl: string): VideoEmbed | null {
     // vm.tiktok.com / vt.tiktok.com short links — fall through to plain link (we can't resolve them client-side)
   }
 
-  // Direct video file
-  if (/\.(mp4|webm|mov|m4v|ogv)(\?|#|$)/i.test(url.pathname + url.search)) {
+  // Bunny Stream embed (iframe player)
+  if (host === "iframe.mediadelivery.net") {
+    return { kind: "iframe", embedSrc: url.toString() };
+  }
+
+  // Direct video file (.mp4, .webm, .mov, .m4v, .ogv anywhere in the path)
+  if (/\.(mp4|webm|mov|m4v|ogv)(?![a-z0-9])/i.test(url.pathname)) {
+    return { kind: "direct", src: url.toString() };
+  }
+
+  // Bunny CDN host without obvious extension — still try as a direct video
+  if (host.endsWith(".b-cdn.net")) {
     return { kind: "direct", src: url.toString() };
   }
 

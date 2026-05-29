@@ -73,7 +73,7 @@ function VideoEmbed({ url }: { url: string }) {
   const embed = getVideoEmbed(url);
   if (!embed) return null;
 
-  if (embed.kind === "youtube" || embed.kind === "tiktok") {
+  if (embed.kind === "youtube" || embed.kind === "tiktok" || embed.kind === "iframe") {
     const aspect = embed.kind === "tiktok" ? "aspect-[9/16] max-w-sm mx-auto" : "aspect-video";
     return (
       <div className={`mt-3 overflow-hidden rounded-xl bg-black ${aspect}`}>
