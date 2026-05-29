@@ -281,7 +281,7 @@ export function ConversationView({
           disabled={sending || !content.trim()}
           aria-label={labels.send}
         >
-          <Send className="size-4 rtl:rotate-180" />
+          <Send className="size-4 rtl:-scale-x-100" />
         </Button>
       </form>
     </div>
