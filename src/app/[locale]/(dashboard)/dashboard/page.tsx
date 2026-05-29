@@ -8,6 +8,8 @@ import { DashboardSidebar } from "@/components/feed/dashboard-sidebar";
 import { FeedTabs } from "@/components/feed/feed-tabs";
 import { EmptyState } from "@/components/feed/empty-state";
 import { getForYouFeed, getFollowingFeed } from "@/app/[locale]/(dashboard)/actions/feed";
+import { getTrendingTopics } from "@/app/[locale]/(dashboard)/actions/hashtags";
+import { getWhoToFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 
 const POSTS_PAGE_SIZE = 20;
 
@@ -31,6 +33,11 @@ export default async function DashboardPage({
 
   const tab = tabParam === "following" ? "following" : "foryou";
   const hashtag = hashtagParam;
+
+  const [trendingInitial, whoToFollowInitial] = await Promise.all([
+    getTrendingTopics(5),
+    getWhoToFollow(user.id, 3),
+  ]);
 
   // Get posts based on tab
   let posts: any[] = [];
@@ -65,7 +72,10 @@ export default async function DashboardPage({
             />
           </div>
           <div className="lg:col-span-1 hidden lg:block">
-            <DashboardSidebar />
+            <DashboardSidebar
+              trendingInitial={trendingInitial}
+              whoToFollowInitial={whoToFollowInitial}
+            />
           </div>
         </div>
       </>
@@ -243,7 +253,10 @@ export default async function DashboardPage({
           </ul>
         </div>
         <div className="lg:col-span-1 hidden lg:block">
-          <DashboardSidebar />
+          <DashboardSidebar
+            trendingInitial={trendingInitial}
+            whoToFollowInitial={whoToFollowInitial}
+          />
         </div>
       </div>
     </>
