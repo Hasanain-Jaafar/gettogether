@@ -6,7 +6,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LeveledAvatar } from "@/components/profile/leveled-avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -39,7 +40,7 @@ type HeaderProps = {
     email?: string;
     user_metadata?: { name?: string; full_name?: string };
   } | null;
-  profile?: { name?: string | null; avatar_url?: string | null } | null;
+  profile?: { name?: string | null; avatar_url?: string | null; level?: number | null } | null;
 };
 
 export function Header({ user, profile }: HeaderProps) {
@@ -242,11 +243,11 @@ export function Header({ user, profile }: HeaderProps) {
           {/* Avatar dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative size-9 rounded-full hover:bg-accent">
-                <Avatar className="size-9">
+              <Button variant="ghost" className="relative size-9 rounded-full hover:bg-accent p-0">
+                <LeveledAvatar level={profile?.level ?? 1} className="size-9">
                   <AvatarImage src={avatarUrl ?? undefined} alt={name ?? "User"} />
                   <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
+                </LeveledAvatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

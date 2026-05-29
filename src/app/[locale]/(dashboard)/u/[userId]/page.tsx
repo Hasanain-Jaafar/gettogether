@@ -11,6 +11,7 @@ import { MessageButton } from "@/components/messages/message-button";
 import { FollowListDialog } from "@/components/profile/follow-list-dialog";
 import { LevelBadge } from "@/components/profile/level-badge";
 import { BadgeGrid, type BadgeRow } from "@/components/profile/badge-grid";
+import { LeveledAvatar } from "@/components/profile/leveled-avatar";
 import {
   MapPin,
   Calendar,
@@ -227,12 +228,12 @@ export default async function PublicProfilePage({
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
           {/* Avatar and Basic Info */}
           <div className="flex flex-col items-center gap-4 sm:w-auto">
-            <Avatar className="size-24">
+            <LeveledAvatar level={userLevel} className="size-24">
               <AvatarImage src={profile.avatar_url ?? undefined} />
               <AvatarFallback className="text-3xl">
                 {getInitials(profile.name)}
               </AvatarFallback>
-            </Avatar>
+            </LeveledAvatar>
           </div>
 
           {/* Profile Details */}

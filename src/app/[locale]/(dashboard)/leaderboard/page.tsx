@@ -2,9 +2,10 @@ import { Trophy } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { LevelBadge } from "@/components/profile/level-badge";
+import { LeveledAvatar } from "@/components/profile/leveled-avatar";
 import { cn } from "@/lib/utils";
 
 function initials(name: string | null): string {
@@ -88,10 +89,10 @@ export default async function LeaderboardPage({
                       >
                         {rank}
                       </span>
-                      <Avatar className="size-10 shrink-0">
+                      <LeveledAvatar level={row.level ?? 1} className="size-10 shrink-0">
                         <AvatarImage src={row.avatar_url ?? undefined} alt={row.name ?? ""} />
                         <AvatarFallback>{initials(row.name)}</AvatarFallback>
-                      </Avatar>
+                      </LeveledAvatar>
                       <div className="min-w-0 flex-1">
                         <p className="flex items-center gap-1 truncate font-semibold text-foreground">
                           {row.name ?? "Unnamed"}

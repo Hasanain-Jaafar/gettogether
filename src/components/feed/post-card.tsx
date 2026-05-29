@@ -21,6 +21,7 @@ import { BookmarkButton } from "@/components/feed/bookmark-button";
 import { ShareButton } from "@/components/feed/share-button";
 import { VerifiedBadge } from "@/components/feed/verified-badge";
 import { LevelBadge } from "@/components/profile/level-badge";
+import { LeveledAvatar } from "@/components/profile/leveled-avatar";
 import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
@@ -194,12 +195,12 @@ export function PostCard({
             href={`/u/${post.user_id}`}
             className="flex min-w-0 flex-1 items-center gap-3"
           >
-            <Avatar className="size-10 shrink-0">
+            <LeveledAvatar level={author.level ?? 1} className="size-10 shrink-0">
               <AvatarImage src={author.avatar_url ?? undefined} />
               <AvatarFallback className="text-sm">
                 {getInitials(author.name)}
               </AvatarFallback>
-            </Avatar>
+            </LeveledAvatar>
             <div className="min-w-0">
               <p className="flex items-center gap-1 font-semibold text-foreground truncate">
                 {author.name ?? t("someone")}

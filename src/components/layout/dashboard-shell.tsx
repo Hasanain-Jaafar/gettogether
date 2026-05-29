@@ -7,7 +7,7 @@ type DashboardShellProps = {
     email?: string;
     user_metadata?: { name?: string; full_name?: string };
   } | null;
-  profile?: { name?: string | null; avatar_url?: string | null } | null;
+  profile?: { name?: string | null; avatar_url?: string | null; level?: number | null } | null;
 };
 
 export function DashboardShell({
