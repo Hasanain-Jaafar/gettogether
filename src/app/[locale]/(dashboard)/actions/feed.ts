@@ -7,6 +7,7 @@ export type PostWithUser = {
   user_id: string;
   content: string;
   image_url: string | null;
+  video_url: string | null;
   created_at: string;
   author?: {
     id: string;
@@ -29,7 +30,7 @@ export async function getForYouFeed(
 
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at")
+    .select("id, user_id, content, image_url, video_url, created_at")
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -79,7 +80,7 @@ export async function getFollowingFeed(
 
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at")
+    .select("id, user_id, content, image_url, video_url, created_at")
     .in("user_id", followingIds)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
@@ -125,7 +126,7 @@ export async function getFilteredFeed(
 
   let query = supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at");
+    .select("id, user_id, content, image_url, video_url, created_at");
 
   // Filter by hashtag if provided
   if (hashtag) {

@@ -10,6 +10,7 @@ type PostWithFullData = Omit<PostCardProps, "post" | "author"> & {
   user_id: string;
   content: string;
   image_url: string | null;
+  video_url: string | null;
   created_at: string;
   author?: {
     id: string;
@@ -49,11 +50,11 @@ export function InfiniteScrollFeed({
   const defaultAuthor = { name: null, avatar_url: null };
 
   const renderPostCard = (post: PostWithFullData) => {
-    const { id, user_id, content, image_url, created_at, author, ...rest } = post;
+    const { id, user_id, content, image_url, video_url, created_at, author, ...rest } = post;
     return (
       <PostCard
         key={id}
-        post={{ id, user_id, content, image_url, created_at }}
+        post={{ id, user_id, content, image_url, video_url, created_at }}
         author={author ?? defaultAuthor}
         {...rest}
       />

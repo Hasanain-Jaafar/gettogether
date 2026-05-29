@@ -46,6 +46,7 @@ export default async function ExplorePage({
     content: string;
     created_at: string;
     image_url: string | null;
+    video_url: string | null;
   }> = [];
   let postAuthors = new Map<
     string,
@@ -62,7 +63,7 @@ export default async function ExplorePage({
         .limit(20),
       supabase
         .from("posts")
-        .select("id, user_id, content, created_at, image_url")
+        .select("id, user_id, content, created_at, image_url, video_url")
         .ilike("content", pattern)
         .order("created_at", { ascending: false })
         .limit(20),

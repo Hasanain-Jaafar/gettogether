@@ -44,7 +44,7 @@ export default async function DashboardPage({
   if (hashtag) {
     const { data: postsByHashtag } = await supabase
       .from("posts")
-      .select("id, user_id, content, image_url, created_at")
+      .select("id, user_id, content, image_url, video_url, created_at")
       .ilike("content", `%#${hashtag}%`)
       .order("created_at", { ascending: false })
       .limit(POSTS_PAGE_SIZE);

@@ -10,7 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/use-profile";
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon, Video, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { getVideoEmbed } from "@/lib/video-embed";
 
 const ACCEPT =
   "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime";
@@ -34,7 +36,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [showUrlField, setShowUrlField] = useState(false);
   const isVideo = imageFile?.type.startsWith("video/") ?? false;
+  const trimmedVideoUrl = videoUrl.trim();
+  const videoUrlEmbed = trimmedVideoUrl ? getVideoEmbed(trimmedVideoUrl) : null;
+  const videoUrlInvalid = trimmedVideoUrl.length > 0 && !videoUrlEmbed;
   const [submitting, setSubmitting] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,15 +54,19 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
   function collapse() {
     if (submitting) return;
-    if (content.trim() || imageFile) return;
+    if (content.trim() || imageFile || trimmedVideoUrl) return;
     setExpanded(false);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = content.trim();
-    if (!trimmed && !imageFile) {
+    if (!trimmed && !imageFile && !trimmedVideoUrl) {
       toast.error(t("writeSomething"));
+      return;
+    }
+    if (videoUrlInvalid) {
+      toast.error(t("invalidVideoUrl"));
       return;
     }
     setSubmitting(true);
@@ -92,13 +103,16 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     const result = await createPost({
       content: trimmed,
       image_url: imageUrl,
-      media_type: mediaType,
+      video_url: trimmedVideoUrl || null,
+      media_type: mediaType ?? (trimmedVideoUrl ? "video" : null),
     });
     setSubmitting(false);
     if (result.success) {
       setContent("");
       setImageFile(null);
       setPreview(null);
+      setVideoUrl("");
+      setShowUrlField(false);
       setExpanded(false);
       toast.success(t("posted"));
     } else {
@@ -178,6 +192,41 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 disabled={submitting}
               />
             </div>
+            {(showUrlField || trimmedVideoUrl) && (
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="url"
+                    inputMode="url"
+                    placeholder={t("videoUrlPlaceholder")}
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
+                    onBlur={collapse}
+                    disabled={submitting}
+                    className="rounded-xl"
+                    aria-invalid={videoUrlInvalid}
+                  />
+                  {trimmedVideoUrl && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setVideoUrl("");
+                        setShowUrlField(false);
+                      }}
+                      aria-label={t("removeVideoUrl")}
+                      className="shrink-0 rounded-full"
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  )}
+                </div>
+                {videoUrlInvalid && (
+                  <p className="text-xs text-destructive">{t("invalidVideoUrl")}</p>
+                )}
+              </div>
+            )}
             {preview && (
               <div className="relative inline-block">
                 {isVideo ? (
@@ -208,23 +257,42 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               </div>
             )}
             <div className="flex items-center justify-between gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="rounded-xl"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => inputRef.current?.click()}
-                disabled={submitting}
-              >
-                <ImageIcon className="size-4 me-1.5" />
-                {t("addImage")}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => inputRef.current?.click()}
+                  disabled={submitting}
+                >
+                  <ImageIcon className="size-4 me-1.5" />
+                  {t("addImage")}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => setShowUrlField((v) => !v)}
+                  disabled={submitting}
+                  aria-pressed={showUrlField}
+                >
+                  <Video className="size-4 me-1.5" />
+                  {t("addVideoUrl")}
+                </Button>
+              </div>
               <Button
                 type="submit"
                 onMouseDown={(e) => e.preventDefault()}
                 className="rounded-xl"
-                disabled={submitting || (!content.trim() && !imageFile)}
+                disabled={
+                  submitting ||
+                  (!content.trim() && !imageFile && !trimmedVideoUrl) ||
+                  videoUrlInvalid
+                }
               >
                 {submitting ? t("posting") : t("post")}
               </Button>

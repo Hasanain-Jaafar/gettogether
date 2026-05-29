@@ -13,6 +13,7 @@ type PostWithUser = {
   user_id: string;
   content: string;
   image_url: string | null;
+  video_url: string | null;
   created_at: string;
   author?: {
     id: string;
@@ -70,7 +71,7 @@ export async function getPostsByHashtag(
 
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at")
+    .select("id, user_id, content, image_url, video_url, created_at")
     .ilike("content", `%#${hashtag}%`)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);

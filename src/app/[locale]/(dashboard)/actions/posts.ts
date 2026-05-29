@@ -10,7 +10,12 @@ const RATE_LIMIT_POSTS_PER_HOUR = 10;
 export type PostResult = { success: true; postId?: string } | { success: false; error: string };
 
 export async function createPost(
-  input: { content: string; image_url?: string | null; media_type?: string | null }
+  input: {
+    content: string;
+    image_url?: string | null;
+    video_url?: string | null;
+    media_type?: string | null;
+  }
 ): Promise<PostResult> {
   const parsed = createPostSchema.safeParse(input);
   if (!parsed.success) {
@@ -55,7 +60,8 @@ export async function createPost(
       user_id: user.id,
       content: parsed.data.content.trim(),
       image_url: parsed.data.image_url ?? null,
-      media_type: mediaType,
+      video_url: parsed.data.video_url ?? null,
+      media_type: parsed.data.video_url && mediaType === "text" ? "video" : mediaType,
     })
     .select("id")
     .single();
@@ -72,7 +78,7 @@ export async function createPost(
 
 export async function updatePost(
   postId: string,
-  input: { content: string; image_url?: string | null }
+  input: { content: string; image_url?: string | null; video_url?: string | null }
 ): Promise<PostResult> {
   const parsed = updatePostSchema.safeParse(input);
   if (!parsed.success) {
@@ -91,6 +97,7 @@ export async function updatePost(
     .update({
       content: parsed.data.content.trim(),
       image_url: parsed.data.image_url ?? null,
+      video_url: parsed.data.video_url ?? null,
     })
     .eq("id", postId)
     .eq("user_id", user.id);

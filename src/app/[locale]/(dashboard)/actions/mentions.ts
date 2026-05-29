@@ -132,7 +132,7 @@ export async function getUserMentions(
   // Get posts that mention this user
   const { data, error, count } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at", { count: "exact" })
+    .select("id, user_id, content, image_url, video_url, created_at", { count: "exact" })
     .ilike("content", `%@${userId}%`)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);

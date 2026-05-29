@@ -12,6 +12,7 @@ export type Reply = {
   user_id: string;
   content: string;
   image_url: string | null;
+  video_url: string | null;
   created_at: string;
   parent_post_id: string | null;
   is_reply: boolean;
@@ -74,7 +75,7 @@ export async function getThread(
   // Get the main post
   const { data: post, error: postError } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at, parent_post_id, is_reply, reply_count")
+    .select("id, user_id, content, image_url, video_url, created_at, parent_post_id, is_reply, reply_count")
     .eq("id", postId)
     .single();
 
@@ -99,7 +100,7 @@ export async function getThread(
   // Get replies
   const { data: replies, error: repliesError } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at, parent_post_id, is_reply, reply_count")
+    .select("id, user_id, content, image_url, video_url, created_at, parent_post_id, is_reply, reply_count")
     .eq("parent_post_id", postId)
     .order("created_at", { ascending: true });
 
@@ -139,7 +140,7 @@ export async function getReplies(
 
   const { data: replies, error } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at, parent_post_id, is_reply, reply_count")
+    .select("id, user_id, content, image_url, video_url, created_at, parent_post_id, is_reply, reply_count")
     .eq("parent_post_id", postId)
     .order("created_at", { ascending: true })
     .range(offset, offset + limit - 1);
@@ -183,7 +184,7 @@ export async function getRecentThreads(limit: number = 10): Promise<Reply[]> {
   // Get posts with replies
   const { data, error } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at, parent_post_id, is_reply, reply_count")
+    .select("id, user_id, content, image_url, video_url, created_at, parent_post_id, is_reply, reply_count")
     .gt("reply_count", 0)
     .order("created_at", { ascending: false })
     .limit(limit);

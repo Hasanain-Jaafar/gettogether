@@ -21,7 +21,7 @@ export default async function PostPage({
 
   const { data: post } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, created_at")
+    .select("id, user_id, content, image_url, video_url, created_at")
     .eq("id", postId)
     .maybeSingle();
 

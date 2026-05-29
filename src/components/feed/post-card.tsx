@@ -23,6 +23,7 @@ import { VerifiedBadge } from "@/components/feed/verified-badge";
 import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
+import { getVideoEmbed } from "@/lib/video-embed";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -49,6 +50,7 @@ export type PostCardProps = {
     id: string;
     content: string;
     image_url: string | null;
+    video_url: string | null;
     created_at: string;
     user_id: string;
   };
@@ -66,6 +68,51 @@ export type PostCardProps = {
   currentUserId: string;
   likers: { name: string | null; avatar_url: string | null }[];
 };
+
+function VideoEmbed({ url }: { url: string }) {
+  const embed = getVideoEmbed(url);
+  if (!embed) return null;
+
+  if (embed.kind === "youtube" || embed.kind === "tiktok") {
+    const aspect = embed.kind === "tiktok" ? "aspect-[9/16] max-w-sm mx-auto" : "aspect-video";
+    return (
+      <div className={`mt-3 overflow-hidden rounded-xl bg-black ${aspect}`}>
+        <iframe
+          src={embed.embedSrc}
+          className="h-full w-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      </div>
+    );
+  }
+
+  if (embed.kind === "direct") {
+    return (
+      <div className="mt-3 overflow-hidden rounded-xl bg-muted">
+        <video
+          src={embed.src}
+          controls
+          playsInline
+          preload="metadata"
+          className="mx-auto block h-auto max-h-[600px] w-full"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={embed.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-3 block truncate rounded-xl border border-border/60 bg-muted/40 px-3 py-2 text-sm text-primary hover:bg-muted/60"
+    >
+      {embed.href}
+    </a>
+  );
+}
 
 function getInitials(name: string | null): string {
   if (!name?.trim()) return "?";
@@ -110,6 +157,7 @@ export function PostCard({
     const result = await updatePost(post.id, {
       content: editContent.trim(),
       image_url: post.image_url,
+      video_url: post.video_url,
     });
     setSaving(false);
     if (result.success) {
@@ -246,6 +294,7 @@ export function PostCard({
                   )}
                 </div>
               )}
+              {post.video_url && <VideoEmbed url={post.video_url} />}
             </>
           )}
         </div>
