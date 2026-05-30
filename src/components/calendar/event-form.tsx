@@ -86,8 +86,8 @@ function EventFormInner({
       title,
       description: description || null,
       location: location || null,
-      starts_at: startsAt,
-      ends_at: endsAt || null,
+      starts_at: new Date(startsAt).toISOString(),
+      ends_at: endsAt ? new Date(endsAt).toISOString() : null,
       visibility,
     };
     startTransition(async () => {

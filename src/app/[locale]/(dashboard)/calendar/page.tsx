@@ -1,19 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEventsInRange } from "@/app/[locale]/(dashboard)/actions/events";
-import { CalendarMonthView } from "@/components/calendar/calendar-month-view";
-
-function startOfMonthGrid(year: number, month: number): Date {
-  const first = new Date(year, month, 1);
-  const offset = (first.getDay() + 6) % 7; // Monday-first
-  return new Date(year, month, 1 - offset);
-}
-
-function addDays(d: Date, days: number): Date {
-  const out = new Date(d);
-  out.setDate(out.getDate() + days);
-  return out;
-}
+import { EventsCardList } from "@/components/calendar/events-card-list";
 
 export default async function CalendarPage({
   params,
@@ -30,21 +18,17 @@ export default async function CalendarPage({
   if (!user) return null;
 
   const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const rangeStart = startOfMonthGrid(year, month);
-  const rangeEnd = addDays(rangeStart, 42);
+  // Show events from yesterday onward for the next ~6 months.
+  const rangeStart = new Date(now);
+  rangeStart.setDate(rangeStart.getDate() - 1);
+  const rangeEnd = new Date(now);
+  rangeEnd.setMonth(rangeEnd.getMonth() + 6);
 
   const initialEvents = await getEventsInRange(rangeStart, rangeEnd);
 
   return (
     <div className="mx-auto max-w-6xl">
-      <CalendarMonthView
-        currentUserId={user.id}
-        initialEvents={initialEvents}
-        initialYear={year}
-        initialMonth={month}
-      />
+      <EventsCardList currentUserId={user.id} initialEvents={initialEvents} />
     </div>
   );
 }

@@ -154,7 +154,7 @@
   "nav": {
     "feed": "Feed",
     "profile": "Profile",
-    "calendar": "Calendar",
+    "calendar": "Events",
     "explore": "Explore",
     "leaderboard": "Leaderboard",
     "messages": "Messages",
@@ -459,6 +459,10 @@
   },
   "calendar": {
     "title": "Calendar",
+    "upcomingEvents": "Upcoming events",
+    "upcomingSubtitle": "Events from you and the people you follow.",
+    "emptyTitle": "No events yet",
+    "emptyDescription": "Create one and your followers will see it here.",
     "today": "Today",
     "previousMonth": "Previous month",
     "nextMonth": "Next month",

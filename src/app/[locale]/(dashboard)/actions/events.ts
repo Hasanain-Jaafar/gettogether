@@ -49,8 +49,8 @@ export async function createEvent(input: CreateEventInput): Promise<EventActionR
       title: parsed.data.title,
       description: parsed.data.description ?? null,
       location: parsed.data.location ?? null,
-      starts_at: new Date(parsed.data.starts_at).toISOString(),
-      ends_at: parsed.data.ends_at ? new Date(parsed.data.ends_at).toISOString() : null,
+      starts_at: parsed.data.starts_at,
+      ends_at: parsed.data.ends_at ?? null,
       visibility: parsed.data.visibility,
     })
     .select("id, user_id, title, description, location, starts_at, ends_at, visibility")
@@ -89,8 +89,8 @@ export async function updateEvent(id: string, input: UpdateEventInput): Promise<
       title: parsed.data.title,
       description: parsed.data.description ?? null,
       location: parsed.data.location ?? null,
-      starts_at: new Date(parsed.data.starts_at).toISOString(),
-      ends_at: parsed.data.ends_at ? new Date(parsed.data.ends_at).toISOString() : null,
+      starts_at: parsed.data.starts_at,
+      ends_at: parsed.data.ends_at ?? null,
       visibility: parsed.data.visibility,
     })
     .eq("id", id)
