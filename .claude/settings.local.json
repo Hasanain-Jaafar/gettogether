@@ -19,7 +19,8 @@
       "Bash(npx supabase migration list:*)",
       "Bash(mkdir -p \"src/app/[locale]\")",
       "Bash(mv \"src/app/\\(marketing\\)\" \"src/app/[locale]/\\(marketing\\)\")",
-      "Bash(mv \"src/app/\\(auth\\)\" \"src/app/[locale]/\\(auth\\)\")"
+      "Bash(mv \"src/app/\\(auth\\)\" \"src/app/[locale]/\\(auth\\)\")",
+      "Bash(npm run *)"
     ]
   }
 }

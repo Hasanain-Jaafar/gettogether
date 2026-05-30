@@ -154,6 +154,7 @@
   "nav": {
     "feed": "Feed",
     "profile": "Profile",
+    "calendar": "Calendar",
     "explore": "Explore",
     "leaderboard": "Leaderboard",
     "messages": "Messages",
@@ -455,5 +456,39 @@
       "name": "Echoed",
       "description": "Your posts were reposted 10 times."
     }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "today": "Today",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "createEvent": "Create event",
+    "editEvent": "Edit event",
+    "deleteEvent": "Delete event",
+    "eventCreated": "Event created",
+    "eventUpdated": "Event updated",
+    "eventDeleted": "Event deleted",
+    "confirmDelete": "Delete this event?",
+    "more": "more",
+    "unknownUser": "Unknown user",
+    "formDescription": "Share what you're doing so followers can see it on their calendar.",
+    "titleLabel": "Title",
+    "titlePlaceholder": "What's happening?",
+    "startsAt": "Starts",
+    "endsAt": "Ends (optional)",
+    "locationLabel": "Location",
+    "locationPlaceholder": "Place or link",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Add details (optional)",
+    "visibilityLabel": "Who can see this?",
+    "visibility": {
+      "public": "Public",
+      "followers": "Followers",
+      "private": "Only me"
+    },
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "saving": "Saving…"
   }
 }

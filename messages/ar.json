@@ -154,6 +154,7 @@
   "nav": {
     "feed": "الرئيسية",
     "profile": "الملف الشخصي",
+    "calendar": "التقويم",
     "explore": "استكشف",
     "leaderboard": "المتصدرون",
     "messages": "الرسائل",
@@ -455,5 +456,39 @@
       "name": "صدى",
       "description": "أُعيد نشر منشوراتك ١٠ مرات."
     }
+  },
+  "calendar": {
+    "title": "التقويم",
+    "today": "اليوم",
+    "previousMonth": "الشهر السابق",
+    "nextMonth": "الشهر التالي",
+    "createEvent": "إنشاء حدث",
+    "editEvent": "تعديل الحدث",
+    "deleteEvent": "حذف الحدث",
+    "eventCreated": "تم إنشاء الحدث",
+    "eventUpdated": "تم تحديث الحدث",
+    "eventDeleted": "تم حذف الحدث",
+    "confirmDelete": "هل تريد حذف هذا الحدث؟",
+    "more": "أخرى",
+    "unknownUser": "مستخدم غير معروف",
+    "formDescription": "شارك ما تخطط له ليظهر في تقويم متابعيك.",
+    "titleLabel": "العنوان",
+    "titlePlaceholder": "ماذا يحدث؟",
+    "startsAt": "يبدأ",
+    "endsAt": "ينتهي (اختياري)",
+    "locationLabel": "الموقع",
+    "locationPlaceholder": "مكان أو رابط",
+    "descriptionLabel": "الوصف",
+    "descriptionPlaceholder": "أضف تفاصيل (اختياري)",
+    "visibilityLabel": "من يمكنه الرؤية؟",
+    "visibility": {
+      "public": "عام",
+      "followers": "المتابعون",
+      "private": "أنا فقط"
+    },
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "create": "إنشاء",
+    "saving": "جارٍ الحفظ…"
   }
 }

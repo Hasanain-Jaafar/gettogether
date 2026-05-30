@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { Home, User, UserCircle, X, Search, MessageSquare, Bell, LogOut, Trophy } from "lucide-react";
+import { Home, User, UserCircle, X, Search, MessageSquare, Bell, LogOut, Trophy, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -21,6 +21,7 @@ export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }
 
   const navItems = [
     { href: "/dashboard", label: t("feed"), icon: Home },
+    { href: "/calendar", label: t("calendar"), icon: Calendar },
     { href: "/explore", label: t("explore"), icon: Search },
     { href: "/leaderboard", label: t("leaderboard"), icon: Trophy },
     { href: "/messages", label: t("messages"), icon: MessageSquare },

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { Home, User, UserCircle, LogOut, Menu, Bell, MessageSquare, Search, Languages, Trophy } from "lucide-react";
+import { Home, User, UserCircle, LogOut, Menu, Bell, MessageSquare, Search, Languages, Trophy, Calendar } from "lucide-react";
 
 function getInitials(name: string | null, email: string | undefined): string {
   if (name?.trim()) {
@@ -60,6 +60,7 @@ export function Header({ user, profile }: HeaderProps) {
 
   const mainNavItems = [
     { href: "/dashboard", label: t("feed"), icon: Home },
+    { href: "/calendar", label: t("calendar"), icon: Calendar },
     { href: "/profile", label: t("profile"), icon: User },
   ];
 
