@@ -167,10 +167,6 @@
     "closeMenu": "Close menu"
   },
   "feed": {
-    "tabs": {
-      "forYou": "For You",
-      "following": "Following"
-    },
     "createPost": {
       "placeholder": "What's on your mind?",
       "addImage": "Add image",

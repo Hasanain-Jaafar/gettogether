@@ -5,9 +5,8 @@ import { CreatePostForm } from "@/components/feed/create-post-form";
 import { PostCard } from "@/components/feed/post-card";
 import { DashboardRealtime } from "@/components/feed/dashboard-realtime";
 import { DashboardSidebar } from "@/components/feed/dashboard-sidebar";
-import { FeedTabs } from "@/components/feed/feed-tabs";
 import { EmptyState } from "@/components/feed/empty-state";
-import { getForYouFeed, getFollowingFeed } from "@/app/[locale]/(dashboard)/actions/feed";
+import { getForYouFeed } from "@/app/[locale]/(dashboard)/actions/feed";
 import { getTrendingTopics } from "@/app/[locale]/(dashboard)/actions/hashtags";
 import { getWhoToFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 
@@ -18,20 +17,19 @@ export default async function DashboardPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ tab?: string; hashtag?: string }>;
+  searchParams: Promise<{ hashtag?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const supabase = await createClient();
   const tSidebar = await getTranslations("sidebar");
   const tFeed = await getTranslations("feed.empty");
-  const { tab: tabParam, hashtag: hashtagParam } = await searchParams;
+  const { hashtag: hashtagParam } = await searchParams;
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const tab = tabParam === "following" ? "following" : "foryou";
   const hashtag = hashtagParam;
 
   const [trendingInitial, whoToFollowInitial] = await Promise.all([
@@ -39,7 +37,6 @@ export default async function DashboardPage({
     getWhoToFollow(user.id, 3),
   ]);
 
-  // Get posts based on tab
   let posts: any[] = [];
   if (hashtag) {
     const { data: postsByHashtag } = await supabase
@@ -49,9 +46,6 @@ export default async function DashboardPage({
       .order("created_at", { ascending: false })
       .limit(POSTS_PAGE_SIZE);
     posts = postsByHashtag ?? [];
-  } else if (tab === "following") {
-    const feedResult = await getFollowingFeed(user.id, POSTS_PAGE_SIZE);
-    posts = feedResult.posts;
   } else {
     const feedResult = await getForYouFeed(user.id, POSTS_PAGE_SIZE);
     posts = feedResult.posts;
@@ -64,11 +58,10 @@ export default async function DashboardPage({
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 space-y-4 sm:space-y-6">
             <CreatePostForm userId={user.id} />
-            {!hashtag && <FeedTabs />}
             <EmptyState
-              type={tab === "following" ? "no-results" : "welcome"}
-              actionLabel={tab === "following" ? tFeed("findPeople") : tFeed("createFirst")}
-              actionTarget={tab === "following" ? "scroll-who-to-follow" : "focus-create-post"}
+              type="welcome"
+              actionLabel={tFeed("createFirst")}
+              actionTarget="focus-create-post"
             />
           </div>
           <div className="lg:col-span-1 hidden lg:block">
@@ -182,7 +175,6 @@ export default async function DashboardPage({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 space-y-4 sm:space-y-6">
           <CreatePostForm userId={user.id} />
-          {!hashtag && <FeedTabs />}
           {hashtag && (
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">#{hashtag}</h2>

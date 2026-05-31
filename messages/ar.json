@@ -167,10 +167,6 @@
     "closeMenu": "إغلاق القائمة"
   },
   "feed": {
-    "tabs": {
-      "forYou": "لك",
-      "following": "أتابع"
-    },
     "createPost": {
       "placeholder": "بمَ تفكر؟",
       "addImage": "إضافة صورة",
