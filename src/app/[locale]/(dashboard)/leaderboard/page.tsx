@@ -75,7 +75,7 @@ export default async function LeaderboardPage({
                     <Link
                       href={`/u/${row.id}`}
                       className={cn(
-                        "relative flex items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-muted/60",
+                        "relative flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-muted/60",
                         isMe && "bg-primary/5 ring-1 ring-primary/30",
                         isChampion &&
                           "overflow-hidden bg-gradient-to-r from-amber-100/80 via-yellow-50 to-amber-100/80 ring-1 ring-amber-400/60 dark:from-amber-950/40 dark:via-amber-900/20 dark:to-amber-950/40",
