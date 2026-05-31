@@ -37,7 +37,6 @@ export default async function ProfilePage({
         initialLocation={profile?.location ?? null}
         initialPronouns={profile?.pronouns ?? null}
         initialInterests={profile?.interests ?? null}
-        initialWebsite={profile?.website ?? null}
         initialBirthday={profile?.birthday ?? null}
         initialRelationshipStatus={profile?.relationship_status ?? null}
         initialShowBirthday={profile?.show_birthday ?? null}

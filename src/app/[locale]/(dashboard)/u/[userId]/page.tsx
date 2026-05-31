@@ -16,7 +16,6 @@ import {
   MapPin,
   Calendar,
   Hash,
-  Globe,
   Heart,
 } from "lucide-react";
 
@@ -286,21 +285,6 @@ export default async function PublicProfilePage({
                     </span>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* Website */}
-            {profile.website && (
-              <div className="flex items-center gap-2">
-                <Globe className="size-4 shrink-0 text-primary" />
-                <Link
-                  href={profile.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary hover:underline"
-                >
-                  {profile.website.replace(/^https?:\/\//, "")}
-                </Link>
               </div>
             )}
 

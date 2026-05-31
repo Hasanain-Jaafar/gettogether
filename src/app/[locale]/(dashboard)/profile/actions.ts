@@ -35,7 +35,6 @@ export async function updateProfile(
     location: d.location ?? null,
     pronouns: d.pronouns ?? null,
     interests: d.interests ?? [],
-    website: d.website ? d.website : null,
     birthday: d.birthday ? d.birthday : null,
     relationship_status: d.relationship_status ?? null,
     show_birthday: d.show_birthday ?? true,

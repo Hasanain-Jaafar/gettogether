@@ -22,7 +22,6 @@ export const profileSchema = z.object({
   location: z.string().max(100).optional(),
   pronouns: z.enum([...PRONOUNS]).optional(),
   interests: z.array(z.string().max(30)).max(10).optional(),
-  website: z.string().url().or(z.literal("")).optional(),
   birthday: z.string().optional().refine((val) => {
     if (!val) return true;
     const date = new Date(val);

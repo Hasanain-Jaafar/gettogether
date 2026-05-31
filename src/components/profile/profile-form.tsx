@@ -30,7 +30,6 @@ import {
 import {
   MapPin,
   Heart,
-  Globe,
   Calendar,
   Hash,
   User,
@@ -47,7 +46,6 @@ type ProfileFormProps = {
   initialLocation: string | null;
   initialPronouns: string | null;
   initialInterests: string[] | null;
-  initialWebsite: string | null;
   initialBirthday: string | null;
   initialRelationshipStatus: string | null;
   initialShowBirthday: boolean | null;
@@ -64,7 +62,6 @@ export function ProfileForm({
   initialLocation,
   initialPronouns,
   initialInterests,
-  initialWebsite,
   initialBirthday,
   initialRelationshipStatus,
   initialShowBirthday,
@@ -84,7 +81,6 @@ export function ProfileForm({
       location: initialLocation ?? "",
       pronouns: (initialPronouns || undefined) as ProfileInput["pronouns"],
       interests: initialInterests ?? [],
-      website: initialWebsite ?? "",
       birthday: initialBirthday ?? "",
       relationship_status: (initialRelationshipStatus || undefined) as ProfileInput["relationship_status"],
       show_birthday: initialShowBirthday ?? true,
@@ -379,31 +375,6 @@ export function ProfileForm({
                 </div>
               )}
               <p className="text-xs text-muted-foreground">{t("interestsHint")}</p>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
-                <Globe className="size-4" />
-                {t("websiteSection")}
-              </h3>
-
-              <FormField
-                control={form.control}
-                name="website"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("personalWebsite")}</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="url"
-                        placeholder={t("websitePlaceholder")}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <div className="space-y-4">
