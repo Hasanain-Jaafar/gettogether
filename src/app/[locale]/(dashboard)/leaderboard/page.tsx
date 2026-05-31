@@ -65,7 +65,7 @@ export default async function LeaderboardPage({
       ) : (
         <Card className="rounded-2xl">
           <CardContent className="p-2 sm:p-3">
-            <ul className="space-y-2">
+            <ul className="space-y-4">
               {rows.map((row, index) => {
                 const isMe = user?.id === row.id;
                 const rank = index + 1;
