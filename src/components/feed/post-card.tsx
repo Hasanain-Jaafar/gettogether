@@ -17,12 +17,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { LikeButton } from "@/components/feed/like-button";
 import { CommentSection } from "@/components/feed/comment-section";
-import { BookmarkButton } from "@/components/feed/bookmark-button";
-import { ShareButton } from "@/components/feed/share-button";
 import { VerifiedBadge } from "@/components/feed/verified-badge";
 import { LevelBadge } from "@/components/profile/level-badge";
 import { LeveledAvatar } from "@/components/profile/leveled-avatar";
-import { RepostButton } from "@/components/feed/repost-button";
 import { relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
 import { getVideoEmbed } from "@/lib/video-embed";
@@ -62,11 +59,7 @@ export type PostCardProps = {
   verificationType?: "individual" | "organization" | "government" | null;
   likeCount: number;
   commentCount: number;
-  bookmarkCount: number;
-  repostCount: number;
   currentUserLiked: boolean;
-  currentUserBookmarked: boolean;
-  currentUserReposted: boolean;
   comments: CommentWithAuthor[];
   currentUserId: string;
   likers: { name: string | null; avatar_url: string | null }[];
@@ -132,11 +125,7 @@ export function PostCard({
   verificationType = "individual",
   likeCount,
   commentCount,
-  bookmarkCount,
-  repostCount,
   currentUserLiked,
-  currentUserBookmarked,
-  currentUserReposted,
   comments,
   currentUserId,
   likers,
@@ -316,17 +305,6 @@ export function PostCard({
             initialComments={comments}
             commentCount={commentCount}
           />
-          <RepostButton
-            postId={post.id}
-            initialCount={repostCount}
-            initialReposted={currentUserReposted}
-          />
-          <BookmarkButton
-            postId={post.id}
-            initialCount={bookmarkCount}
-            initialBookmarked={currentUserBookmarked}
-          />
-          <ShareButton postId={post.id} />
         </div>
       </CardContent>
 

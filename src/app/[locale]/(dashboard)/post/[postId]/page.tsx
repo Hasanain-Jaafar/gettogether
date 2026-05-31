@@ -33,20 +33,13 @@ export default async function PostPage({
     .eq("id", post.user_id)
     .maybeSingle();
 
-  const [
-    { data: likes },
-    { data: comments },
-    { data: bookmarks },
-    { data: reposts },
-  ] = await Promise.all([
+  const [{ data: likes }, { data: comments }] = await Promise.all([
     supabase.from("likes").select("user_id").eq("post_id", postId),
     supabase
       .from("comments")
       .select("id, post_id, content, created_at, user_id, parent_id")
       .eq("post_id", postId)
       .order("created_at", { ascending: true }),
-    supabase.from("bookmarks").select("user_id").eq("post_id", postId),
-    supabase.from("reposts").select("user_id").eq("post_id", postId),
   ]);
 
   const commentUserIds = [...new Set(comments?.map((c) => c.user_id) ?? [])];
@@ -106,15 +99,7 @@ export default async function PostPage({
         author={author ?? { name: null, avatar_url: null }}
         likeCount={likes?.length ?? 0}
         commentCount={comments?.length ?? 0}
-        bookmarkCount={bookmarks?.length ?? 0}
-        repostCount={reposts?.length ?? 0}
         currentUserLiked={likes?.some((l) => l.user_id === user.id) ?? false}
-        currentUserBookmarked={
-          bookmarks?.some((b) => b.user_id === user.id) ?? false
-        }
-        currentUserReposted={
-          reposts?.some((r) => r.user_id === user.id) ?? false
-        }
         comments={commentsWithAuthors}
         currentUserId={user.id}
         likers={likers}

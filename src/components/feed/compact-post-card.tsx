@@ -17,9 +17,7 @@ type CompactPostCardProps = {
   author: { name: string | null; avatar_url: string | null };
   likeCount: number;
   commentCount: number;
-  bookmarkCount: number;
   currentUserLiked: boolean;
-  currentUserBookmarked: boolean;
   isVerified?: boolean;
   verificationType?: "individual" | "organization";
   className?: string;
@@ -38,9 +36,7 @@ export function CompactPostCard({
   author,
   likeCount,
   commentCount,
-  bookmarkCount,
   currentUserLiked,
-  currentUserBookmarked,
   className,
 }: CompactPostCardProps) {
   const locale = useLocale();
@@ -103,13 +99,6 @@ export function CompactPostCard({
             {likeCount} {likeCount === 1 ? "like" : "likes"}
           </span>
           <span>{commentCount} {commentCount === 1 ? "comment" : "comments"}</span>
-          <span
-            className={cn(
-              currentUserBookmarked && "text-primary"
-            )}
-          >
-            {bookmarkCount} {bookmarkCount === 1 ? "bookmark" : "bookmarks"}
-          </span>
         </div>
       </div>
 
