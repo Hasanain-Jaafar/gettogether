@@ -20,7 +20,8 @@
       "Bash(mkdir -p \"src/app/[locale]\")",
       "Bash(mv \"src/app/\\(marketing\\)\" \"src/app/[locale]/\\(marketing\\)\")",
       "Bash(mv \"src/app/\\(auth\\)\" \"src/app/[locale]/\\(auth\\)\")",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/en.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/ar.json','utf8'\\)\\); console.log\\('JSON OK'\\)\")"
     ]
   }
 }

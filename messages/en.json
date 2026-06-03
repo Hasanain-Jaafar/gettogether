@@ -1,111 +1,12 @@
 {
   "marketing": {
     "header": {
-      "features": "Features",
-      "about": "About",
-      "faq": "FAQ",
       "signIn": "Sign in",
-      "signUp": "Sign up",
-      "openMenu": "Open menu",
-      "closeMenu": "Close menu"
+      "signUp": "Sign up"
     },
     "hero": {
-      "headline1": "Where",
-      "headline2": "hearts connect",
-      "headline3": "in",
-      "headline4": "warm embrace",
-      "subheading": "A cozy gathering place where love blossoms and relationships grow. Share your journey, connect with kindred spirits, and build meaningful connections in a warm, welcoming space.",
-      "findCommunity": "Find your community",
-      "ignite": "Ignite connections",
-      "buildBonds": "Build lasting bonds",
-      "joinCta": "Join our gathering",
-      "welcomeBack": "Welcome back",
-      "trust": "✓ Free to join • ✓ Safe & welcoming • ✓ Built with ❤️"
-    },
-    "features": {
-      "title": "Why GetTogether?",
-      "subtitle": "We've created a space where relationships can flourish and hearts can truly connect.",
-      "items": {
-        "connections": {
-          "title": "Meaningful Connections",
-          "description": "Find people who truly get you. Our community is built on genuine interactions and shared values."
-        },
-        "safety": {
-          "title": "Safe & Welcoming",
-          "description": "Your safety is our priority. We've created a warm space where you can be your authentic self."
-        },
-        "cozy": {
-          "title": "Cozy Atmosphere",
-          "description": "Experience the comfort of a welcoming gathering. No pressure, just authentic human connection."
-        },
-        "share": {
-          "title": "Share Your Journey",
-          "description": "Express yourself freely through posts, images, and conversations. Your story matters here."
-        }
-      }
-    },
-    "about": {
-      "title": "More Than Just Another Social Platform",
-      "subtitle": "GetTogether was born from a simple belief: that everyone deserves a warm, welcoming space to connect with like-minded souls. We're tired of algorithm-driven feeds and manufactured engagement. We wanted something real.",
-      "mission": "Our mission is to create the world's most welcoming digital gathering place—where relationships bloom naturally, conversations flow freely, and everyone feels like they belong.",
-      "values": {
-        "genuine": {
-          "title": "Genuine Connection",
-          "description": "We believe in authentic relationships, not superficial interactions. Every feature is designed to foster real connections between people."
-        },
-        "warm": {
-          "title": "Warm & Welcoming",
-          "description": "Like your favorite coffee shop on a rainy day, GetTogether is a cozy space where everyone feels at home and valued."
-        },
-        "community": {
-          "title": "Community First",
-          "description": "We're building a community, not a platform. Your voice matters, your experiences shape our future, and you belong here."
-        },
-        "spark": {
-          "title": "Spark Joy",
-          "description": "Life's too short for dull moments. We bring magic to everyday connections through thoughtful design and delightful experiences."
-        }
-      }
-    },
-    "faq": {
-      "title": "Frequently Asked Questions",
-      "subtitle": "Got questions? We've got answers.",
-      "footer": "Still have questions? We'd love to hear from you.",
-      "items": {
-        "free": {
-          "question": "Is GetTogether free to use?",
-          "answer": "Yes! GetTogether is completely free to use. We believe that meaningful connections should be accessible to everyone. Sign up, post, connect, and build relationships at no cost."
-        },
-        "find": {
-          "question": "How do I find people to connect with?",
-          "answer": "We offer multiple ways to discover kindred spirits: explore the feed to see posts from everyone, use the Explore page to discover new people, and engage with posts that resonate with you. Genuine interactions often lead to meaningful connections."
-        },
-        "privacy": {
-          "question": "Is my data and privacy protected?",
-          "answer": "Absolutely. Your privacy and safety are our top priorities. We use industry-standard encryption, never sell your data, and give you full control over your profile and posts. You can delete your account at any time."
-        },
-        "media": {
-          "question": "Can I share photos and media?",
-          "answer": "Yes! You can share images with your posts. Our platform supports various image formats, and we optimize them for a great viewing experience across all devices."
-        },
-        "different": {
-          "question": "How is GetTogether different from other social platforms?",
-          "answer": "Unlike algorithm-driven platforms that prioritize engagement over connection, GetTogether focuses on authentic, meaningful interactions. We've designed our cozy, welcoming atmosphere to foster genuine relationships rather than endless scrolling."
-        },
-        "visibility": {
-          "question": "Can I control who sees my posts?",
-          "answer": "Your posts are visible to the entire GetTogether community, which is part of what makes our warm, open atmosphere special. You can always edit or delete your posts, and block anyone who makes you uncomfortable."
-        }
-      }
-    },
-    "cta": {
-      "title": "Ready to find your people?",
-      "subtitle": "Join our warm community in seconds. No credit card required — just bring your authentic self and let the connections begin.",
-      "share": "Share & Connect",
-      "kindred": "Find Kindred Spirits",
-      "grow": "Grow Together",
-      "button": "Start your journey",
-      "footer": "Join thousands who've already found their place"
+      "title": "A world brighter with you",
+      "subtitle": "A warm place where our love blossoms and our days grow together. Share our journey. Souls connect."
     }
   },
   "auth": {

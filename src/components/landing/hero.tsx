@@ -1,127 +1,100 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { Heart, Users, Flame, Sparkles } from "lucide-react";
 
 export function Hero() {
   const t = useTranslations("marketing.hero");
+  const tHeader = useTranslations("marketing.header");
+
   return (
-    <motion.section
-      className="relative overflow-hidden px-4 py-24 sm:py-32 md:py-40"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* Warm gradient background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/30" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] -translate-y-1/2 bg-primary/10 rounded-full blur-3xl" />
+    <section className="relative min-h-[calc(100vh-4rem)] w-full overflow-hidden">
+      {/* Background image: mobile-portrait on small screens, desktop on md+ */}
+      <Image
+        src="/Mobil bg.png"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center md:hidden"
+      />
+      <Image
+        src="/Desktop bg.png"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="hidden object-cover object-center md:block"
+      />
 
-      <div className="mx-auto max-w-4xl text-center">
-        {/* Heart icon with animation */}
+      {/* Subtle bottom fade so the buttons stay legible */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10" />
+
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col items-center px-6 pt-12 pb-10 text-center sm:max-w-lg md:max-w-xl">
+        {/* Heart logo */}
         <motion.div
-          className="mx-auto mb-8 flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0.5 }}
+          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1, duration: 0.5, type: "spring" }}
+          transition={{ duration: 0.5 }}
+          className="mx-auto"
         >
-          <div className="relative">
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <Heart className="size-20 text-primary fill-primary/20" />
-            </motion.div>
-            <Sparkles className="absolute -top-2 -right-2 size-6 text-[#e85a91]" />
-          </div>
+          <Image
+            src="/heart.png"
+            alt=""
+            width={140}
+            height={140}
+            priority
+            className="size-24 sm:size-28 md:size-32"
+          />
         </motion.div>
 
-        {/* Main heading */}
-        <motion.h1
-          className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          {t("headline1")} <span className="text-primary">{t("headline2")}</span>{" "}
-          <br className="hidden sm:block" />
-          {t("headline3")} <span className="text-[#c73c7c]">{t("headline4")}</span>
-        </motion.h1>
+        {/* Headline + subheading sit in the middle of the screen */}
+        <div className="mt-auto flex flex-col items-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="text-4xl font-extrabold leading-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-5xl md:text-6xl"
+          >
+            {t("title")}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.5 }}
+            className="mt-4 max-w-xs text-base leading-relaxed text-white/95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] sm:max-w-sm sm:text-lg"
+          >
+            {t("subtitle")}
+          </motion.p>
+        </div>
 
-        {/* Subheading */}
-        <motion.p
-          className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl md:text-2xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          {t("subheading")}
-        </motion.p>
-
-        {/* Feature highlights */}
+        {/* CTAs */}
         <motion.div
-          className="mt-10 flex flex-wrap items-center justify-center gap-6"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <Users className="size-5 text-primary" />
-            <span>{t("findCommunity")}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <Flame className="size-5 text-[#e85a91]" />
-            <span>{t("ignite")}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <Heart className="size-5 text-primary" />
-            <span>{t("buildBonds")}</span>
-          </div>
-        </motion.div>
-
-        {/* CTA buttons */}
-        <motion.div
-          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
+          className="mt-10 flex w-full flex-col items-stretch gap-3"
         >
           <Button
             asChild
             size="lg"
-            className="w-full sm:w-auto rounded-full shadow-lg shadow-primary/30 px-8 text-base"
+            className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary/90"
           >
-            <Link href="/sign-up">{t("joinCta")}</Link>
+            <Link href="/sign-in">{tHeader("signIn")}</Link>
           </Button>
           <Button
             asChild
+            size="lg"
             variant="outline"
-            size="lg"
-            className="w-full sm:w-auto rounded-full text-base"
+            className="h-12 w-full rounded-full border-2 border-primary bg-transparent text-base font-semibold text-primary hover:bg-primary/10 hover:text-primary"
           >
-            <Link href="/sign-in">{t("welcomeBack")}</Link>
+            <Link href="/sign-up">{tHeader("signUp")}</Link>
           </Button>
         </motion.div>
-
-        {/* Trust indicator */}
-        <motion.p
-          className="mt-6 text-sm text-muted-foreground"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7, duration: 0.5 }}
-        >
-          {t("trust")}
-        </motion.p>
       </div>
-    </motion.section>
+    </section>
   );
 }
