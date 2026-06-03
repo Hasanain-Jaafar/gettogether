@@ -78,7 +78,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.5 }}
-          className="mt-8 flex w-full flex-col items-stretch gap-3 sm:mt-10"
+          className="mt-16 flex w-full flex-col items-stretch gap-3 sm:mt-20"
         >
           <Button
             asChild
