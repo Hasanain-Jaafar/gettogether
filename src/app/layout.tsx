@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Tajawal } from "next/font/google";
+import { Geist, Geist_Mono, Tajawal, Zain } from "next/font/google";
 import { headers } from "next/headers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -19,6 +19,12 @@ const tajawal = Tajawal({
   variable: "--font-tajawal",
   subsets: ["arabic", "latin"],
   weight: ["300", "400", "500", "700", "800"],
+});
+
+const zain = Zain({
+  variable: "--font-zain",
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -41,7 +47,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${tajawal.variable} antialiased ${locale === "ar" ? "font-arabic" : ""}`}
+        className={`${geistSans.variable} ${geistMono.variable} ${tajawal.variable} ${zain.variable} antialiased ${locale === "ar" ? "font-arabic" : ""}`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}

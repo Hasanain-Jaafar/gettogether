@@ -11,7 +11,9 @@ export function Hero() {
   const tHeader = useTranslations("marketing.header");
 
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] w-full overflow-hidden">
+    <section
+      className="relative min-h-[calc(100vh-4rem)] w-full overflow-hidden font-[family-name:var(--font-zain)]"
+    >
       {/* Background image: mobile-portrait on small screens, desktop on md+ */}
       <Image
         src="/Mobil bg.png"
@@ -33,7 +35,7 @@ export function Hero() {
       {/* Subtle bottom fade so the buttons stay legible */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10" />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col items-center px-6 pt-12 pb-10 text-center sm:max-w-lg md:max-w-xl">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col items-center px-6 pt-6 pb-10 text-center sm:max-w-lg sm:pt-12 md:max-w-xl">
         {/* Heart logo */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -51,13 +53,13 @@ export function Hero() {
           />
         </motion.div>
 
-        {/* Headline + subheading sit in the middle of the screen */}
-        <div className="mt-auto flex flex-col items-center">
+        {/* Headline + subheading */}
+        <div className="mt-6 flex flex-col items-center sm:mt-auto">
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.5 }}
-            className="text-4xl font-extrabold leading-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-5xl md:text-6xl"
+            className="text-5xl font-extrabold leading-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-6xl md:text-7xl"
           >
             {t("title")}
           </motion.h1>
@@ -65,7 +67,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
-            className="mt-4 max-w-xs text-base leading-relaxed text-white/95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] sm:max-w-sm sm:text-lg"
+            className="mt-4 max-w-xs text-lg leading-relaxed text-white/95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] sm:max-w-sm sm:text-xl"
           >
             {t("subtitle")}
           </motion.p>
@@ -76,7 +78,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.5 }}
-          className="mt-10 flex w-full flex-col items-stretch gap-3"
+          className="mt-8 flex w-full flex-col items-stretch gap-3 sm:mt-10"
         >
           <Button
             asChild
@@ -89,7 +91,7 @@ export function Hero() {
             asChild
             size="lg"
             variant="outline"
-            className="h-12 w-full rounded-full border-2 border-primary bg-transparent text-base font-semibold text-primary hover:bg-primary/10 hover:text-primary"
+            className="h-12 w-full rounded-full border-2 border-white bg-transparent text-base font-semibold text-white hover:bg-white/10 hover:text-white"
           >
             <Link href="/sign-up">{tHeader("signUp")}</Link>
           </Button>
