@@ -105,7 +105,7 @@ export default async function LeaderboardPage({
                         {isChampion && (
                           <span
                             aria-hidden
-                            className="absolute inset-0 rounded-full ring-2 ring-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.55)]"
+                            className="pointer-events-none absolute -inset-1 rounded-full shadow-[0_0_20px_6px_rgba(245,158,11,0.45)]"
                           />
                         )}
                         <LeveledAvatar level={row.level ?? 1} className="size-10">
