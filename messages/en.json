@@ -56,7 +56,6 @@
     "feed": "Feed",
     "profile": "Profile",
     "calendar": "Events",
-    "explore": "Explore",
     "leaderboard": "Leaderboard",
     "messages": "Messages",
     "notifications": "Notifications",
@@ -238,19 +237,6 @@
     "unsupportedFile": "Unsupported file type.",
     "uploadFailed": "Upload failed."
   },
-  "explore": {
-    "title": "Explore",
-    "subtitle": "Find people and posts across the community.",
-    "placeholder": "Search people, posts, hashtags…",
-    "startSearching": "Start searching",
-    "startSearchingDescription": "Type a name, a word from a post, or a topic. Results update as you type.",
-    "noResults": "No results for \"{query}\"",
-    "noResultsHint": "Try a different name or keyword.",
-    "people": "People",
-    "posts": "Posts",
-    "hashtagResults": "Posts tagged #{tag}",
-    "clearSearch": "Clear search"
-  },
   "postPage": {
     "back": "Back",
     "notFound": "Post not found"
@@ -271,8 +257,7 @@
     "searchPeople": "Search people…",
     "noMatches": "No matches",
     "followFirstTitle": "Follow people to message them",
-    "followFirstHint": "Visit Explore to find people you'd like to chat with.",
-    "goToExplore": "Go to Explore",
+    "followFirstHint": "Follow someone first to start a conversation.",
     "followGateError": "You can only message people you follow or who follow you."
   },
   "poll": {

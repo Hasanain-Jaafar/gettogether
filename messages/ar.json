@@ -56,7 +56,6 @@
     "feed": "الرئيسية",
     "profile": "الملف الشخصي",
     "calendar": "الأحداث",
-    "explore": "استكشف",
     "leaderboard": "المتصدرون",
     "messages": "الرسائل",
     "notifications": "الإشعارات",
@@ -238,19 +237,6 @@
     "unsupportedFile": "نوع الملف غير مدعوم.",
     "uploadFailed": "فشل الرفع."
   },
-  "explore": {
-    "title": "استكشف",
-    "subtitle": "اعثر على الأشخاص والمنشورات في المجتمع.",
-    "placeholder": "ابحث عن أشخاص، منشورات، أو هاشتاغات…",
-    "startSearching": "ابدأ البحث",
-    "startSearchingDescription": "اكتب اسماً، أو كلمة من منشور، أو موضوعاً. تتحدث النتائج فور الكتابة.",
-    "noResults": "لا نتائج لـ \"{query}\"",
-    "noResultsHint": "جرّب اسماً أو كلمة أخرى.",
-    "people": "الأشخاص",
-    "posts": "المنشورات",
-    "hashtagResults": "المنشورات الموسومة بـ #{tag}",
-    "clearSearch": "مسح البحث"
-  },
   "postPage": {
     "back": "رجوع",
     "notFound": "المنشور غير موجود"
@@ -271,8 +257,7 @@
     "searchPeople": "ابحث عن أشخاص…",
     "noMatches": "لا توجد نتائج",
     "followFirstTitle": "تابع أشخاصاً لمراسلتهم",
-    "followFirstHint": "اذهب إلى الاستكشاف للعثور على أشخاص لمراسلتهم.",
-    "goToExplore": "اذهب إلى الاستكشاف",
+    "followFirstHint": "تابع شخصاً أولاً لبدء محادثة.",
     "followGateError": "يمكنك فقط مراسلة الأشخاص الذين تتابعهم أو يتابعونك."
   },
   "poll": {

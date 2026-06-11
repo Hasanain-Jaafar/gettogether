@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { PenSquare, Search } from "lucide-react";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import {
   Dialog,
   DialogContent,
@@ -107,15 +107,6 @@ export function NewMessageDialog() {
               <p className="text-xs text-muted-foreground">
                 {t("followFirstHint")}
               </p>
-              <Button
-                asChild
-                size="sm"
-                variant="outline"
-                className="rounded-full mt-2"
-                onClick={() => setOpen(false)}
-              >
-                <Link href="/explore">{t("goToExplore")}</Link>
-              </Button>
             </div>
           ) : filtered.length === 0 ? (
             <p className="px-2 py-6 text-center text-sm text-muted-foreground">
