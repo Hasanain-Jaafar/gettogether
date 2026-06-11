@@ -164,7 +164,10 @@ export function EventsCardList({ currentUserId, initialEvents }: Props) {
           <h1 className="text-2xl font-bold">{t("upcomingEvents")}</h1>
           <p className="text-sm text-muted-foreground">{t("upcomingSubtitle")}</p>
         </div>
-        <Button onClick={() => setCreateOpen(true)} className="rounded-full">
+        <Button
+          onClick={() => setCreateOpen(true)}
+          className="size-9 rounded-full p-0 sm:h-9 sm:w-auto sm:px-4"
+        >
           <Plus className="size-4" />
           <span className="hidden sm:inline">{t("createEvent")}</span>
         </Button>
