@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowRight, CalendarDays, Globe, Lock, MapPin, Plus, Users } from "lucide-react";
+import { Archive, ArrowRight, CalendarDays, Globe, Lock, MapPin, Plus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EventForm } from "./event-form";
 import { EventDetailDialog } from "./event-detail-dialog";
@@ -27,6 +27,14 @@ const CHIP_PALETTE = [
   "bg-emerald-200/70 text-emerald-900 dark:bg-emerald-900/60 dark:text-emerald-100",
 ];
 
+const PAST_BG = "bg-muted/60 dark:bg-muted/30";
+const PAST_CHIP = "bg-background/70 text-muted-foreground dark:bg-background/40";
+
+function isPast(ev: CalendarEvent, now: number) {
+  const end = ev.ends_at ? new Date(ev.ends_at).getTime() : new Date(ev.starts_at).getTime();
+  return end < now;
+}
+
 export function EventsCardList({ currentUserId, initialEvents }: Props) {
   const t = useTranslations("calendar");
   const locale = useLocale();
@@ -43,20 +51,110 @@ export function EventsCardList({ currentUserId, initialEvents }: Props) {
     [locale],
   );
 
+  const { upcoming, past } = useMemo(() => {
+    const now = Date.now();
+    const up: CalendarEvent[] = [];
+    const pa: CalendarEvent[] = [];
+    for (const ev of events) {
+      if (isPast(ev, now)) pa.push(ev);
+      else up.push(ev);
+    }
+    up.sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+    pa.sort((a, b) => b.starts_at.localeCompare(a.starts_at));
+    return { upcoming: up, past: pa };
+  }, [events]);
+
   function handleCreated(ev: CalendarEvent) {
-    setEvents((prev) => [...prev, ev].sort((a, b) => a.starts_at.localeCompare(b.starts_at)));
+    setEvents((prev) => [...prev, ev]);
   }
   function handleUpdated(ev: CalendarEvent) {
-    setEvents((prev) =>
-      prev
-        .map((e) => (e.id === ev.id ? ev : e))
-        .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
-    );
+    setEvents((prev) => prev.map((e) => (e.id === ev.id ? ev : e)));
     setSelectedEvent(ev);
   }
   function handleDeleted(id: string) {
     setEvents((prev) => prev.filter((e) => e.id !== id));
     setSelectedEvent(null);
+  }
+
+  function renderCard(ev: CalendarEvent, i: number, archived: boolean) {
+    const bg = archived ? PAST_BG : PALETTE[i % PALETTE.length];
+    const chip = archived ? PAST_CHIP : CHIP_PALETTE[i % CHIP_PALETTE.length];
+    const start = new Date(ev.starts_at);
+    const end = ev.ends_at ? new Date(ev.ends_at) : null;
+    const VisIcon =
+      ev.visibility === "public" ? Globe : ev.visibility === "private" ? Lock : Users;
+    return (
+      <button
+        key={ev.id}
+        type="button"
+        onClick={() => setSelectedEvent(ev)}
+        className={`group flex min-h-[230px] flex-col rounded-2xl p-5 text-start shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${bg} ${
+          archived ? "opacity-80 saturate-50 hover:opacity-100" : ""
+        }`}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <h2
+            className={`text-xl font-bold line-clamp-2 ${
+              archived ? "text-muted-foreground" : "text-foreground"
+            }`}
+          >
+            {ev.title}
+          </h2>
+          {archived && (
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <Archive className="size-3" />
+              {t("archived")}
+            </span>
+          )}
+        </div>
+        {ev.description && (
+          <p
+            className={`mt-1.5 text-sm line-clamp-2 ${
+              archived ? "text-muted-foreground/80" : "text-foreground/70"
+            }`}
+          >
+            {ev.description}
+          </p>
+        )}
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${chip}`}
+          >
+            <CalendarDays className="size-3" />
+            {dateFmt.format(start)} · {timeFmt.format(start)}
+            {end ? ` – ${timeFmt.format(end)}` : ""}
+          </span>
+          {ev.location && (
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${chip}`}
+            >
+              <MapPin className="size-3" />
+              <span className="max-w-[140px] truncate">{ev.location}</span>
+            </span>
+          )}
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${chip}`}
+          >
+            <VisIcon className="size-3" />
+            {t(`visibility.${ev.visibility}`)}
+          </span>
+        </div>
+
+        <div className="mt-auto flex items-center justify-between pt-5">
+          <span
+            className={`text-sm font-semibold ${
+              archived ? "text-muted-foreground" : "text-foreground"
+            }`}
+          >
+            {ev.author?.name ?? t("unknownUser")}
+          </span>
+          <span className="inline-flex size-9 items-center justify-center rounded-full bg-background/80 text-foreground shadow-sm transition group-hover:bg-background">
+            <ArrowRight className="size-4 rtl:rotate-180" />
+          </span>
+        </div>
+      </button>
+    );
   }
 
   return (
@@ -72,7 +170,7 @@ export function EventsCardList({ currentUserId, initialEvents }: Props) {
         </Button>
       </div>
 
-      {events.length === 0 ? (
+      {upcoming.length === 0 ? (
         <div className="rounded-2xl border border-dashed p-10 text-center">
           <CalendarDays className="mx-auto size-10 text-muted-foreground" />
           <p className="mt-3 font-medium">{t("emptyTitle")}</p>
@@ -84,55 +182,25 @@ export function EventsCardList({ currentUserId, initialEvents }: Props) {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {events.map((ev, i) => {
-            const bg = PALETTE[i % PALETTE.length];
-            const chip = CHIP_PALETTE[i % CHIP_PALETTE.length];
-            const start = new Date(ev.starts_at);
-            const end = ev.ends_at ? new Date(ev.ends_at) : null;
-            const VisIcon =
-              ev.visibility === "public" ? Globe : ev.visibility === "private" ? Lock : Users;
-            return (
-              <button
-                key={ev.id}
-                type="button"
-                onClick={() => setSelectedEvent(ev)}
-                className={`group flex min-h-[230px] flex-col rounded-2xl p-5 text-start shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${bg}`}
-              >
-                <h2 className="text-xl font-bold text-foreground line-clamp-2">{ev.title}</h2>
-                {ev.description && (
-                  <p className="mt-1.5 text-sm text-foreground/70 line-clamp-2">{ev.description}</p>
-                )}
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${chip}`}>
-                    <CalendarDays className="size-3" />
-                    {dateFmt.format(start)} · {timeFmt.format(start)}
-                    {end ? ` – ${timeFmt.format(end)}` : ""}
-                  </span>
-                  {ev.location && (
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${chip}`}>
-                      <MapPin className="size-3" />
-                      <span className="max-w-[140px] truncate">{ev.location}</span>
-                    </span>
-                  )}
-                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${chip}`}>
-                    <VisIcon className="size-3" />
-                    {t(`visibility.${ev.visibility}`)}
-                  </span>
-                </div>
-
-                <div className="mt-auto flex items-center justify-between pt-5">
-                  <span className="text-sm font-semibold text-foreground">
-                    {ev.author?.name ?? t("unknownUser")}
-                  </span>
-                  <span className="inline-flex size-9 items-center justify-center rounded-full bg-background/80 text-foreground shadow-sm transition group-hover:bg-background">
-                    <ArrowRight className="size-4 rtl:rotate-180" />
-                  </span>
-                </div>
-              </button>
-            );
-          })}
+          {upcoming.map((ev, i) => renderCard(ev, i, false))}
         </div>
+      )}
+
+      {past.length > 0 && (
+        <section className="mt-12">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Archive className="size-4 text-muted-foreground" />
+              <h2 className="text-lg font-semibold text-muted-foreground">{t("pastEvents")}</h2>
+            </div>
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">{past.length}</span>
+          </div>
+          <p className="mb-4 text-sm text-muted-foreground">{t("pastSubtitle")}</p>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {past.map((ev, i) => renderCard(ev, i, true))}
+          </div>
+        </section>
       )}
 
       <EventForm open={createOpen} onOpenChange={setCreateOpen} onCreated={handleCreated} />

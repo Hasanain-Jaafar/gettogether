@@ -18,9 +18,10 @@ export default async function CalendarPage({
   if (!user) return null;
 
   const now = new Date();
-  // Show events from yesterday onward for the next ~6 months.
+  // Include past events (last ~6 months) so they can be shown as archived,
+  // alongside upcoming events for the next ~6 months.
   const rangeStart = new Date(now);
-  rangeStart.setDate(rangeStart.getDate() - 1);
+  rangeStart.setMonth(rangeStart.getMonth() - 6);
   const rangeEnd = new Date(now);
   rangeEnd.setMonth(rangeEnd.getMonth() + 6);
 
