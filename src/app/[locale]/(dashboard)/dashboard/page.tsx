@@ -214,7 +214,6 @@ export default async function DashboardPage({
         </div>
         <div className="lg:col-span-1 hidden lg:block">
           <DashboardSidebar
-            trendingInitial={trendingInitial}
             whoToFollowInitial={whoToFollowInitial}
           />
         </div>
