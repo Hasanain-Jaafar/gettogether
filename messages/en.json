@@ -44,6 +44,7 @@
       "hasAccount": "Already have an account?",
       "signInLink": "Sign in",
       "rateLimit": "Too many sign-up attempts. Please wait a few minutes and try again.",
+      "domainBlocked": "Sign ups from this email domain are not allowed.",
       "genericError": "Could not create account."
     }
   },

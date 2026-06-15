@@ -60,6 +60,8 @@ export function SignUpForm() {
           : msg.toLowerCase().includes("duplicate") ||
             msg.toLowerCase().includes("unique")
           ? t("usernameTaken")
+          : msg.toLowerCase().includes("domain not allowed")
+          ? t("domainBlocked")
           : t("genericError");
       setError(friendly);
       return;
