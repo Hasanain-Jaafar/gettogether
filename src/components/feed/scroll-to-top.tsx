@@ -1,0 +1,60 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { ArrowUp } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export function ScrollToTop() {
+  const [visible, setVisible] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    function onScroll() {
+      if (window.scrollY > 400) {
+        setLeaving(false);
+        setVisible(true);
+      } else {
+        setLeaving(true);
+        timeout = setTimeout(() => {
+          setVisible(false);
+          setLeaving(false);
+        }, 300);
+      }
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <button
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      aria-label="Scroll to top"
+      className={cn(
+        "fixed bottom-6 right-6 z-50 group",
+        "flex items-center gap-2 rounded-full px-4 py-2.5",
+        "bg-primary text-primary-foreground",
+        "shadow-lg shadow-primary/30",
+        "hover:shadow-xl hover:shadow-primary/40 hover:scale-105",
+        "active:scale-95",
+        "transition-all duration-200",
+        leaving
+          ? "animate-[slide-down_0.3s_ease-in_forwards]"
+          : "animate-[slide-up_0.3s_ease-out_forwards]"
+      )}
+    >
+      <ArrowUp
+        className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5"
+        strokeWidth={2.5}
+      />
+      <span className="text-sm font-medium leading-none">Top</span>
+    </button>
+  );
+}

@@ -2,12 +2,6 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export type TrendingTopic = {
-  name: string;
-  count: number;
-  last_trending_at: string;
-};
-
 type PostWithUser = {
   id: string;
   user_id: string;
@@ -22,45 +16,6 @@ type PostWithUser = {
     level?: number | null;
   } | null;
 };
-
-export async function extractHashtags(content: string): Promise<string[]> {
-  const hashtagRegex = /#(\w+)/g;
-  const hashtags: string[] = [];
-  let match;
-  while ((match = hashtagRegex.exec(content)) !== null) {
-    hashtags.push(match[1]);
-  }
-  return hashtags;
-}
-
-export async function getTrendingTopics(
-  limit: number = 10
-): Promise<TrendingTopic[]> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("trending_topics")
-    .select("name, count, last_trending_at")
-    .order("count", { ascending: false })
-    .limit(limit);
-
-  if (error) return [];
-
-  return data ?? [];
-}
-
-export async function updateTrendingTopics(): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient();
-
-  // Call the database function to update trending topics
-  const { error } = await supabase.rpc("update_trending_topics");
-
-  if (error) {
-    return { success: false, error: error.message };
-  }
-
-  return { success: true };
-}
 
 export async function getPostsByHashtag(
   hashtag: string,

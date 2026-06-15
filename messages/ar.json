@@ -148,9 +148,6 @@
     }
   },
   "sidebar": {
-    "trending": "الرائج",
-    "trendingTopics": "المواضيع الرائجة",
-    "noTrending": "لا توجد مواضيع رائجة بعد",
     "whoToFollow": "أشخاص لمتابعتهم",
     "follow": "متابعة",
     "following": "أتابع",

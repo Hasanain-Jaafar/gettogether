@@ -148,9 +148,6 @@
     }
   },
   "sidebar": {
-    "trending": "Trending",
-    "trendingTopics": "Trending Topics",
-    "noTrending": "No trending topics yet",
     "whoToFollow": "Who to Follow",
     "follow": "Follow",
     "following": "Following",

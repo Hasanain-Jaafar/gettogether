@@ -4,10 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 import { CreatePostForm } from "@/components/feed/create-post-form";
 import { PostCard } from "@/components/feed/post-card";
 import { DashboardRealtime } from "@/components/feed/dashboard-realtime";
+import { ScrollToTop } from "@/components/feed/scroll-to-top";
 import { DashboardSidebar } from "@/components/feed/dashboard-sidebar";
 import { EmptyState } from "@/components/feed/empty-state";
 import { getForYouFeed } from "@/app/[locale]/(dashboard)/actions/feed";
-import { getTrendingTopics } from "@/app/[locale]/(dashboard)/actions/hashtags";
 import { getWhoToFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 
 const POSTS_PAGE_SIZE = 20;
@@ -32,10 +32,7 @@ export default async function DashboardPage({
 
   const hashtag = hashtagParam;
 
-  const [trendingInitial, whoToFollowInitial] = await Promise.all([
-    getTrendingTopics(5),
-    getWhoToFollow(user.id, 3),
-  ]);
+  const whoToFollowInitial = await getWhoToFollow(user.id, 3);
 
   let posts: any[] = [];
   if (hashtag) {
@@ -55,6 +52,7 @@ export default async function DashboardPage({
     return (
       <>
         <DashboardRealtime />
+        <ScrollToTop />
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 space-y-4 sm:space-y-6">
             <CreatePostForm userId={user.id} />
@@ -66,7 +64,6 @@ export default async function DashboardPage({
           </div>
           <div className="lg:col-span-1 hidden lg:block">
             <DashboardSidebar
-              trendingInitial={trendingInitial}
               whoToFollowInitial={whoToFollowInitial}
             />
           </div>
@@ -172,6 +169,7 @@ export default async function DashboardPage({
   return (
     <>
       <DashboardRealtime />
+      <ScrollToTop />
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 space-y-4 sm:space-y-6">
           <CreatePostForm userId={user.id} />
