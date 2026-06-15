@@ -39,7 +39,7 @@ export function ScrollToTop() {
       aria-label="Scroll to top"
       className={cn(
         "fixed bottom-6 right-6 z-50 group",
-        "flex items-center gap-2 rounded-full px-4 py-2.5",
+        "flex items-center justify-center rounded-full size-11",
         "bg-primary text-primary-foreground",
         "shadow-lg shadow-primary/30",
         "hover:shadow-xl hover:shadow-primary/40 hover:scale-105",
@@ -54,7 +54,6 @@ export function ScrollToTop() {
         className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5"
         strokeWidth={2.5}
       />
-      <span className="text-sm font-medium leading-none">Top</span>
     </button>
   );
 }
