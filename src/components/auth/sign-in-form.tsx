@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { signInSchema, type SignInInput } from "@/lib/validations/auth";
 import { resolveLoginIdentifier } from "@/app/[locale]/(auth)/actions";
@@ -126,15 +125,6 @@ export function SignInForm() {
             >
               {form.formState.isSubmitting ? t("submitting") : t("submit")}
             </Button>
-            <p className="text-sm text-muted-foreground text-center">
-              {t("noAccount")}{" "}
-              <Link
-                href="/sign-up"
-                className="font-medium text-primary underline-offset-4 hover:underline"
-              >
-                {t("signUpLink")}
-              </Link>
-            </p>
           </CardFooter>
         </form>
       </Form>

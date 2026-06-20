@@ -78,7 +78,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.5 }}
-          className="mt-16 flex w-full flex-col items-stretch gap-3 sm:mt-20"
+          className="absolute inset-x-6 bottom-[15%] flex w-auto flex-col items-stretch gap-3 sm:inset-x-12"
         >
           <Button
             asChild
@@ -86,14 +86,6 @@ export function Hero() {
             className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary/90"
           >
             <Link href="/sign-in">{tHeader("signIn")}</Link>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="h-12 w-full rounded-full border-2 border-white bg-transparent text-base font-semibold text-white hover:bg-white/10 hover:text-white"
-          >
-            <Link href="/sign-up">{tHeader("signUp")}</Link>
           </Button>
         </motion.div>
       </div>

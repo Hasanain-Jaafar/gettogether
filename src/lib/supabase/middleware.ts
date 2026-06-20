@@ -33,9 +33,16 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthPage =
-    request.nextUrl.pathname.startsWith("/sign-in") ||
-    request.nextUrl.pathname.startsWith("/sign-up");
+  const pathWithoutLocale =
+    request.nextUrl.pathname.replace(/^\/(en|ar)(?=\/|$)/, "") || "/";
+  const isSignUpRoute =
+    pathWithoutLocale === "/sign-up" || pathWithoutLocale.startsWith("/sign-up/");
+
+  if (isSignUpRoute) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
+
+  const isAuthPage = request.nextUrl.pathname.startsWith("/sign-in");
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith("/dashboard") ||
     request.nextUrl.pathname.startsWith("/profile") ||
