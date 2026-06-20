@@ -58,7 +58,6 @@
     "profile": "Profile",
     "calendar": "Events",
     "leaderboard": "Leaderboard",
-    "messages": "Messages",
     "notifications": "Notifications",
     "viewProfile": "View profile",
     "editProfile": "Edit profile",
@@ -238,25 +237,6 @@
   "postPage": {
     "back": "Back",
     "notFound": "Post not found"
-  },
-  "messages": {
-    "title": "Messages",
-    "empty": "No conversations yet. Visit someone's profile and send the first message.",
-    "noMessagesYet": "No messages yet",
-    "unknownUser": "Unknown",
-    "back": "Back",
-    "placeholder": "Type a message…",
-    "send": "Send",
-    "seen": "Seen",
-    "typing": "typing…",
-    "startConversation": "Say hi to start the conversation.",
-    "message": "Message",
-    "newMessage": "New message",
-    "searchPeople": "Search people…",
-    "noMatches": "No matches",
-    "followFirstTitle": "Follow people to message them",
-    "followFirstHint": "Follow someone first to start a conversation.",
-    "followGateError": "You can only message people you follow or who follow you."
   },
   "poll": {
     "vote": "Vote",

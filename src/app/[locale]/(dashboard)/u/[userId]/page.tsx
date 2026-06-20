@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PostCard } from "@/components/feed/post-card";
 import { getFollowers, getFollowing } from "@/app/[locale]/(dashboard)/actions/follows";
 import { FollowButton } from "@/components/profile/follow-button";
-import { MessageButton } from "@/components/messages/message-button";
 import { FollowListDialog } from "@/components/profile/follow-list-dialog";
 import { LevelBadge } from "@/components/profile/level-badge";
 import { BadgeGrid, type BadgeRow } from "@/components/profile/badge-grid";
@@ -309,7 +308,6 @@ export default async function PublicProfilePage({
                   targetUserId={userId}
                   initialFollowing={isFollowing}
                 />
-                <MessageButton targetUserId={userId} />
               </div>
             )}
 

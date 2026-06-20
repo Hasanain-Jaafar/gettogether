@@ -58,7 +58,6 @@
     "profile": "الملف الشخصي",
     "calendar": "الأحداث",
     "leaderboard": "المتصدرون",
-    "messages": "الرسائل",
     "notifications": "الإشعارات",
     "viewProfile": "عرض الملف الشخصي",
     "editProfile": "تعديل الملف الشخصي",
@@ -238,25 +237,6 @@
   "postPage": {
     "back": "رجوع",
     "notFound": "المنشور غير موجود"
-  },
-  "messages": {
-    "title": "الرسائل",
-    "empty": "لا توجد محادثات بعد. زر ملف شخص ما وأرسل أول رسالة.",
-    "noMessagesYet": "لا توجد رسائل بعد",
-    "unknownUser": "غير معروف",
-    "back": "رجوع",
-    "placeholder": "اكتب رسالة…",
-    "send": "إرسال",
-    "seen": "تمت القراءة",
-    "typing": "يكتب…",
-    "startConversation": "ابدأ المحادثة بتحية.",
-    "message": "مراسلة",
-    "newMessage": "رسالة جديدة",
-    "searchPeople": "ابحث عن أشخاص…",
-    "noMatches": "لا توجد نتائج",
-    "followFirstTitle": "تابع أشخاصاً لمراسلتهم",
-    "followFirstHint": "تابع شخصاً أولاً لبدء محادثة.",
-    "followGateError": "يمكنك فقط مراسلة الأشخاص الذين تتابعهم أو يتابعونك."
   },
   "poll": {
     "vote": "تصويت",
