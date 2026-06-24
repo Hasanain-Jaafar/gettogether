@@ -16,7 +16,7 @@ export function DashboardShell({
   profile,
 }: DashboardShellProps) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-screen flex-col">
       <Header user={user} profile={profile} />
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <div className="mx-auto w-full max-w-4xl lg:max-w-6xl">

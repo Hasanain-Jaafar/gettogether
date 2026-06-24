@@ -13,6 +13,8 @@ import { useProfile } from "@/hooks/use-profile";
 import { ImageIcon, Video, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { getVideoEmbed } from "@/lib/video-embed";
+import { CATEGORY_ICONS, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
+import { cn } from "@/lib/utils";
 
 const ACCEPT =
   "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime";
@@ -33,6 +35,7 @@ function initialsFor(name: string | null | undefined): string {
 
 export function CreatePostForm({ userId }: CreatePostFormProps) {
   const t = useTranslations("feed.createPost");
+  const tCategories = useTranslations("feed.categories");
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -42,6 +45,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const trimmedVideoUrl = videoUrl.trim();
   const videoUrlEmbed = trimmedVideoUrl ? getVideoEmbed(trimmedVideoUrl) : null;
   const videoUrlInvalid = trimmedVideoUrl.length > 0 && !videoUrlEmbed;
+  const [category, setCategory] = useState<PostCategory | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -70,6 +74,10 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     }
     if (videoUrlInvalid) {
       toast.error(t("invalidVideoUrl"));
+      return;
+    }
+    if (!category) {
+      toast.error(t("categoryRequired"));
       return;
     }
     setSubmitting(true);
@@ -108,6 +116,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       image_url: imageUrl,
       video_url: trimmedVideoUrl || null,
       media_type: mediaType ?? (trimmedVideoUrl ? "video" : null),
+      category,
     });
     setSubmitting(false);
     if (result.success) {
@@ -116,6 +125,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       setPreview(null);
       setVideoUrl("");
       setShowUrlField(false);
+      setCategory(null);
       setExpanded(false);
       toast.success(t("posted"));
     } else {
@@ -144,7 +154,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
   return (
     <Card className="rounded-2xl border border-border/80 bg-card shadow-sm">
-      <CardContent className="p-4 sm:p-6">
+      <CardContent className={expanded ? "p-4 sm:p-6" : "p-2"}>
         <input
           ref={inputRef}
           type="file"
@@ -154,28 +164,18 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         />
 
         {!expanded ? (
-          <div className="flex items-center gap-3">
-            <Avatar className="size-10 shrink-0">
+          <div className="flex items-center gap-2">
+            <Avatar className="size-7 shrink-0">
               <AvatarImage src={avatarUrl} alt={profile?.name ?? ""} />
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="flex-1 rounded-full bg-muted/40 px-4 py-2.5 text-start text-muted-foreground hover:bg-muted/60 transition-colors"
+              className="flex-1 rounded-full border border-border/60 bg-muted/40 px-3.5 py-1.5 text-start text-sm text-muted-foreground hover:bg-muted/60 transition-colors"
             >
               {t("placeholder")}
             </button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="rounded-full shrink-0"
-              onClick={() => inputRef.current?.click()}
-              aria-label={t("addImage")}
-            >
-              <ImageIcon className="size-5 text-muted-foreground" />
-            </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -194,6 +194,31 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 maxLength={2000}
                 disabled={submitting}
               />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {POST_CATEGORIES.map((c) => {
+                const Icon = CATEGORY_ICONS[c];
+                const selected = category === c;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => setCategory(c)}
+                    disabled={submitting}
+                    aria-pressed={selected}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors",
+                      selected
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:bg-muted/60",
+                    )}
+                  >
+                    <Icon className="size-3.5" />
+                    {tCategories(c)}
+                  </button>
+                );
+              })}
             </div>
             {(showUrlField || trimmedVideoUrl) && (
               <div className="space-y-1">
@@ -294,7 +319,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 disabled={
                   submitting ||
                   (!content.trim() && !imageFile && !trimmedVideoUrl) ||
-                  videoUrlInvalid
+                  videoUrlInvalid ||
+                  !category
                 }
               >
                 {submitting ? t("posting") : t("post")}

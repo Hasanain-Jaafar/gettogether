@@ -6,8 +6,8 @@ import { routing } from "@/i18n/routing";
 const intlMiddleware = createIntlMiddleware(routing);
 
 function detectLocale(pathname: string): "en" | "ar" {
-  if (pathname === "/ar" || pathname.startsWith("/ar/")) return "ar";
-  return "en";
+  if (pathname === "/en" || pathname.startsWith("/en/")) return "en";
+  return "ar";
 }
 
 export async function proxy(request: NextRequest) {

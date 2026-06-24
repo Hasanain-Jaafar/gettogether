@@ -72,10 +72,10 @@ export function NotificationItem({
     // Let the actor avatar/name link navigate normally
     if ((e.target as HTMLElement).closest("a[href*='/u/']")) return;
 
-    const target = (e.currentTarget as HTMLElement).querySelector<HTMLAnchorElement>(
-      "a[data-nav-target]"
+    const target = (e.currentTarget as HTMLElement).querySelector<HTMLElement>(
+      "[data-nav-target]"
     );
-    const href = target?.getAttribute("href");
+    const href = target?.getAttribute("data-href");
 
     e.preventDefault();
 
@@ -121,10 +121,9 @@ export function NotificationItem({
         className
       )}
     >
-      <Link
-        href={postLink ? `${postLink}${commentLink}` : "#"}
+      <div
         data-nav-target
-        onClick={(e) => e.preventDefault()}
+        data-href={postLink ? `${postLink}${commentLink}` : "#"}
         className="flex items-start gap-3 flex-1"
       >
       <div className="mt-0.5 shrink-0">
@@ -156,7 +155,7 @@ export function NotificationItem({
         {!isRead && (
           <div className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" />
         )}
-      </Link>
+      </div>
     </div>
   );
 }

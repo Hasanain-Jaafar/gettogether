@@ -39,7 +39,7 @@ export function SignInForm() {
 
   async function onSubmit(values: SignInInput) {
     setError(null);
-    const { email } = await resolveLoginIdentifier(values.identifier);
+    const { email } = await resolveLoginIdentifier(values.identifier.trim());
     if (!email) {
       setError(t("invalidCredentials"));
       return;
@@ -47,7 +47,7 @@ export function SignInForm() {
     const supabase = createClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
-      password: values.password,
+      password: values.password.trim(),
     });
     if (signInError) {
       const msg = signInError.message ?? "";
@@ -57,7 +57,7 @@ export function SignInForm() {
           ? t("invalidCredentials")
           : msg.toLowerCase().includes("email not confirmed")
           ? t("emailNotConfirmed")
-          : t("genericError");
+          : t("genericError", { message: msg || "unknown error" });
       setError(friendly);
       return;
     }

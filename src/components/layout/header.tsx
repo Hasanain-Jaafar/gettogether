@@ -276,7 +276,6 @@ export function Header({ user, profile }: HeaderProps) {
         isOpen={mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}
         onLogout={handleLogout}
-        userId={userId}
         unreadCount={unreadCount}
       />
     </>

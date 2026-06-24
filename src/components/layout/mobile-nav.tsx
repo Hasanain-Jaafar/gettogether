@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { Home, User, UserCircle, X, Bell, LogOut, Trophy, Calendar } from "lucide-react";
+import { Home, X, Bell, LogOut, Trophy, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -11,11 +11,10 @@ type MobileNavProps = {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
-  userId?: string;
   unreadCount?: number;
 };
 
-export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }: MobileNavProps) {
+export function MobileNav({ isOpen, onClose, onLogout, unreadCount = 0 }: MobileNavProps) {
   const t = useTranslations("nav");
   const pathname = usePathname();
 
@@ -24,10 +23,6 @@ export function MobileNav({ isOpen, onClose, onLogout, userId, unreadCount = 0 }
     { href: "/calendar", label: t("calendar"), icon: Calendar },
     { href: "/leaderboard", label: t("leaderboard"), icon: Trophy },
     { href: "/notifications", label: t("notifications"), icon: Bell },
-    ...(userId
-      ? [{ href: `/u/${userId}`, label: t("viewProfile"), icon: UserCircle }]
-      : []),
-    { href: "/profile", label: t("editProfile"), icon: User },
   ];
 
   return (

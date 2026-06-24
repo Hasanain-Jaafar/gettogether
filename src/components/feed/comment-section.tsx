@@ -177,7 +177,7 @@ export function CommentSection({
                   setReplyTo(isReplying ? null : c.id);
                   setReplyContent("");
                 }}
-                className="text-xs font-medium text-muted-foreground hover:text-foreground"
+                className="rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground hover:border-foreground/40 hover:text-foreground"
               >
                 {isReplying ? t("cancelReply") : t("reply")}
               </button>

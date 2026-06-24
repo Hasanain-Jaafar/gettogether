@@ -15,6 +15,7 @@ export async function createPost(
     image_url?: string | null;
     video_url?: string | null;
     media_type?: string | null;
+    category: string;
   }
 ): Promise<PostResult> {
   const parsed = createPostSchema.safeParse(input);
@@ -62,6 +63,7 @@ export async function createPost(
       image_url: parsed.data.image_url ?? null,
       video_url: parsed.data.video_url ?? null,
       media_type: parsed.data.video_url && mediaType === "text" ? "video" : mediaType,
+      category: parsed.data.category,
     })
     .select("id")
     .single();
@@ -78,7 +80,7 @@ export async function createPost(
 
 export async function updatePost(
   postId: string,
-  input: { content: string; image_url?: string | null; video_url?: string | null }
+  input: { content: string; image_url?: string | null; video_url?: string | null; category: string }
 ): Promise<PostResult> {
   const parsed = updatePostSchema.safeParse(input);
   if (!parsed.success) {
@@ -98,6 +100,7 @@ export async function updatePost(
       content: parsed.data.content.trim(),
       image_url: parsed.data.image_url ?? null,
       video_url: parsed.data.video_url ?? null,
+      category: parsed.data.category,
     })
     .eq("id", postId)
     .eq("user_id", user.id);

@@ -103,7 +103,7 @@ export default async function PublicProfilePage({
 
   const { data: posts } = await supabase
     .from("posts")
-    .select("id, user_id, content, image_url, video_url, created_at")
+    .select("id, user_id, content, image_url, video_url, created_at, category")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 

@@ -25,7 +25,7 @@
       "signUpLink": "إنشاء حساب",
       "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
       "emailNotConfirmed": "تحقق من بريدك وأكّد حسابك قبل تسجيل الدخول.",
-      "genericError": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+      "genericError": "حدث خطأ أثناء تسجيل الدخول: {message}"
     },
     "signUp": {
       "title": "إنشاء حساب",
@@ -59,16 +59,16 @@
     "calendar": "الأحداث",
     "leaderboard": "المتصدرون",
     "notifications": "الإشعارات",
-    "viewProfile": "عرض الملف الشخصي",
-    "editProfile": "تعديل الملف الشخصي",
-    "logout": "تسجيل الخروج",
+    "viewProfile": "عرض",
+    "editProfile": "تعديل",
+    "logout": "خروج",
     "menu": "القائمة",
     "openMenu": "فتح القائمة",
     "closeMenu": "إغلاق القائمة"
   },
   "feed": {
     "createPost": {
-      "placeholder": "بمَ تفكر؟",
+      "placeholder": "انشر هنا ابداعك",
       "addImage": "إضافة صورة",
       "removeImage": "إزالة الصورة",
       "addVideoUrl": "رابط فيديو",
@@ -82,7 +82,9 @@
       "videoTooLarge": "يجب أن يكون الفيديو أقل من {size} ميغابايت",
       "bucketMissing": "حاوية صور المنشورات مفقودة. أنشئ حاوية باسم post-images في تخزين Supabase (انظر STORAGE.md).",
       "uploadFailed": "فشل رفع الصورة.",
-      "posted": "تم النشر!"
+      "posted": "تم النشر!",
+      "selectCategory": "اختر تصنيفاً",
+      "categoryRequired": "اختر تصنيفاً قبل النشر."
     },
     "post": {
       "edit": "تعديل",
@@ -96,6 +98,13 @@
       "someone": "شخص ما",
       "addStory": "إضافة قصة"
     },
+    "categories": {
+      "songs": "أغاني",
+      "diaries": "يوميات",
+      "culture": "ثقافة",
+      "morning": "صباحية",
+      "images": "صور"
+    },
     "comments": {
       "placeholder": "أضف تعليقاً…",
       "submit": "نشر",
@@ -107,7 +116,7 @@
       "noComments": "لا توجد تعليقات بعد. كن الأول!",
       "showAll": "عرض كل التعليقات ({count})",
       "hideComments": "إخفاء التعليقات",
-      "reply": "رد",
+      "reply": "اكتب رد",
       "cancelReply": "إلغاء",
       "replyPlaceholder": "اكتب رداً…",
       "like": "إعجاب"

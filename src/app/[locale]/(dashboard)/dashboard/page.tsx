@@ -9,6 +9,8 @@ import { DashboardSidebar } from "@/components/feed/dashboard-sidebar";
 import { EmptyState } from "@/components/feed/empty-state";
 import { getForYouFeed } from "@/app/[locale]/(dashboard)/actions/feed";
 import { getWhoToFollow } from "@/app/[locale]/(dashboard)/actions/follows";
+import { CategoryFilterBar } from "@/components/feed/category-filter-bar";
+import { isPostCategory, type PostCategory } from "@/lib/post-categories";
 
 const POSTS_PAGE_SIZE = 20;
 
@@ -17,32 +19,35 @@ export default async function DashboardPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ hashtag?: string }>;
+  searchParams: Promise<{ hashtag?: string; category?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const supabase = await createClient();
   const tSidebar = await getTranslations("sidebar");
   const tFeed = await getTranslations("feed.empty");
-  const { hashtag: hashtagParam } = await searchParams;
+  const { hashtag: hashtagParam, category: categoryParam } = await searchParams;
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
 
   const hashtag = hashtagParam;
+  const category: PostCategory | null = isPostCategory(categoryParam) ? categoryParam : null;
 
   const whoToFollowInitial = await getWhoToFollow(user.id, 3);
 
   let posts: any[] = [];
-  if (hashtag) {
-    const { data: postsByHashtag } = await supabase
+  if (hashtag || category) {
+    let query = supabase
       .from("posts")
-      .select("id, user_id, content, image_url, video_url, created_at")
-      .ilike("content", `%#${hashtag}%`)
+      .select("id, user_id, content, image_url, video_url, created_at, category");
+    if (hashtag) query = query.ilike("content", `%#${hashtag}%`);
+    if (category) query = query.eq("category", category);
+    const { data: filteredPosts } = await query
       .order("created_at", { ascending: false })
       .limit(POSTS_PAGE_SIZE);
-    posts = postsByHashtag ?? [];
+    posts = filteredPosts ?? [];
   } else {
     const feedResult = await getForYouFeed(user.id, POSTS_PAGE_SIZE);
     posts = feedResult.posts;
@@ -56,10 +61,11 @@ export default async function DashboardPage({
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 space-y-4 sm:space-y-6">
             <CreatePostForm userId={user.id} />
+            <CategoryFilterBar active={category} />
             <EmptyState
-              type="welcome"
-              actionLabel={tFeed("createFirst")}
-              actionTarget="focus-create-post"
+              type={category ? "no-results" : "welcome"}
+              actionLabel={category ? undefined : tFeed("createFirst")}
+              actionTarget={category ? undefined : "focus-create-post"}
             />
           </div>
           <div className="lg:col-span-1 hidden lg:block">
@@ -173,6 +179,7 @@ export default async function DashboardPage({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 space-y-4 sm:space-y-6">
           <CreatePostForm userId={user.id} />
+          <CategoryFilterBar active={category} />
           {hashtag && (
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">#{hashtag}</h2>

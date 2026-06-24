@@ -25,7 +25,7 @@
       "signUpLink": "Sign up",
       "invalidCredentials": "Invalid email or password.",
       "emailNotConfirmed": "Check your inbox and confirm your email before signing in.",
-      "genericError": "Invalid email or password."
+      "genericError": "Something went wrong signing in: {message}"
     },
     "signUp": {
       "title": "Create an account",
@@ -82,7 +82,9 @@
       "videoTooLarge": "Video must be under {size}MB",
       "bucketMissing": "Post images bucket missing. Create a bucket named post-images in Supabase Storage (see STORAGE.md).",
       "uploadFailed": "Image upload failed.",
-      "posted": "Posted!"
+      "posted": "Posted!",
+      "selectCategory": "Choose a category",
+      "categoryRequired": "Choose a category before posting."
     },
     "post": {
       "edit": "Edit",
@@ -95,6 +97,13 @@
       "deleting": "Deleting…",
       "someone": "Someone",
       "addStory": "Add story"
+    },
+    "categories": {
+      "songs": "Songs",
+      "diaries": "Diaries",
+      "culture": "Culture",
+      "morning": "Morning greetings",
+      "images": "Images"
     },
     "comments": {
       "placeholder": "Add a comment…",

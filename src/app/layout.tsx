@@ -42,7 +42,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = (await headers()).get("x-locale") === "ar" ? "ar" : "en";
+  const locale = (await headers()).get("x-locale") === "en" ? "en" : "ar";
   const dir = locale === "ar" ? "rtl" : "ltr";
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>

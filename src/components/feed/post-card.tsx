@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { CATEGORY_COLORS, CATEGORY_ICONS, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +21,7 @@ import { CommentSection } from "@/components/feed/comment-section";
 import { VerifiedBadge } from "@/components/feed/verified-badge";
 import { LevelBadge } from "@/components/profile/level-badge";
 import { LeveledAvatar } from "@/components/profile/leveled-avatar";
-import { relativeTime } from "@/lib/utils";
+import { cn, relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
 import { getVideoEmbed } from "@/lib/video-embed";
 import { linkifyHashtags } from "@/lib/linkify-hashtags";
@@ -53,6 +54,7 @@ export type PostCardProps = {
     video_url: string | null;
     created_at: string;
     user_id: string;
+    category?: string | null;
   };
   author: { name: string | null; avatar_url: string | null; level?: number | null };
   isVerified?: boolean;
@@ -132,16 +134,23 @@ export function PostCard({
 }: PostCardProps) {
   const router = useRouter();
   const t = useTranslations("feed.post");
+  const tCategories = useTranslations("feed.categories");
   const locale = useLocale();
+  const CategoryIcon = post.category && post.category in CATEGORY_ICONS
+    ? CATEGORY_ICONS[post.category as PostCategory]
+    : null;
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
+  const [editCategory, setEditCategory] = useState<PostCategory>(
+    (post.category as PostCategory) ?? "diaries",
+  );
   const [saving, setSaving] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const isOwn = currentUserId === post.user_id;
 
   async function handleSaveEdit() {
-    if (editContent.trim() === post.content) {
+    if (editContent.trim() === post.content && editCategory === post.category) {
       setEditing(false);
       return;
     }
@@ -150,6 +159,7 @@ export function PostCard({
       content: editContent.trim(),
       image_url: post.image_url,
       video_url: post.video_url,
+      category: editCategory,
     });
     setSaving(false);
     if (result.success) {
@@ -205,7 +215,19 @@ export function PostCard({
               </p>
             </div>
           </Link>
-          {isOwn && (
+          <div className="flex shrink-0 items-center gap-2">
+            {CategoryIcon && (
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-[family-name:var(--font-zain)]",
+                  CATEGORY_COLORS[post.category as PostCategory],
+                )}
+              >
+                <CategoryIcon className="size-3" />
+                {tCategories(post.category as PostCategory)}
+              </span>
+            )}
+            {isOwn && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -228,7 +250,8 @@ export function PostCard({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
+            )}
+          </div>
         </div>
         <div className="px-4 pb-3">
           {editing ? (
@@ -240,12 +263,36 @@ export function PostCard({
                 maxLength={2000}
                 disabled={saving}
               />
+              <div className="flex flex-wrap gap-2">
+                {POST_CATEGORIES.map((c) => {
+                  const Icon = CATEGORY_ICONS[c];
+                  const selected = editCategory === c;
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setEditCategory(c)}
+                      disabled={saving}
+                      aria-pressed={selected}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors",
+                        selected
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border text-muted-foreground hover:bg-muted/60",
+                      )}
+                    >
+                      <Icon className="size-3.5" />
+                      {tCategories(c)}
+                    </button>
+                  );
+                })}
+              </div>
               <div className="flex gap-2">
                 <Button
                   size="sm"
                   className="rounded-xl"
                   onClick={handleSaveEdit}
-                  disabled={saving || !editContent.trim()}
+                  disabled={saving || (!editContent.trim() && !post.image_url && !post.video_url)}
                 >
                   {saving ? t("saving") : t("save")}
                 </Button>
@@ -256,6 +303,7 @@ export function PostCard({
                   onClick={() => {
                     setEditing(false);
                     setEditContent(post.content);
+                    setEditCategory((post.category as PostCategory) ?? "diaries");
                   }}
                   disabled={saving}
                 >
