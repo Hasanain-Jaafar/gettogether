@@ -10,9 +10,15 @@ export function ScrollToTop() {
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
+    const container =
+      document.getElementById("dashboard-scroll-container") ?? window;
 
     function onScroll() {
-      if (window.scrollY > 400) {
+      const scrollTop =
+        container === window
+          ? window.scrollY
+          : (container as HTMLElement).scrollTop;
+      if (scrollTop > 400) {
         setLeaving(false);
         setVisible(true);
       } else {
@@ -24,9 +30,9 @@ export function ScrollToTop() {
       }
     }
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    container.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      container.removeEventListener("scroll", onScroll);
       clearTimeout(timeout);
     };
   }, []);
@@ -35,7 +41,14 @@ export function ScrollToTop() {
 
   return (
     <button
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      onClick={() => {
+        const container = document.getElementById("dashboard-scroll-container");
+        if (container) {
+          container.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }}
       aria-label="Scroll to top"
       className={cn(
         "fixed bottom-6 right-6 z-50 group",
