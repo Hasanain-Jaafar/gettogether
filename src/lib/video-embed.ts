@@ -43,6 +43,7 @@ export function getVideoEmbed(rawUrl: string): VideoEmbed | null {
   // Official format: https://iframe.mediadelivery.net/embed/{libraryId}/{videoId}
   // Some accounts/regions use player.mediadelivery.net — accept both.
   if (host === "iframe.mediadelivery.net" || host === "player.mediadelivery.net") {
+    url.searchParams.set("autoplay", "false");
     return { kind: "iframe", embedSrc: url.toString() };
   }
 
