@@ -71,6 +71,7 @@
       "placeholder": "What's on your mind?",
       "addImage": "Add image",
       "removeImage": "Remove image",
+      "addVideo": "Add video",
       "addVideoUrl": "Video URL",
       "videoUrlPlaceholder": "Paste a YouTube or TikTok link",
       "removeVideoUrl": "Remove video URL",
@@ -82,6 +83,8 @@
       "videoTooLarge": "Video must be under {size}MB",
       "bucketMissing": "Post images bucket missing. Create a bucket named post-images in Supabase Storage (see STORAGE.md).",
       "uploadFailed": "Image upload failed.",
+      "videoUploadFailed": "Video upload failed.",
+      "uploadingVideo": "Uploading video… {percent}%",
       "posted": "Posted!",
       "selectCategory": "Choose a category",
       "categoryRequired": "Choose a category before posting."

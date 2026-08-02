@@ -1,25 +1,27 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { Upload as TusUpload } from "tus-js-client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { createPost } from "@/app/[locale]/(dashboard)/actions/posts";
+import { createBunnyUploadTicket } from "@/app/[locale]/(dashboard)/actions/bunny";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/use-profile";
-import { ImageIcon, Video, X } from "lucide-react";
+import { ImageIcon, Video, Link2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { getVideoEmbed } from "@/lib/video-embed";
 import { CATEGORY_ICONS, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
 import { cn } from "@/lib/utils";
 
-const ACCEPT =
-  "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime";
+const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
+const VIDEO_ACCEPT = "video/mp4,video/webm,video/quicktime";
 const MAX_IMAGE_MB = 4;
-const MAX_VIDEO_MB = 50;
+const MAX_VIDEO_MB = 8192;
 
 type CreatePostFormProps = {
   userId: string;
@@ -47,8 +49,10 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const videoUrlInvalid = trimmedVideoUrl.length > 0 && !videoUrlEmbed;
   const [category, setCategory] = useState<PostCategory | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { profile } = useProfile(userId);
 
@@ -63,6 +67,46 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     const next = e?.relatedTarget as Node | null;
     if (next && e?.currentTarget.closest("form")?.contains(next)) return;
     setExpanded(false);
+  }
+
+  function uploadVideoToBunny(file: File): Promise<string | null> {
+    return createBunnyUploadTicket(file.name).then((ticketResult) => {
+      if (!ticketResult.success) {
+        toast.error(ticketResult.error);
+        return null;
+      }
+      const { ticket } = ticketResult;
+      setUploadProgress(0);
+      return new Promise<string | null>((resolve) => {
+        const upload = new TusUpload(file, {
+          endpoint: ticket.uploadEndpoint,
+          retryDelays: [0, 1000, 3000, 5000],
+          headers: {
+            AuthorizationSignature: ticket.signature,
+            AuthorizationExpire: String(ticket.expiration),
+            VideoId: ticket.videoId,
+            LibraryId: ticket.libraryId,
+          },
+          metadata: {
+            filetype: file.type,
+            title: file.name,
+          },
+          onError: () => {
+            toast.error(t("videoUploadFailed"));
+            setUploadProgress(null);
+            resolve(null);
+          },
+          onProgress: (bytesSent, bytesTotal) => {
+            setUploadProgress(Math.round((bytesSent / bytesTotal) * 100));
+          },
+          onSuccess: () => {
+            setUploadProgress(null);
+            resolve(`https://iframe.mediadelivery.net/embed/${ticket.libraryId}/${ticket.videoId}`);
+          },
+        });
+        upload.start();
+      });
+    });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -82,10 +126,18 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     }
     setSubmitting(true);
     let imageUrl: string | null = null;
+    let uploadedVideoUrl: string | null = null;
     let mediaType: "image" | "video" | "gif" | null = null;
-    if (imageFile) {
+    if (imageFile && isVideo) {
+      uploadedVideoUrl = await uploadVideoToBunny(imageFile);
+      if (!uploadedVideoUrl) {
+        setSubmitting(false);
+        return;
+      }
+      mediaType = "video";
+    } else if (imageFile) {
       const supabase = createClient();
-      const ext = imageFile.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
+      const ext = imageFile.name.split(".").pop() || "jpg";
       const path = `${userId}/${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage
         .from("post-images")
@@ -105,16 +157,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       }
       const { data } = supabase.storage.from("post-images").getPublicUrl(path);
       imageUrl = data.publicUrl;
-      mediaType = isVideo
-        ? "video"
-        : imageFile.type === "image/gif"
-          ? "gif"
-          : "image";
+      mediaType = imageFile.type === "image/gif" ? "gif" : "image";
     }
     const result = await createPost({
       content: trimmed,
       image_url: imageUrl,
-      video_url: trimmedVideoUrl || null,
+      video_url: uploadedVideoUrl ?? trimmedVideoUrl ?? null,
       media_type: mediaType ?? (trimmedVideoUrl ? "video" : null),
       category,
     });
@@ -158,7 +206,14 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         <input
           ref={inputRef}
           type="file"
-          accept={ACCEPT}
+          accept={IMAGE_ACCEPT}
+          className="hidden"
+          onChange={onFileChange}
+        />
+        <input
+          ref={videoInputRef}
+          type="file"
+          accept={VIDEO_ACCEPT}
           className="hidden"
           onChange={onFileChange}
         />
@@ -277,11 +332,25 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                     setImageFile(null);
                     setPreview(null);
                   }}
-                  className="absolute end-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                  disabled={submitting}
+                  className="absolute end-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:opacity-50"
                   aria-label={t("removeImage")}
                 >
                   <X className="size-3" />
                 </button>
+              </div>
+            )}
+            {isVideo && uploadProgress !== null && (
+              <div className="space-y-1">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {t("uploadingVideo", { percent: uploadProgress })}
+                </p>
               </div>
             )}
             <div className="flex items-center justify-between gap-2">
@@ -304,11 +373,23 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                   size="sm"
                   className="rounded-xl"
                   onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => videoInputRef.current?.click()}
+                  disabled={submitting}
+                >
+                  <Video className="size-4 me-1.5" />
+                  {t("addVideo")}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl"
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => setShowUrlField((v) => !v)}
                   disabled={submitting}
                   aria-pressed={showUrlField}
                 >
-                  <Video className="size-4 me-1.5" />
+                  <Link2 className="size-4 me-1.5" />
                   {t("addVideoUrl")}
                 </Button>
               </div>

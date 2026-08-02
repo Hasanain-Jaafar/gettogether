@@ -71,6 +71,7 @@
       "placeholder": "انشر هنا ابداعك",
       "addImage": "إضافة صورة",
       "removeImage": "إزالة الصورة",
+      "addVideo": "إضافة فيديو",
       "addVideoUrl": "رابط فيديو",
       "videoUrlPlaceholder": "ألصق رابط يوتيوب أو تيك توك",
       "removeVideoUrl": "إزالة رابط الفيديو",
@@ -82,6 +83,8 @@
       "videoTooLarge": "يجب أن يكون الفيديو أقل من {size} ميغابايت",
       "bucketMissing": "حاوية صور المنشورات مفقودة. أنشئ حاوية باسم post-images في تخزين Supabase (انظر STORAGE.md).",
       "uploadFailed": "فشل رفع الصورة.",
+      "videoUploadFailed": "فشل رفع الفيديو.",
+      "uploadingVideo": "جارٍ رفع الفيديو… {percent}%",
       "posted": "تم النشر!",
       "selectCategory": "اختر تصنيفاً",
       "categoryRequired": "اختر تصنيفاً قبل النشر."
