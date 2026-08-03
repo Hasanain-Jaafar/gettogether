@@ -146,7 +146,7 @@ export function NotificationItem({
             )}{" "}
             <span className="text-muted-foreground">{text.replace(actorName, "").trim()}</span>
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5" suppressHydrationWarning>
             {relativeTime(notification.created_at, locale)}
           </p>
         </div>

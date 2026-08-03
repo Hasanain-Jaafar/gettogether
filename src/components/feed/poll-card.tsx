@@ -170,7 +170,7 @@ export function PollCard({ poll, className }: PollCardProps) {
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{t("votes", { count: poll.total_votes })}</span>
         {poll.expires_at && !isExpired && (
-          <span>{t("ends", { time: relativeTime(poll.expires_at, locale) })}</span>
+          <span suppressHydrationWarning>{t("ends", { time: relativeTime(poll.expires_at, locale) })}</span>
         )}
       </div>
     </div>

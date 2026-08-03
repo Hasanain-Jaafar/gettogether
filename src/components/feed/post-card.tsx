@@ -210,7 +210,7 @@ export function PostCard({
                   <LevelBadge level={author.level} size="sm" />
                 )}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground" suppressHydrationWarning>
                 {relativeTime(post.created_at, locale)}
               </p>
             </div>

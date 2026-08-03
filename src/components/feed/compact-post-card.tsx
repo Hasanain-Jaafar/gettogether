@@ -78,7 +78,7 @@ export function CompactPostCard({
           >
             {author.name ?? "Someone"}
           </Link>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground" suppressHydrationWarning>
             {relativeTime(post.created_at, locale)}
           </span>
         </div>

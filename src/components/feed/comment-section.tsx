@@ -153,7 +153,7 @@ export function CommentSection({
               {c.content}
             </p>
             <div className="flex items-center gap-3 mt-0.5">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground" suppressHydrationWarning>
                 {relativeTime(c.created_at, locale)}
               </p>
               <button
