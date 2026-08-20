@@ -20,7 +20,7 @@ export async function createPost(
 ): Promise<PostResult> {
   const parsed = createPostSchema.safeParse(input);
   if (!parsed.success) {
-    const msg = parsed.error.flatten().formErrors?.[0] ?? "Invalid input.";
+    const msg = parsed.error.issues[0]?.message ?? "Invalid input.";
     return { success: false, error: msg };
   }
 
@@ -84,7 +84,7 @@ export async function updatePost(
 ): Promise<PostResult> {
   const parsed = updatePostSchema.safeParse(input);
   if (!parsed.success) {
-    const msg = parsed.error.flatten().formErrors?.[0] ?? "Invalid input.";
+    const msg = parsed.error.issues[0]?.message ?? "Invalid input.";
     return { success: false, error: msg };
   }
 
