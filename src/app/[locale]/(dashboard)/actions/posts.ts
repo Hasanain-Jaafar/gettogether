@@ -20,7 +20,10 @@ export async function createPost(
 ): Promise<PostResult> {
   const parsed = createPostSchema.safeParse(input);
   if (!parsed.success) {
-    const msg = parsed.error.issues[0]?.message ?? "Invalid input.";
+    const issue = parsed.error.issues[0];
+    const field = issue?.path?.[0];
+    const value = field ? (input as Record<string, unknown>)[field as string] : undefined;
+    const msg = `${issue?.message ?? "Invalid input."} [${String(field)}=${JSON.stringify(value)}]`;
     return { success: false, error: msg };
   }
 

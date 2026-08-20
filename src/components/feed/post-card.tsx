@@ -81,6 +81,7 @@ function VideoEmbed({ url }: { url: string }) {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
+          loading="lazy"
         />
       </div>
     );
