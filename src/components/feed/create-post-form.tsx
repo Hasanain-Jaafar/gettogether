@@ -162,7 +162,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     const result = await createPost({
       content: trimmed,
       image_url: imageUrl,
-      video_url: uploadedVideoUrl ?? trimmedVideoUrl ?? null,
+      video_url: uploadedVideoUrl || trimmedVideoUrl || null,
       media_type: mediaType ?? (trimmedVideoUrl ? "video" : null),
       category,
     });
