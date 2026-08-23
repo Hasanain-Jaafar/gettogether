@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 
 const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
 const VIDEO_ACCEPT = "video/mp4,video/webm,video/quicktime";
-const MAX_IMAGE_MB = 4;
+const MAX_IMAGE_MB = 10;
 const MAX_VIDEO_MB = 8192;
 
 type CreatePostFormProps = {
