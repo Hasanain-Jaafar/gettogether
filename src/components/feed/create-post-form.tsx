@@ -343,6 +343,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                   <video
                     src={preview}
                     controls
+                    controlsList="noplaybackrate"
                     className="block max-h-64 w-auto max-w-full rounded-xl"
                   />
                 ) : (

@@ -98,6 +98,7 @@ function VideoEmbed({ url, orientation }: { url: string; orientation?: "landscap
         <video
           src={embed.src}
           controls
+          controlsList="noplaybackrate"
           playsInline
           preload="metadata"
           className="mx-auto block h-auto max-h-[600px] w-full"
@@ -328,6 +329,7 @@ export function PostCard({
                     <video
                       src={post.image_url}
                       controls
+                      controlsList="noplaybackrate"
                       playsInline
                       preload="metadata"
                       className="mx-auto block h-auto max-h-[600px] w-full"
