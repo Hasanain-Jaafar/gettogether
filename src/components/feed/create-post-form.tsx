@@ -43,6 +43,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoOrientation, setVideoOrientation] = useState<"landscape" | "portrait" | null>(null);
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [showUrlField, setShowUrlField] = useState(false);
   const isVideo = imageFile?.type.startsWith("video/") ?? false;
   const trimmedVideoUrl = videoUrl.trim();
@@ -163,6 +164,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     const result = await createPost({
       content: trimmed,
       image_url: imageUrl,
+      image_width: imageUrl ? imageDimensions?.width ?? null : null,
+      image_height: imageUrl ? imageDimensions?.height ?? null : null,
       video_url: uploadedVideoUrl || trimmedVideoUrl || null,
       video_orientation: uploadedVideoUrl ? videoOrientation : null,
       media_type: mediaType ?? (trimmedVideoUrl ? "video" : null),
@@ -175,6 +178,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       setPreview(null);
       setVideoUrl("");
       setVideoOrientation(null);
+      setImageDimensions(null);
       setShowUrlField(false);
       setCategory(null);
       setExpanded(false);
@@ -202,6 +206,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
     if (fileIsVideo) {
       setVideoOrientation(null);
+      setImageDimensions(null);
       const probe = document.createElement("video");
       probe.preload = "metadata";
       probe.onloadedmetadata = () => {
@@ -210,6 +215,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       probe.src = objectUrl;
     } else {
       setVideoOrientation(null);
+      setImageDimensions(null);
+      const probe = new Image();
+      probe.onload = () => {
+        setImageDimensions({ width: probe.naturalWidth, height: probe.naturalHeight });
+      };
+      probe.src = objectUrl;
     }
   }
 
@@ -348,6 +359,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                     setImageFile(null);
                     setPreview(null);
                     setVideoOrientation(null);
+                    setImageDimensions(null);
                   }}
                   disabled={submitting}
                   className="absolute end-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:opacity-50"

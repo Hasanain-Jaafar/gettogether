@@ -31,27 +31,32 @@ export default async function DashboardPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+  const userId = user.id;
 
   const hashtag = hashtagParam;
   const category: PostCategory | null = isPostCategory(categoryParam) ? categoryParam : null;
 
-  const whoToFollowInitial = await getWhoToFollow(user.id, 3);
-
-  let posts: any[] = [];
-  if (hashtag || category) {
-    let query = supabase
-      .from("posts")
-      .select("id, user_id, content, image_url, video_url, video_orientation, created_at, category");
-    if (hashtag) query = query.ilike("content", `%#${hashtag}%`);
-    if (category) query = query.eq("category", category);
-    const { data: filteredPosts } = await query
-      .order("created_at", { ascending: false })
-      .limit(POSTS_PAGE_SIZE);
-    posts = filteredPosts ?? [];
-  } else {
-    const feedResult = await getForYouFeed(user.id, POSTS_PAGE_SIZE);
-    posts = feedResult.posts;
+  async function fetchPosts(): Promise<any[]> {
+    if (hashtag || category) {
+      let query = supabase
+        .from("posts")
+        .select("id, user_id, content, image_url, image_width, image_height, video_url, video_orientation, created_at, category");
+      if (hashtag) query = query.ilike("content", `%#${hashtag}%`);
+      if (category) query = query.eq("category", category);
+      const { data: filteredPosts } = await query
+        .order("created_at", { ascending: false })
+        .limit(POSTS_PAGE_SIZE);
+      return filteredPosts ?? [];
+    }
+    const feedResult = await getForYouFeed(userId, POSTS_PAGE_SIZE);
+    return feedResult.posts;
   }
+
+  // These two don't depend on each other — fetch them together instead of waiting in sequence.
+  const [whoToFollowInitial, posts] = await Promise.all([
+    getWhoToFollow(userId, 3),
+    fetchPosts(),
+  ]);
 
   if (!posts?.length) {
     return (
@@ -79,18 +84,17 @@ export default async function DashboardPage({
   }
 
   const userIds = [...new Set(posts.map((p) => p.user_id))];
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url, level")
-    .in("id", userIds);
-
-  const profileMap = new Map(profiles?.map((pr) => [pr.id, pr]) ?? []);
-
   const postIds = posts.map((p) => p.id);
-  const { data: likes } = await supabase
-    .from("likes")
-    .select("post_id, user_id")
-    .in("post_id", postIds);
+
+  // likes and comments only depend on postIds, so fetch them together.
+  const [{ data: likes }, { data: comments }] = await Promise.all([
+    supabase.from("likes").select("post_id, user_id").in("post_id", postIds),
+    supabase
+      .from("comments")
+      .select("id, post_id, content, created_at, user_id, parent_id")
+      .in("post_id", postIds)
+      .order("created_at", { ascending: true }),
+  ]);
 
   const likeCountMap = new Map<string, number>();
   const userLikedSet = new Set<string>();
@@ -104,38 +108,27 @@ export default async function DashboardPage({
     likesByPost.set(l.post_id, likers);
   });
 
-  // Get profiles of users who liked posts
+  const commentCountMap = new Map<string, number>();
+  comments?.forEach((c) =>
+    commentCountMap.set(c.post_id, (commentCountMap.get(c.post_id) ?? 0) + 1)
+  );
+
+  // Post authors, likers and commenters overlap heavily — fetch every profile
+  // we'll need in one query instead of three, once we know who they all are.
   const likerUserIds = [...new Set(likes?.map((l) => l.user_id) ?? [])];
-  const { data: likerProfiles } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url, level")
-    .in("id", likerUserIds);
-  const likerProfileMap = new Map(
-    likerProfiles?.map((p) => [p.id, p]) ?? []
-  );
-
-  const { data: comments } = await supabase
-    .from("comments")
-    .select("id, post_id, content, created_at, user_id, parent_id")
-    .in("post_id", postIds)
-    .order("created_at", { ascending: true });
-
   const commentUserIds = [...new Set(comments?.map((c) => c.user_id) ?? [])];
-  const { data: commentProfiles } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url, level")
-    .in("id", commentUserIds);
-  const commentProfileMap = new Map(
-    commentProfiles?.map((p) => [p.id, p]) ?? []
-  );
-
+  const allProfileIds = [...new Set([...userIds, ...likerUserIds, ...commentUserIds])];
   const commentIds = comments?.map((c) => c.id) ?? [];
-  const { data: commentLikes } = commentIds.length
-    ? await supabase
-        .from("comment_likes")
-        .select("comment_id, user_id")
-        .in("comment_id", commentIds)
-    : { data: [] as { comment_id: string; user_id: string }[] };
+
+  const [{ data: profiles }, { data: commentLikes }] = await Promise.all([
+    supabase.from("profiles").select("id, name, avatar_url, level").in("id", allProfileIds),
+    commentIds.length
+      ? supabase.from("comment_likes").select("comment_id, user_id").in("comment_id", commentIds)
+      : Promise.resolve({ data: [] as { comment_id: string; user_id: string }[] }),
+  ]);
+
+  const profileMap = new Map(profiles?.map((pr) => [pr.id, pr]) ?? []);
+
   const commentLikeCount = new Map<string, number>();
   const commentLikedByMe = new Set<string>();
   commentLikes?.forEach((l) => {
@@ -153,24 +146,12 @@ export default async function DashboardPage({
     const list = commentsByPost.get(c.post_id) ?? [];
     list.push({
       ...c,
-      author: commentProfileMap.get(c.user_id) ?? null,
+      author: profileMap.get(c.user_id) ?? null,
       like_count: commentLikeCount.get(c.id) ?? 0,
       liked_by_me: commentLikedByMe.has(c.id),
     });
     commentsByPost.set(c.post_id, list);
   });
-
-  const commentCountMap = new Map<string, number>();
-  comments?.forEach((c) =>
-    commentCountMap.set(c.post_id, (commentCountMap.get(c.post_id) ?? 0) + 1)
-  );
-
-  // Get follows to know who the user is following
-  const { data: following } = await supabase
-    .from("follows")
-    .select("following_id")
-    .eq("follower_id", user.id);
-  const followingIds = new Set(following?.map((f) => f.following_id) ?? []);
 
   return (
     <>
@@ -207,7 +188,7 @@ export default async function DashboardPage({
                   likers={
                     likesByPost
                       .get(post.id)
-                      ?.map((userId) => likerProfileMap.get(userId))
+                      ?.map((userId) => profileMap.get(userId))
                       .filter(
                         (profile): profile is { id: string; name: string | null; avatar_url: string | null; level: number | null } =>
                           profile !== undefined

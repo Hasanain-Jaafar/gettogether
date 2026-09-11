@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -51,6 +52,8 @@ export type PostCardProps = {
     id: string;
     content: string;
     image_url: string | null;
+    image_width?: number | null;
+    image_height?: number | null;
     video_url: string | null;
     video_orientation?: "landscape" | "portrait" | null;
     created_at: string;
@@ -329,8 +332,17 @@ export function PostCard({
                       preload="metadata"
                       className="mx-auto block h-auto max-h-[600px] w-full"
                     />
+                  ) : post.image_width && post.image_height ? (
+                    <Image
+                      src={post.image_url}
+                      alt="Post image"
+                      width={post.image_width}
+                      height={post.image_height}
+                      sizes="(min-width: 1024px) 800px, 100vw"
+                      className="mx-auto block h-auto max-h-[600px] w-full object-contain"
+                    />
                   ) : (
-                    /* eslint-disable-next-line @next/next/no-img-element */
+                    /* eslint-disable-next-line @next/next/no-img-element -- no stored dimensions (legacy post), next/image requires them */
                     <img
                       src={post.image_url}
                       alt="Post image"

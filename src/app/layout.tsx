@@ -1,18 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Tajawal, Zain } from "next/font/google";
+import { Tajawal, Zain } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const tajawal = Tajawal({
   variable: "--font-tajawal",
@@ -44,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${tajawal.variable} ${zain.variable} antialiased font-arabic`}
+        className={`${tajawal.variable} ${zain.variable} antialiased font-arabic`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}

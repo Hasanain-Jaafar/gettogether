@@ -13,6 +13,8 @@ export async function createPost(
   input: {
     content: string;
     image_url?: string | null;
+    image_width?: number | null;
+    image_height?: number | null;
     video_url?: string | null;
     video_orientation?: "landscape" | "portrait" | null;
     media_type?: string | null;
@@ -62,6 +64,8 @@ export async function createPost(
       user_id: user.id,
       content: parsed.data.content.trim(),
       image_url: parsed.data.image_url ?? null,
+      image_width: parsed.data.image_width ?? null,
+      image_height: parsed.data.image_height ?? null,
       video_url: parsed.data.video_url ?? null,
       video_orientation: parsed.data.video_orientation ?? null,
       media_type: parsed.data.video_url && mediaType === "text" ? "video" : mediaType,

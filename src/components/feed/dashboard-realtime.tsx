@@ -1,118 +1,58 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { ArrowUp } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 
 export function DashboardRealtime() {
   const router = useRouter();
-  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastRefreshRef = useRef<number>(0);
-
-  const debouncedRefresh = () => {
-    const now = Date.now();
-    const MIN_REFRESH_INTERVAL = 2000; // Minimum 2 seconds between refreshes
-
-    // Clear any pending refresh
-    if (refreshTimeoutRef.current) {
-      clearTimeout(refreshTimeoutRef.current);
-    }
-
-    // Debounce the refresh by 500ms
-    refreshTimeoutRef.current = setTimeout(() => {
-      // Throttle: don't refresh if we just refreshed recently
-      if (now - lastRefreshRef.current >= MIN_REFRESH_INTERVAL) {
-        lastRefreshRef.current = Date.now();
-        router.refresh();
-      }
-    }, 500);
-  };
+  const t = useTranslations("feed.realtime");
+  const [hasNewPosts, setHasNewPosts] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
 
-    // Subscribe to new likes
-    const likesChannel = supabase
-      .channel("likes-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "likes",
-        },
-        debouncedRefresh
-      )
-      .subscribe();
-
-    // Subscribe to new comments
-    const commentsChannel = supabase
-      .channel("comments-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "comments",
-        },
-        debouncedRefresh
-      )
-      .subscribe();
-
-    // Subscribe to new posts
+    // Only new posts affect what the feed looks like for everyone, so this is
+    // the one change worth surfacing globally. Likes/comments/bookmarks/reposts
+    // are already reflected optimistically in their own components and don't
+    // need to push a refresh to every other open dashboard.
     const postsChannel = supabase
       .channel("posts-changes")
       .on(
         "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "posts",
-        },
-        debouncedRefresh
+        { event: "INSERT", schema: "public", table: "posts" },
+        () => setHasNewPosts(true)
       )
       .subscribe();
 
-    // Subscribe to bookmarks
-    const bookmarksChannel = supabase
-      .channel("bookmarks-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "bookmarks",
-        },
-        debouncedRefresh
-      )
-      .subscribe();
-
-    // Subscribe to reposts
-    const repostsChannel = supabase
-      .channel("reposts-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "reposts",
-        },
-        debouncedRefresh
-      )
-      .subscribe();
-
-    // Cleanup subscriptions
     return () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current);
-      }
-      supabase.removeChannel(likesChannel);
-      supabase.removeChannel(commentsChannel);
       supabase.removeChannel(postsChannel);
-      supabase.removeChannel(bookmarksChannel);
-      supabase.removeChannel(repostsChannel);
     };
-  }, [router]);
+  }, []);
 
-  return null;
+  if (!hasNewPosts) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        setHasNewPosts(false);
+        router.refresh();
+      }}
+      className={cn(
+        "fixed left-1/2 top-20 z-30 -translate-x-1/2",
+        "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium",
+        "bg-primary text-primary-foreground shadow-lg shadow-primary/30",
+        "hover:shadow-xl hover:shadow-primary/40 hover:scale-105 active:scale-95",
+        "transition-all duration-200",
+        "animate-[slide-up_0.3s_ease-out_forwards]"
+      )}
+    >
+      <ArrowUp className="size-4" strokeWidth={2.5} />
+      {t("newPosts")}
+    </button>
+  );
 }

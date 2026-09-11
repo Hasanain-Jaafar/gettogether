@@ -69,13 +69,45 @@ export default async function PublicProfilePage({
   } = await supabase.auth.getUser();
   if (!currentUser) return null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
+  const isOwnProfile = currentUser.id === userId;
+
+  // None of these depend on each other — fetch them all together instead of
+  // waiting on each round trip in sequence.
+  const [
+    { data: profile },
+    { data: userBadgesRaw },
+    { data: posts },
+    followers,
+    following,
+    followRow,
+  ] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", userId).single(),
+    supabase
+      .from("user_badges")
+      .select("badge_key, badges(key, name, description, icon, tier)")
+      .eq("user_id", userId)
+      .order("awarded_at", { ascending: false }),
+    supabase
+      .from("posts")
+      .select("id, user_id, content, image_url, image_width, image_height, video_url, video_orientation, created_at, category")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false }),
+    getFollowers(userId),
+    getFollowing(userId),
+    isOwnProfile
+      ? Promise.resolve(null)
+      : supabase
+          .from("follows")
+          .select("id")
+          .eq("follower_id", currentUser.id)
+          .eq("following_id", userId)
+          .maybeSingle()
+          .then((r) => r.data),
+  ]);
 
   if (!profile) notFound();
+
+  const isFollowing = !!followRow;
 
   const userXp: number = profile.xp ?? 0;
   const userLevel: number = profile.level ?? 1;
@@ -89,11 +121,6 @@ export default async function PublicProfilePage({
     ),
   );
 
-  const { data: userBadgesRaw } = await supabase
-    .from("user_badges")
-    .select("badge_key, badges(key, name, description, icon, tier)")
-    .eq("user_id", userId)
-    .order("awarded_at", { ascending: false });
   const userBadges: BadgeRow[] = (userBadgesRaw ?? [])
     .map((row: { badges: BadgeRow | BadgeRow[] | null }) => {
       const b = Array.isArray(row.badges) ? row.badges[0] : row.badges;
@@ -101,17 +128,18 @@ export default async function PublicProfilePage({
     })
     .filter((b): b is BadgeRow => b != null);
 
-  const { data: posts } = await supabase
-    .from("posts")
-    .select("id, user_id, content, image_url, video_url, video_orientation, created_at, category")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
   const postIds = posts?.map((p) => p.id) ?? [];
-  const { data: likes } = await supabase
-    .from("likes")
-    .select("post_id, user_id")
-    .in("post_id", postIds);
+
+  // likes and comments only depend on postIds, so fetch them together.
+  const [{ data: likes }, { data: comments }] = await Promise.all([
+    supabase.from("likes").select("post_id, user_id").in("post_id", postIds),
+    supabase
+      .from("comments")
+      .select("id, post_id, content, created_at, user_id, parent_id")
+      .in("post_id", postIds)
+      .order("created_at", { ascending: true }),
+  ]);
+
   const likeCountMap = new Map<string, number>();
   const userLikedSet = new Set<string>();
   likes?.forEach((l) => {
@@ -119,27 +147,19 @@ export default async function PublicProfilePage({
     if (l.user_id === currentUser.id) userLikedSet.add(l.post_id);
   });
 
-  const { data: comments } = await supabase
-    .from("comments")
-    .select("id, post_id, content, created_at, user_id, parent_id")
-    .in("post_id", postIds)
-    .order("created_at", { ascending: true });
   const commentUserIds = [...new Set(comments?.map((c) => c.user_id) ?? [])];
-  const { data: commentProfiles } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url")
-    .in("id", commentUserIds);
+  const commentIds = comments?.map((c) => c.id) ?? [];
+
+  const [{ data: commentProfiles }, { data: commentLikes }] = await Promise.all([
+    supabase.from("profiles").select("id, name, avatar_url").in("id", commentUserIds),
+    commentIds.length
+      ? supabase.from("comment_likes").select("comment_id, user_id").in("comment_id", commentIds)
+      : Promise.resolve({ data: [] as { comment_id: string; user_id: string }[] }),
+  ]);
   const commentProfileMap = new Map(
     commentProfiles?.map((p) => [p.id, p]) ?? []
   );
 
-  const commentIds = comments?.map((c) => c.id) ?? [];
-  const { data: commentLikes } = commentIds.length
-    ? await supabase
-        .from("comment_likes")
-        .select("comment_id, user_id")
-        .in("comment_id", commentIds)
-    : { data: [] as { comment_id: string; user_id: string }[] };
   const commentLikeCount = new Map<string, number>();
   const commentLikedByMe = new Set<string>();
   commentLikes?.forEach((l) => {
@@ -167,23 +187,6 @@ export default async function PublicProfilePage({
   comments?.forEach((c) =>
     commentCountMap.set(c.post_id, (commentCountMap.get(c.post_id) ?? 0) + 1)
   );
-
-  // Get followers and following
-  const followers = await getFollowers(userId);
-  const following = await getFollowing(userId);
-
-  const isOwnProfile = currentUser.id === userId;
-
-  let isFollowing = false;
-  if (!isOwnProfile) {
-    const { data: followRow } = await supabase
-      .from("follows")
-      .select("id")
-      .eq("follower_id", currentUser.id)
-      .eq("following_id", userId)
-      .maybeSingle();
-    isFollowing = !!followRow;
-  }
 
   return (
     <div className="space-y-6">

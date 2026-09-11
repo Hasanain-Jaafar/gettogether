@@ -7,6 +7,8 @@ const basePostFields = {
     .max(2000, "Post must be 2000 characters or less")
     .trim(),
   image_url: z.string().url().optional().nullable(),
+  image_width: z.number().int().positive().optional().nullable(),
+  image_height: z.number().int().positive().optional().nullable(),
   video_url: z.string().url().optional().nullable(),
   video_orientation: z.enum(["landscape", "portrait"]).optional().nullable(),
   media_type: z.enum(["text", "image", "video", "gif", "poll", "link"]).optional().nullable(),
