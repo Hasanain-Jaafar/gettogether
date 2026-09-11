@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter as useNextRouter } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { Home, User, UserCircle, LogOut, Menu, Bell, Languages, Trophy, Calendar } from "lucide-react";
+import { Home, User, UserCircle, LogOut, Menu, Bell, Trophy, Calendar } from "lucide-react";
 
 function getInitials(name: string | null, email: string | undefined): string {
   if (name?.trim()) {
@@ -48,15 +48,8 @@ export function Header({ user, profile }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const tLang = useTranslations("language");
-  const locale = useLocale();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-
-  function switchLocale(next: "en" | "ar") {
-    if (next === locale) return;
-    router.replace(pathname, { locale: next });
-  }
 
   const mainNavItems = [
     { href: "/dashboard", label: t("feed"), icon: Home },
@@ -216,25 +209,6 @@ export function Header({ user, profile }: HeaderProps) {
               )}
             </Link>
           </Button>
-
-          {/* Language switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-lg" aria-label={tLang("label")}>
-                <Languages className="size-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => switchLocale("en")}>
-                {tLang("english")}
-                {locale === "en" && <span className="ms-auto text-primary">✓</span>}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => switchLocale("ar")}>
-                {tLang("arabic")}
-                {locale === "ar" && <span className="ms-auto text-primary">✓</span>}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
           {/* Theme toggle */}
           <ThemeToggle />

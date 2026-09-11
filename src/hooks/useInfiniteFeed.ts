@@ -6,6 +6,7 @@ type PostWithMeta = {
   content: string;
   image_url: string | null;
   video_url: string | null;
+  video_orientation?: "landscape" | "portrait" | null;
   created_at: string;
   user_id: string;
   author?: {

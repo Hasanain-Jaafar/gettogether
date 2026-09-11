@@ -8,6 +8,7 @@ const basePostFields = {
     .trim(),
   image_url: z.string().url().optional().nullable(),
   video_url: z.string().url().optional().nullable(),
+  video_orientation: z.enum(["landscape", "portrait"]).optional().nullable(),
   media_type: z.enum(["text", "image", "video", "gif", "poll", "link"]).optional().nullable(),
   category: z.enum(POST_CATEGORIES, { message: "Select a category." }),
 };

@@ -41,7 +41,7 @@ export default async function DashboardPage({
   if (hashtag || category) {
     let query = supabase
       .from("posts")
-      .select("id, user_id, content, image_url, video_url, created_at, category");
+      .select("id, user_id, content, image_url, video_url, video_orientation, created_at, category");
     if (hashtag) query = query.ilike("content", `%#${hashtag}%`);
     if (category) query = query.eq("category", category);
     const { data: filteredPosts } = await query

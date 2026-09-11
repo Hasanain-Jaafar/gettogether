@@ -42,6 +42,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
+  const [videoOrientation, setVideoOrientation] = useState<"landscape" | "portrait" | null>(null);
   const [showUrlField, setShowUrlField] = useState(false);
   const isVideo = imageFile?.type.startsWith("video/") ?? false;
   const trimmedVideoUrl = videoUrl.trim();
@@ -163,6 +164,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       content: trimmed,
       image_url: imageUrl,
       video_url: uploadedVideoUrl || trimmedVideoUrl || null,
+      video_orientation: uploadedVideoUrl ? videoOrientation : null,
       media_type: mediaType ?? (trimmedVideoUrl ? "video" : null),
       category,
     });
@@ -172,6 +174,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       setImageFile(null);
       setPreview(null);
       setVideoUrl("");
+      setVideoOrientation(null);
       setShowUrlField(false);
       setCategory(null);
       setExpanded(false);
@@ -193,8 +196,21 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       return;
     }
     setImageFile(file);
-    setPreview(URL.createObjectURL(file));
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
     setExpanded(true);
+
+    if (fileIsVideo) {
+      setVideoOrientation(null);
+      const probe = document.createElement("video");
+      probe.preload = "metadata";
+      probe.onloadedmetadata = () => {
+        setVideoOrientation(probe.videoHeight > probe.videoWidth ? "portrait" : "landscape");
+      };
+      probe.src = objectUrl;
+    } else {
+      setVideoOrientation(null);
+    }
   }
 
   const avatarUrl = profile?.avatar_url ?? undefined;
@@ -331,6 +347,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                   onClick={() => {
                     setImageFile(null);
                     setPreview(null);
+                    setVideoOrientation(null);
                   }}
                   disabled={submitting}
                   className="absolute end-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:opacity-50"

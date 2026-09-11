@@ -5,18 +5,12 @@ import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-function detectLocale(pathname: string): "en" | "ar" {
-  if (pathname === "/en" || pathname.startsWith("/en/")) return "en";
-  return "ar";
-}
-
 export async function proxy(request: NextRequest) {
-  const locale = detectLocale(request.nextUrl.pathname);
-  request.headers.set("x-locale", locale);
+  request.headers.set("x-locale", "ar");
 
   const intlResponse = intlMiddleware(request);
   if (intlResponse.status === 307 || intlResponse.status === 308) {
-    intlResponse.headers.set("x-locale", locale);
+    intlResponse.headers.set("x-locale", "ar");
     return intlResponse;
   }
 
@@ -26,7 +20,7 @@ export async function proxy(request: NextRequest) {
       sessionResponse.headers.set(key, value);
     }
   });
-  sessionResponse.headers.set("x-locale", locale);
+  sessionResponse.headers.set("x-locale", "ar");
   return sessionResponse;
 }
 

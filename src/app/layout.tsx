@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Tajawal, Zain } from "next/font/google";
-import { headers } from "next/headers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
@@ -37,17 +36,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = (await headers()).get("x-locale") === "en" ? "en" : "ar";
-  const dir = locale === "ar" ? "rtl" : "ltr";
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${tajawal.variable} ${zain.variable} antialiased ${locale === "ar" ? "font-arabic" : ""}`}
+        className={`${geistSans.variable} ${geistMono.variable} ${tajawal.variable} ${zain.variable} antialiased font-arabic`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}

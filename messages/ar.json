@@ -48,11 +48,6 @@
       "genericError": "تعذّر إنشاء الحساب."
     }
   },
-  "language": {
-    "label": "اللغة",
-    "english": "English",
-    "arabic": "العربية"
-  },
   "nav": {
     "feed": "الرئيسية",
     "profile": "الملف الشخصي",

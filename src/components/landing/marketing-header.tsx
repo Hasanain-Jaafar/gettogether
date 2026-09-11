@@ -1,23 +1,11 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { Link, usePathname } from "@/i18n/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Heart, Languages } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Heart } from "lucide-react";
 
 export function MarketingHeader() {
   const pathname = usePathname();
-  const router = useRouter();
-  const locale = useLocale();
-  const t = useTranslations("marketing.header");
-  const tLang = useTranslations("language");
   const onHome = pathname === "/";
 
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -26,11 +14,6 @@ export function MarketingHeader() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
-
-  function switchLocale(next: "en" | "ar") {
-    if (next === locale) return;
-    router.replace(pathname, { locale: next });
-  }
 
   return (
     <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -45,24 +28,6 @@ export function MarketingHeader() {
         </Link>
 
         <nav className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full" aria-label={tLang("label")}>
-                <Languages className="size-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => switchLocale("en")}>
-                {tLang("english")}
-                {locale === "en" && <span className="ms-auto text-primary">✓</span>}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => switchLocale("ar")}>
-                {tLang("arabic")}
-                {locale === "ar" && <span className="ms-auto text-primary">✓</span>}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           <ThemeToggle />
         </nav>
       </div>
