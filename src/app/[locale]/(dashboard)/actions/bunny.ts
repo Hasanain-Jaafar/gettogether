@@ -88,7 +88,9 @@ export async function getBunnyVideoOrientation(
     return null;
   }
 
-  const match = url.pathname.match(/^\/embed\/([^/?#]+)\/([^/?#]+)/);
+  // Bunny serves the same video at both /embed/{libraryId}/{videoId} (iframe
+  // player UI) and /play/{libraryId}/{videoId} (direct play link) — accept either.
+  const match = url.pathname.match(/^\/(?:embed|play)\/([^/?#]+)\/([^/?#]+)/);
   if (!match) return null;
   const [, embeddedLibraryId, videoId] = match;
   if (embeddedLibraryId !== libraryId) return null;
