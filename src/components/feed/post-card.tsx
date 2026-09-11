@@ -76,7 +76,10 @@ function VideoEmbed({ url, orientation }: { url: string; orientation?: "landscap
   if (!embed) return null;
 
   if (embed.kind === "youtube" || embed.kind === "tiktok" || embed.kind === "iframe") {
-    const isPortrait = embed.kind === "tiktok" || (embed.kind === "iframe" && orientation === "portrait");
+    const isPortrait =
+      embed.kind === "tiktok" ||
+      (embed.kind === "youtube" && embed.isShorts) ||
+      (embed.kind === "iframe" && orientation === "portrait");
     const aspect = isPortrait ? "aspect-[9/16] max-w-sm mx-auto" : "aspect-video";
     return (
       <div className={`mt-3 overflow-hidden rounded-xl bg-black ${aspect}`}>

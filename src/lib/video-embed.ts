@@ -1,5 +1,5 @@
 export type VideoEmbed =
-  | { kind: "youtube"; embedSrc: string }
+  | { kind: "youtube"; embedSrc: string; isShorts: boolean }
   | { kind: "tiktok"; embedSrc: string }
   | { kind: "iframe"; embedSrc: string }
   | { kind: "direct"; src: string }
@@ -18,15 +18,15 @@ export function getVideoEmbed(rawUrl: string): VideoEmbed | null {
   // YouTube
   if (host === "youtu.be") {
     const id = url.pathname.slice(1).split("/")[0];
-    if (id) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${id}` };
+    if (id) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${id}`, isShorts: false };
   }
   if (host === "youtube.com" || host === "m.youtube.com" || host === "youtube-nocookie.com") {
     const v = url.searchParams.get("v");
-    if (v) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${v}` };
+    if (v) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${v}`, isShorts: false };
     const shortsMatch = url.pathname.match(/^\/shorts\/([^/?#]+)/);
-    if (shortsMatch) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${shortsMatch[1]}` };
+    if (shortsMatch) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${shortsMatch[1]}`, isShorts: true };
     const embedMatch = url.pathname.match(/^\/embed\/([^/?#]+)/);
-    if (embedMatch) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${embedMatch[1]}` };
+    if (embedMatch) return { kind: "youtube", embedSrc: `https://www.youtube.com/embed/${embedMatch[1]}`, isShorts: false };
   }
 
   // TikTok
