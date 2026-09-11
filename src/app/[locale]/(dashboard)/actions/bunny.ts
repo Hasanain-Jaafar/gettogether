@@ -98,9 +98,18 @@ export async function getBunnyVideoOrientation(
       headers: { AccessKey: apiKey },
     });
     if (!res.ok) return null;
-    const data = (await res.json()) as { width?: number; height?: number };
+    const data = (await res.json()) as { width?: number; height?: number; rotation?: number | null };
     if (!data.width || !data.height) return null;
-    return data.height > data.width ? "portrait" : "landscape";
+
+    // width/height are the pre-rotation encoded resolution — a vertically
+    // recorded phone video is often stored at its sensor's landscape resolution
+    // with a 90/270 rotation flag saying "display this on its side". Swap the
+    // comparison when that's the case, or every rotated portrait video reads
+    // as landscape.
+    const isSideways = Math.abs(data.rotation ?? 0) % 180 === 90;
+    const displayWidth = isSideways ? data.height : data.width;
+    const displayHeight = isSideways ? data.width : data.height;
+    return displayHeight > displayWidth ? "portrait" : "landscape";
   } catch {
     return null;
   }
