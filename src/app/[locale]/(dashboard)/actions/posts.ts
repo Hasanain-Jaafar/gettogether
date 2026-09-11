@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createPostSchema, updatePostSchema } from "@/lib/validations/post";
 import { notifyMentionedUsers } from "./mentions";
+import { getBunnyVideoOrientation } from "./bunny";
 
 const RATE_LIMIT_POSTS_PER_HOUR = 10;
 
@@ -58,6 +59,13 @@ export async function createPost(
     }
   }
 
+  // When a Bunny embed link was pasted in directly (rather than uploaded through
+  // the app), orientation isn't known client-side — look it up server-side.
+  let videoOrientation = parsed.data.video_orientation ?? null;
+  if (!videoOrientation && parsed.data.video_url) {
+    videoOrientation = await getBunnyVideoOrientation(parsed.data.video_url);
+  }
+
   const { data: post, error } = await supabase
     .from("posts")
     .insert({
@@ -67,7 +75,7 @@ export async function createPost(
       image_width: parsed.data.image_width ?? null,
       image_height: parsed.data.image_height ?? null,
       video_url: parsed.data.video_url ?? null,
-      video_orientation: parsed.data.video_orientation ?? null,
+      video_orientation: videoOrientation,
       media_type: parsed.data.video_url && mediaType === "text" ? "video" : mediaType,
       category: parsed.data.category,
     })

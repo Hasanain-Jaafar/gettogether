@@ -65,3 +65,43 @@ export async function createBunnyUploadTicket(
     },
   };
 }
+
+// When someone pastes a Bunny embed link directly (instead of uploading through
+// the app), we have no client-side way to know if the source video is portrait
+// or landscape. If the link points at our own library, ask Bunny for its real
+// dimensions so the feed can size the embed correctly instead of always
+// defaulting to a 16:9 box.
+export async function getBunnyVideoOrientation(
+  embedUrl: string
+): Promise<"landscape" | "portrait" | null> {
+  const libraryId = process.env.BUNNY_STREAM_LIBRARY_ID;
+  const apiKey = process.env.BUNNY_STREAM_API_KEY;
+  if (!libraryId || !apiKey) return null;
+
+  let url: URL;
+  try {
+    url = new URL(embedUrl);
+  } catch {
+    return null;
+  }
+  if (url.hostname !== "iframe.mediadelivery.net" && url.hostname !== "player.mediadelivery.net") {
+    return null;
+  }
+
+  const match = url.pathname.match(/^\/embed\/([^/?#]+)\/([^/?#]+)/);
+  if (!match) return null;
+  const [, embeddedLibraryId, videoId] = match;
+  if (embeddedLibraryId !== libraryId) return null;
+
+  try {
+    const res = await fetch(`${BUNNY_API_BASE}/library/${libraryId}/videos/${videoId}`, {
+      headers: { AccessKey: apiKey },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { width?: number; height?: number };
+    if (!data.width || !data.height) return null;
+    return data.height > data.width ? "portrait" : "landscape";
+  } catch {
+    return null;
+  }
+}
