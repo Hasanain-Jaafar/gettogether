@@ -136,47 +136,29 @@ export async function getWhoToFollow(
 ): Promise<{ user: FollowRelation; mutualFollowers: number }[]> {
   const supabase = await createClient();
 
-  // Get users that the current user is following
-  const { data: following } = await supabase
-    .from("follows")
-    .select("following_id")
-    .eq("follower_id", userId);
+  // Candidate selection, exclusion and mutual-follower counting all happen
+  // in one query server-side (see migrations/032_who_to_follow_rpc.sql)
+  // instead of 3 sequential round trips from here.
+  const { data, error } = await supabase.rpc("get_who_to_follow", {
+    p_user_id: userId,
+    p_limit: limit,
+  });
 
-  const followingIds = following?.map((f) => f.following_id) ?? [];
-  followingIds.push(userId); // Exclude self
+  if (error || !data?.length) return [];
 
-  // Get potential users to follow
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url")
-    .not("id", "in", `(${followingIds.join(",")})`)
-    .limit(limit * 3); // Get more to filter
+  type WhoToFollowRow = {
+    id: string;
+    name: string | null;
+    avatar_url: string | null;
+    mutual_followers: number | null;
+  };
 
-  if (!profiles?.length) return [];
-
-  // Mutual-follower counts are independent per profile — run them together
-  // instead of one round trip at a time.
-  const counts = await Promise.all(
-    profiles.map((profile) =>
-      supabase
-        .from("follows")
-        .select("*", { count: "exact", head: true })
-        .in("follower_id", followingIds)
-        .eq("following_id", profile.id)
-    )
-  );
-
-  const results = profiles.map((profile, i) => ({
+  return (data as WhoToFollowRow[]).map((row) => ({
     user: {
-      id: profile.id,
-      name: profile.name,
-      avatar_url: profile.avatar_url,
+      id: row.id,
+      name: row.name,
+      avatar_url: row.avatar_url,
     },
-    mutualFollowers: counts[i].count ?? 0,
+    mutualFollowers: row.mutual_followers ?? 0,
   }));
-
-  // Sort by mutual followers and take top results
-  return results
-    .sort((a, b) => b.mutualFollowers - a.mutualFollowers)
-    .slice(0, limit);
 }
