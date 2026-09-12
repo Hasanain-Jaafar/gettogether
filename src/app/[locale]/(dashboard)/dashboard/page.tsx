@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { CreatePostForm } from "@/components/feed/create-post-form";
 import { PostCard } from "@/components/feed/post-card";
 import { DashboardRealtime } from "@/components/feed/dashboard-realtime";
@@ -29,7 +29,7 @@ export default async function DashboardPage({
   const { hashtag: hashtagParam, category: categoryParam } = await searchParams;
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getUser();
   if (!user) return null;
   const userId = user.id;
 

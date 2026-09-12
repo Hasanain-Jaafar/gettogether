@@ -6,7 +6,7 @@ import { createPostSchema, updatePostSchema } from "@/lib/validations/post";
 import { notifyMentionedUsers } from "./mentions";
 import { getBunnyVideoOrientation } from "./bunny";
 
-const RATE_LIMIT_POSTS_PER_HOUR = 10;
+const RATE_LIMIT_POSTS_PER_HOUR = 30;
 
 export type PostResult = { success: true; postId?: string } | { success: false; error: string };
 

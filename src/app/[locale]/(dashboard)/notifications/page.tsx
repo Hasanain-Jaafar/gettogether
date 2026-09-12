@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { getNotifications, markAllAsRead } from "@/app/[locale]/(dashboard)/actions/notifications";
 import { NotificationItem } from "@/components/notifications/notification-item";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ export default async function NotificationsPage({
   const t = await getTranslations("notifications");
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getUser();
   if (!user) return null;
 
   const { notifications, unreadCount } = await getNotifications(user.id);

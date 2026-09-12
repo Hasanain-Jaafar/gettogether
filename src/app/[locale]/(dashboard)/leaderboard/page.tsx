@@ -1,7 +1,7 @@
 import { Crown, Trophy } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { LevelBadge } from "@/components/profile/level-badge";
@@ -35,7 +35,7 @@ export default async function LeaderboardPage({
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getUser();
 
   const { data: rowsData } = await supabase
     .from("profiles")

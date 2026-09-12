@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { ProfileForm } from "@/components/profile/profile-form";
 
 export default async function ProfilePage({
@@ -14,7 +14,7 @@ export default async function ProfilePage({
   const t = await getTranslations("profile");
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getUser();
   if (!user) redirect("/sign-in");
 
   const { data: profile } = await supabase

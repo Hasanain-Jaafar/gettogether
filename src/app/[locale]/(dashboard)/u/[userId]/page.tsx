@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PostCard } from "@/components/feed/post-card";
@@ -66,7 +66,7 @@ export default async function PublicProfilePage({
   const supabase = await createClient();
   const {
     data: { user: currentUser },
-  } = await supabase.auth.getUser();
+  } = await getUser();
   if (!currentUser) return null;
 
   const isOwnProfile = currentUser.id === userId;

@@ -154,25 +154,26 @@ export async function getWhoToFollow(
 
   if (!profiles?.length) return [];
 
-  const results: { user: FollowRelation; mutualFollowers: number }[] = [];
+  // Mutual-follower counts are independent per profile — run them together
+  // instead of one round trip at a time.
+  const counts = await Promise.all(
+    profiles.map((profile) =>
+      supabase
+        .from("follows")
+        .select("*", { count: "exact", head: true })
+        .in("follower_id", followingIds)
+        .eq("following_id", profile.id)
+    )
+  );
 
-  for (const profile of profiles) {
-    // Get count of mutual followers
-    const { count } = await supabase
-      .from("follows")
-      .select("*", { count: "exact", head: true })
-      .in("follower_id", followingIds)
-      .eq("following_id", profile.id);
-
-    results.push({
-      user: {
-        id: profile.id,
-        name: profile.name,
-        avatar_url: profile.avatar_url,
-      },
-      mutualFollowers: count ?? 0,
-    });
-  }
+  const results = profiles.map((profile, i) => ({
+    user: {
+      id: profile.id,
+      name: profile.name,
+      avatar_url: profile.avatar_url,
+    },
+    mutualFollowers: counts[i].count ?? 0,
+  }));
 
   // Sort by mutual followers and take top results
   return results

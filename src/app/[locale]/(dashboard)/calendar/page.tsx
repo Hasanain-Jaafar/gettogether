@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { getEventsInRange } from "@/app/[locale]/(dashboard)/actions/events";
 import { EventsCardList } from "@/components/calendar/events-card-list";
 
@@ -14,7 +14,7 @@ export default async function CalendarPage({
   const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getUser();
   if (!user) return null;
 
   const now = new Date();
