@@ -1,6 +1,8 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
+import { loadFeedPage, type FeedPage } from "@/lib/feed-page";
+import { isPostCategory } from "@/lib/post-categories";
 
 export type PostWithUser = {
   id: string;
@@ -172,4 +174,24 @@ export async function getFilteredFeed(
   })) as PostWithUser[];
 
   return { posts: postsWithUsers };
+}
+
+// Next page of the dashboard feed for the "Load more" button.
+export async function loadMoreFeedPosts(
+  filters: { hashtag?: string | null; category?: string | null },
+  before: string
+): Promise<FeedPage> {
+  const {
+    data: { user },
+  } = await getUser();
+  if (!user) return { items: [], nextCursor: null, hasMore: false };
+
+  return loadFeedPage(
+    user.id,
+    {
+      hashtag: filters.hashtag || null,
+      category: isPostCategory(filters.category) ? filters.category : null,
+    },
+    before
+  );
 }

@@ -157,6 +157,8 @@ export function PostCard({
   const [saving, setSaving] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  // Posts added by "Load more" aren't re-rendered by router.refresh(), so hide the card ourselves.
+  const [deleted, setDeleted] = useState(false);
   const isOwn = currentUserId === post.user_id;
 
   async function handleSaveEdit() {
@@ -190,11 +192,14 @@ export function PostCard({
     setDeleting(false);
     if (result.success) {
       setConfirmDeleteOpen(false);
+      setDeleted(true);
       router.refresh();
     } else {
       toast.error(result.error);
     }
   }
+
+  if (deleted) return null;
 
   return (
     <Card className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition-shadow hover:shadow-md">
