@@ -4,10 +4,8 @@ import { Link } from "@/i18n/navigation";
 import { createClient, getUser } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PostCard } from "@/components/feed/post-card";
-import { getFollowers, getFollowing } from "@/app/[locale]/(dashboard)/actions/follows";
+import { PostGrid } from "@/components/profile/post-grid";
 import { FollowButton } from "@/components/profile/follow-button";
-import { FollowListDialog } from "@/components/profile/follow-list-dialog";
 import {
   MapPin,
   Calendar,
@@ -73,18 +71,14 @@ export default async function PublicProfilePage({
   const [
     { data: profile },
     { data: posts },
-    followers,
-    following,
     followRow,
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", userId).single(),
     supabase
       .from("posts")
-      .select("id, user_id, content, image_url, image_width, image_height, video_url, video_orientation, created_at, category")
+      .select("id, content, image_url, video_url, category")
       .eq("user_id", userId)
       .order("created_at", { ascending: false }),
-    getFollowers(userId),
-    getFollowing(userId),
     isOwnProfile
       ? Promise.resolve(null)
       : supabase
@@ -100,76 +94,8 @@ export default async function PublicProfilePage({
 
   const isFollowing = !!followRow;
 
-  const postIds = posts?.map((p) => p.id) ?? [];
-
-  // likes and comments only depend on postIds, so fetch them together.
-  const [{ data: likes }, { data: comments }] = await Promise.all([
-    supabase.from("likes").select("post_id, user_id").in("post_id", postIds),
-    supabase
-      .from("comments")
-      .select("id, post_id, content, created_at, user_id, parent_id")
-      .in("post_id", postIds)
-      .order("created_at", { ascending: true }),
-  ]);
-
-  const likeCountMap = new Map<string, number>();
-  const userLikedSet = new Set<string>();
-  likes?.forEach((l) => {
-    likeCountMap.set(l.post_id, (likeCountMap.get(l.post_id) ?? 0) + 1);
-    if (l.user_id === currentUser.id) userLikedSet.add(l.post_id);
-  });
-
-  const commentUserIds = [...new Set(comments?.map((c) => c.user_id) ?? [])];
-  const commentIds = comments?.map((c) => c.id) ?? [];
-
-  const [{ data: commentProfiles }, { data: commentLikes }] = await Promise.all([
-    supabase.from("profiles").select("id, name, avatar_url").in("id", commentUserIds),
-    commentIds.length
-      ? supabase.from("comment_likes").select("comment_id, user_id").in("comment_id", commentIds)
-      : Promise.resolve({ data: [] as { comment_id: string; user_id: string }[] }),
-  ]);
-  const commentProfileMap = new Map(
-    commentProfiles?.map((p) => [p.id, p]) ?? []
-  );
-
-  const commentLikeCount = new Map<string, number>();
-  const commentLikedByMe = new Set<string>();
-  commentLikes?.forEach((l) => {
-    commentLikeCount.set(l.comment_id, (commentLikeCount.get(l.comment_id) ?? 0) + 1);
-    if (l.user_id === currentUser.id) commentLikedByMe.add(l.comment_id);
-  });
-
-  type CommentWithAuthor = NonNullable<typeof comments>[0] & {
-    author: { name: string | null; avatar_url: string | null } | null;
-    like_count: number;
-    liked_by_me: boolean;
-  };
-  const commentsByPost = new Map<string, CommentWithAuthor[]>();
-  comments?.forEach((c) => {
-    const list = commentsByPost.get(c.post_id) ?? [];
-    list.push({
-      ...c,
-      author: commentProfileMap.get(c.user_id) ?? null,
-      like_count: commentLikeCount.get(c.id) ?? 0,
-      liked_by_me: commentLikedByMe.has(c.id),
-    });
-    commentsByPost.set(c.post_id, list);
-  });
-  const commentCountMap = new Map<string, number>();
-  comments?.forEach((c) =>
-    commentCountMap.set(c.post_id, (commentCountMap.get(c.post_id) ?? 0) + 1)
-  );
-
   return (
     <div className="space-y-6">
-      {/* Followers / Following Stats */}
-      <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
-        <div className="grid grid-cols-2 gap-4">
-          <FollowListDialog label={t("followers")} users={followers} />
-          <FollowListDialog label={t("following")} users={following} />
-        </div>
-      </div>
-
       {/* Profile Card */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
@@ -290,22 +216,7 @@ export default async function PublicProfilePage({
           <p>{tFeed("empty.noPostsTitle")}</p>
         </div>
       ) : (
-        <ul className="space-y-4">
-          {posts.map((post) => (
-            <li key={post.id}>
-              <PostCard
-                post={post}
-                author={{ name: profile.name, avatar_url: profile.avatar_url }}
-                likeCount={likeCountMap.get(post.id) ?? 0}
-                commentCount={commentCountMap.get(post.id) ?? 0}
-                currentUserLiked={userLikedSet.has(post.id)}
-                comments={commentsByPost.get(post.id) ?? []}
-                currentUserId={currentUser.id}
-                likers={[]}
-              />
-            </li>
-          ))}
-        </ul>
+        <PostGrid posts={posts} />
       )}
     </div>
   );

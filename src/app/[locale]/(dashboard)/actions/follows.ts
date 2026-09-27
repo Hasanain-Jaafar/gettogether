@@ -8,12 +8,6 @@ export type FollowResult =
   | { success: true; following: boolean }
   | { success: false; error: string };
 
-export type FollowRelation = {
-  id: string;
-  name: string | null;
-  avatar_url: string | null;
-};
-
 export async function toggleFollow(targetUserId: string): Promise<FollowResult> {
   const supabase = await createClient();
   const {
@@ -56,76 +50,4 @@ export async function toggleFollow(targetUserId: string): Promise<FollowResult> 
   revalidatePath("/dashboard");
   revalidatePath("/profile");
   return { success: true, following: true };
-}
-
-export async function getFollowing(userId: string): Promise<FollowRelation[]> {
-  const supabase = await createClient();
-
-  // Get following IDs first
-  const { data: follows, error: followsError } = await supabase
-    .from("follows")
-    .select("following_id")
-    .eq("follower_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (followsError || !follows?.length) return [];
-
-  const followingIds = follows.map((f) => f.following_id);
-
-  // Get profiles for following IDs
-  const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url")
-    .in("id", followingIds);
-
-  if (profilesError) return [];
-
-  const profileMap = new Map(profiles?.map((p) => [p.id, p]) ?? []);
-
-  return (
-    follows.map((f) => {
-      const profile = profileMap.get(f.following_id);
-      return {
-        id: f.following_id,
-        name: profile?.name ?? null,
-        avatar_url: profile?.avatar_url ?? null,
-      };
-    }) ?? []
-  );
-}
-
-export async function getFollowers(userId: string): Promise<FollowRelation[]> {
-  const supabase = await createClient();
-
-  // Get follower IDs first
-  const { data: follows, error: followsError } = await supabase
-    .from("follows")
-    .select("follower_id")
-    .eq("following_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (followsError || !follows?.length) return [];
-
-  const followerIds = follows.map((f) => f.follower_id);
-
-  // Get profiles for follower IDs
-  const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url")
-    .in("id", followerIds);
-
-  if (profilesError) return [];
-
-  const profileMap = new Map(profiles?.map((p) => [p.id, p]) ?? []);
-
-  return (
-    follows.map((f) => {
-      const profile = profileMap.get(f.follower_id);
-      return {
-        id: f.follower_id,
-        name: profile?.name ?? null,
-        avatar_url: profile?.avatar_url ?? null,
-      };
-    }) ?? []
-  );
 }
