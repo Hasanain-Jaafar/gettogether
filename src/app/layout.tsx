@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Tajawal, Zain } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -19,11 +19,31 @@ const zain = Zain({
 export const metadata: Metadata = {
   title: "GetTogether",
   description: "A cozy gathering place where love blossoms and relationships grow. Connect with kindred spirits and build meaningful relationships.",
+  applicationName: "GetTogether",
   icons: {
-    icon: "/icons/favicon.svg",
+    icon: [
+      { url: "/icons/favicon.svg", type: "image/svg+xml" },
+      { url: "/pwa/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
     shortcut: "/icons/favicon.svg",
-    apple: "/icons/favicon.svg",
+    apple: { url: "/pwa/apple-touch-icon.png", sizes: "180x180" },
   },
+  appleWebApp: {
+    capable: true,
+    title: "GetTogether",
+    statusBarStyle: "default",
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f3f1f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e090a" },
+  ],
 };
 
 export default function RootLayout({
