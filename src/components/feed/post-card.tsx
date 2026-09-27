@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { CATEGORY_COLORS, CATEGORY_ICONS, POST_CATEGORIES, isPostCategory, type PostCategory } from "@/lib/post-categories";
 import {
   DropdownMenu,
@@ -230,7 +230,7 @@ export function PostCard({
               </p>
             </div>
           </Link>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-0.5">
             {category && (
               <span
                 className={cn(
@@ -247,9 +247,9 @@ export function PostCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8 rounded-full shrink-0"
+                  className="h-8 w-5 shrink-0 rounded-md"
                 >
-                  <MoreHorizontal className="size-4" />
+                  <MoreVertical className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

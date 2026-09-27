@@ -10,9 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useProfile } from "@/hooks/use-profile";
-import { ImageIcon, Video, Link2, X } from "lucide-react";
+import { ImageIcon, Video, Link2, X, PenLine } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { getVideoEmbed } from "@/lib/video-embed";
 import { CATEGORY_ICONS, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
@@ -26,14 +24,6 @@ const MAX_VIDEO_MB = 8192;
 type CreatePostFormProps = {
   userId: string;
 };
-
-function initialsFor(name: string | null | undefined): string {
-  if (!name?.trim()) return "U";
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2)
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  return name.slice(0, 2).toUpperCase();
-}
 
 export function CreatePostForm({ userId }: CreatePostFormProps) {
   const t = useTranslations("feed.createPost");
@@ -56,7 +46,6 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { profile } = useProfile(userId);
 
   useEffect(() => {
     if (expanded) textareaRef.current?.focus();
@@ -232,11 +221,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     }
   }
 
-  const avatarUrl = profile?.avatar_url ?? undefined;
-  const initials = initialsFor(profile?.name);
-
   return (
-    <Card className="rounded-2xl border border-border/80 bg-card shadow-sm">
+    <Card className="rounded-md border border-border/80 bg-card shadow-sm">
       <CardContent className={expanded ? "p-4 sm:p-6" : "p-2"}>
         <input
           ref={inputRef}
@@ -255,10 +241,9 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
         {!expanded ? (
           <div className="flex items-center gap-2">
-            <Avatar className="size-7 shrink-0">
-              <AvatarImage src={avatarUrl} alt={profile?.name ?? ""} />
-              <AvatarFallback>{initials}</AvatarFallback>
-            </Avatar>
+            <span aria-hidden className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <PenLine className="size-3.5" />
+            </span>
             <button
               type="button"
               onClick={() => setExpanded(true)}
@@ -270,10 +255,9 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex items-start gap-3">
-              <Avatar className="size-10 shrink-0">
-                <AvatarImage src={avatarUrl} alt={profile?.name ?? ""} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
+              <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <PenLine className="size-5" />
+              </span>
               <Textarea
                 ref={textareaRef}
                 placeholder={t("placeholder")}

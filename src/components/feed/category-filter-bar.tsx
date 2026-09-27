@@ -11,6 +11,9 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
     <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60 md:-mx-6 md:px-6">
       <div className="relative">
         <div className="flex gap-1.5 overflow-x-auto scroll-px-4 snap-x snap-mandatory scrollbar-hide py-1.5">
+          {/* Auto margins on the end spacers center the chips when they fit, and collapse to 0 when they
+              overflow so the row still scrolls from the first chip. Spacers keep end chips clear of the fades. */}
+          <div className="ms-auto w-3 shrink-0" aria-hidden />
           <Link
             href="/dashboard"
             className={cn(
@@ -41,8 +44,7 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
               </Link>
             );
           })}
-          {/* trailing spacer so the last chip clears the fade overlay and the screen edge */}
-          <div className="shrink-0 w-3" aria-hidden />
+          <div className="me-auto w-3 shrink-0" aria-hidden />
         </div>
         <div className="pointer-events-none absolute inset-y-0 w-10 ltr:right-0 ltr:bg-gradient-to-l rtl:left-0 rtl:bg-gradient-to-r from-background to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 w-10 ltr:left-0 ltr:bg-gradient-to-r rtl:right-0 rtl:bg-gradient-to-l from-background to-transparent" />

@@ -168,8 +168,26 @@ export function Header({ user, profile }: HeaderProps) {
         {/* Spacer (desktop only; on mobile the icon row fills the width) */}
         <div className="hidden flex-1 md:block" />
 
-        {/* Secondary navigation: spread evenly across the bar on mobile */}
+        {/* Secondary navigation: spread evenly across the bar on mobile.
+            RTL order: notifications (right), home (center), avatar (left). */}
         <nav className="flex flex-1 items-center justify-between md:flex-none md:justify-end md:gap-2">
+          {/* Notifications with badge */}
+          <Button
+            variant="ghost"
+            size="icon"
+            asChild
+            className={cn("rounded-lg relative", pathname === "/notifications" && "bg-accent text-primary")}
+          >
+            <Link href="/notifications" aria-label={t("notifications")}>
+              <Bell className="size-5" />
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
+              )}
+            </Link>
+          </Button>
+
           {secondaryNavItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -191,24 +209,6 @@ export function Header({ user, profile }: HeaderProps) {
               </Button>
             );
           })}
-
-          {/* Notifications with badge */}
-          <Button
-            variant="ghost"
-            size="icon"
-            asChild
-            className={cn("rounded-lg relative", pathname === "/notifications" && "bg-accent text-primary")}
-          >
-            <Link href="/notifications" aria-label={t("notifications")}>
-              <Bell className="size-5" />
-              {unreadCount > 0 && (
-                <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </Badge>
-              )}
-            </Link>
-          </Button>
-
 
           {/* Avatar dropdown */}
           <DropdownMenu>
