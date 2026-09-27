@@ -29,9 +29,11 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims() refreshes an expired session (writing new cookies via setAll)
+  // and verifies the JWT locally, so this doesn't cost a round trip to Supabase
+  // Auth on every request, prefetch and server action.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims ?? null;
 
   const pathWithoutLocale =
     request.nextUrl.pathname.replace(/^\/(en|ar)(?=\/|$)/, "") || "/";

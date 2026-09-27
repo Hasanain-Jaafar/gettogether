@@ -16,7 +16,7 @@ export function Hero() {
     >
       {/* Background image: mobile-portrait on small screens, desktop on md+ */}
       <Image
-        src="/Mobil bg.png"
+        src="/Mobil bg.webp"
         alt=""
         fill
         priority
@@ -24,7 +24,7 @@ export function Hero() {
         className="object-cover object-center md:hidden"
       />
       <Image
-        src="/Desktop bg.png"
+        src="/Desktop bg.webp"
         alt=""
         fill
         priority
