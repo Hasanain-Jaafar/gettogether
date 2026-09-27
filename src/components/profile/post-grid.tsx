@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Play } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { getVideoEmbed } from "@/lib/video-embed";
+import { getVideoEmbed, videoKey } from "@/lib/video-embed";
 import { CATEGORY_COLORS, isPostCategory } from "@/lib/post-categories";
 import { cn } from "@/lib/utils";
 import { VideoFrameThumb } from "@/components/profile/video-frame-thumb";
@@ -19,6 +19,13 @@ const VIDEO_FILE = /\.(mp4|webm|mov|m4v)(\?|$)/i;
 /** True when the post carries a video (a video link, or a video file stored as its media). */
 export function isVideoPost(post: Pick<PostGridItem, "image_url" | "video_url">): boolean {
   return !!post.video_url || (!!post.image_url && VIDEO_FILE.test(post.image_url));
+}
+
+/** Identity of the post's video (see videoKey), or null when the post has no video. */
+export function postVideoKey(post: Pick<PostGridItem, "image_url" | "video_url">): string | null {
+  if (post.video_url) return videoKey(post.video_url);
+  if (post.image_url && VIDEO_FILE.test(post.image_url)) return videoKey(post.image_url);
+  return null;
 }
 
 type VideoThumb = { kind: "image"; src: string } | { kind: "frame"; src: string };

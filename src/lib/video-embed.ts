@@ -59,3 +59,32 @@ export function getVideoEmbed(rawUrl: string): VideoEmbed | null {
 
   return { kind: "link", href: url.toString() };
 }
+
+/**
+ * A stable identity for the video a link points at, so the same video posted
+ * through different URL forms (youtu.be vs watch?v=, extra query params, a
+ * Bunny /play vs /embed link) is recognized as one. Null if it isn't a video link.
+ */
+export function videoKey(rawUrl: string): string | null {
+  const embed = getVideoEmbed(rawUrl);
+  if (!embed) return null;
+  switch (embed.kind) {
+    case "youtube":
+      return `youtube:${new URL(embed.embedSrc).pathname.split("/").pop()}`;
+    case "tiktok":
+      return `tiktok:${new URL(embed.embedSrc).pathname.split("/").pop()}`;
+    case "iframe": {
+      const url = new URL(embed.embedSrc);
+      const bunny = url.pathname.match(/^\/(?:embed|play)\/([^/]+)\/([^/?#]+)/);
+      return bunny ? `bunny:${bunny[1]}/${bunny[2]}` : `iframe:${url.host}${url.pathname}`;
+    }
+    case "direct": {
+      const url = new URL(embed.src);
+      return `file:${url.host.toLowerCase()}${decodeURIComponent(url.pathname)}`;
+    }
+    case "link": {
+      const url = new URL(embed.href);
+      return `link:${url.host.toLowerCase()}${url.pathname}${url.search}`;
+    }
+  }
+}
