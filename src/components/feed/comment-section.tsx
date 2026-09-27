@@ -9,6 +9,7 @@ import { createComment } from "@/app/[locale]/(dashboard)/actions/comments";
 import { toggleCommentLike } from "@/app/[locale]/(dashboard)/actions/likes";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { relativeTime } from "@/lib/utils";
@@ -205,7 +206,7 @@ export function CommentSection({
                   className="rounded-xl shrink-0"
                   disabled={replySubmitting || !replyContent.trim()}
                 >
-                  {replySubmitting ? "…" : t("submit")}
+                  {replySubmitting ? <Spinner /> : t("submit")}
                 </Button>
               </form>
             )}
@@ -248,7 +249,7 @@ export function CommentSection({
               className="rounded-xl shrink-0"
               disabled={submitting || !content.trim()}
             >
-              {submitting ? "…" : t("submit")}
+              {submitting ? <Spinner /> : t("submit")}
             </Button>
           </form>
           <ul className="space-y-3">

@@ -10,6 +10,7 @@ import { updateProfile } from "@/app/[locale]/(dashboard)/profile/actions";
 import { profileSchema, type ProfileInput } from "@/lib/validations/profile";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -404,6 +405,7 @@ export function ProfileForm({
             </div>
 
             <Button type="submit" disabled={form.formState.isSubmitting} className="rounded-full">
+              {form.formState.isSubmitting && <Spinner />}
               {form.formState.isSubmitting ? t("saving") : t("save")}
             </Button>
           </form>

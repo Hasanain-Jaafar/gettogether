@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { relativeTime } from "@/lib/utils";
 import { markAsRead } from "@/app/[locale]/(dashboard)/actions/notifications";
 import { toast } from "sonner";
+import { startNavigationProgress } from "@/components/navigation-progress";
 
 type NotificationItemProps = {
   notification: {
@@ -79,6 +80,10 @@ export function NotificationItem({
 
     e.preventDefault();
 
+    const navHref = href && href !== "#" ? href : null;
+    // Show progress right away; marking as read runs before the push and would otherwise feel like a dead tap.
+    if (navHref) startNavigationProgress();
+
     if (!isRead && !marking) {
       setMarking(true);
       const result = await markAsRead(notification.id);
@@ -91,8 +96,8 @@ export function NotificationItem({
       setMarking(false);
     }
 
-    if (href && href !== "#") {
-      router.push(href);
+    if (navHref) {
+      router.push(navHref);
     }
   };
 

@@ -7,6 +7,7 @@ import { UserPlus, UserCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { toggleFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 type FollowButtonProps = {
@@ -56,7 +57,7 @@ export function FollowButton({
       disabled={loading}
     >
       {loading ? (
-        <span className="size-4 animate-pulse" />
+        <Spinner />
       ) : following ? (
         <>
           <motion.span

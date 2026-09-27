@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { startNavigationProgress } from "@/components/navigation-progress";
 import { Home, User, UserCircle, LogOut, Menu, Bell, Trophy, Calendar } from "lucide-react";
 
 function getInitials(name: string | null, email: string | undefined): string {
@@ -132,6 +133,7 @@ export function Header({ user, profile }: HeaderProps) {
   }, [user]);
 
   async function handleLogout() {
+    startNavigationProgress();
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/");

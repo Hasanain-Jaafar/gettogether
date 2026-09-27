@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { createPost } from "@/app/[locale]/(dashboard)/actions/posts";
 import { createBunnyUploadTicket } from "@/app/[locale]/(dashboard)/actions/bunny";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -434,6 +435,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                   !category
                 }
               >
+                {submitting && <Spinner />}
                 {submitting ? t("posting") : t("post")}
               </Button>
             </div>

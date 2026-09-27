@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { LikeButton } from "@/components/feed/like-button";
@@ -309,6 +310,7 @@ export function PostCard({
                   onClick={handleSaveEdit}
                   disabled={saving || (!editContent.trim() && !post.image_url && !post.video_url)}
                 >
+                  {saving && <Spinner />}
                   {saving ? t("saving") : t("save")}
                 </Button>
                 <Button
@@ -409,6 +411,7 @@ export function PostCard({
               disabled={deleting}
               onClick={confirmDelete}
             >
+              {deleting && <Spinner />}
               {deleting ? t("deleting") : t("delete")}
             </Button>
           </DialogFooter>

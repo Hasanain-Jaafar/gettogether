@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { cropImageToBlob } from "@/lib/crop-image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Dialog,
   DialogContent,
@@ -141,6 +142,7 @@ export function AvatarUpload({
           disabled={uploading}
           onClick={() => inputRef.current?.click()}
         >
+          {uploading && <Spinner />}
           {uploading ? t("uploading") : t("changeAvatar")}
         </Button>
         <p className="text-xs text-muted-foreground">
@@ -200,6 +202,7 @@ export function AvatarUpload({
               disabled={uploading || !areaPx}
               className="rounded-full"
             >
+              {uploading && <Spinner />}
               {uploading ? tCommon("saving") : tCommon("save")}
             </Button>
           </DialogFooter>

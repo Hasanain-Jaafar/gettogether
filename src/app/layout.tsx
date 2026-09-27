@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Tajawal, Zain } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
 
 const tajawal = Tajawal({
@@ -57,6 +58,7 @@ export default function RootLayout({
         className={`${tajawal.variable} ${zain.variable} antialiased font-arabic`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <NavigationProgress />
           {children}
           <Toaster richColors position="top-center" />
         </ThemeProvider>

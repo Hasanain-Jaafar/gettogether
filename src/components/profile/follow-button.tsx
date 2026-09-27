@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { UserPlus, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { toggleFollow } from "@/app/[locale]/(dashboard)/actions/follows";
 
 type FollowButtonProps = {
@@ -45,7 +46,11 @@ export function FollowButton({
       variant={following ? "outline" : "default"}
       className="rounded-full"
     >
-      {following ? (
+      {isPending ? (
+        <>
+          <Spinner /> {following ? t("following") : t("follow")}
+        </>
+      ) : following ? (
         <>
           <UserCheck className="size-4" /> {t("following")}
         </>

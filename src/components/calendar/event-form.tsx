@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -203,6 +204,7 @@ function EventFormInner({
               {t("cancel")}
             </Button>
             <Button type="submit" disabled={pending || !title.trim()}>
+              {pending && <Spinner />}
               {pending ? t("saving") : editing ? t("save") : t("create")}
             </Button>
           </DialogFooter>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +9,8 @@ import { createClient } from "@/lib/supabase/client";
 import { signInSchema, type SignInInput } from "@/lib/validations/auth";
 import { resolveLoginIdentifier } from "@/app/[locale]/(auth)/actions";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { startNavigationProgress } from "@/components/navigation-progress";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -31,11 +33,14 @@ export function SignInForm() {
   const router = useRouter();
   const t = useTranslations("auth.signIn");
   const [error, setError] = useState<string | null>(null);
+  // Stays pending until /dashboard has rendered, so the button doesn't reset mid-redirect.
+  const [redirecting, startRedirect] = useTransition();
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
     defaultValues: { identifier: "", password: "" },
   });
+  const busy = form.formState.isSubmitting || redirecting;
 
   async function onSubmit(values: SignInInput) {
     setError(null);
@@ -61,7 +66,8 @@ export function SignInForm() {
       setError(friendly);
       return;
     }
-    router.push("/dashboard");
+    startNavigationProgress();
+    startRedirect(() => router.push("/dashboard"));
   }
 
   return (
@@ -121,9 +127,10 @@ export function SignInForm() {
             <Button
               type="submit"
               className="w-full h-11 font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20"
-              disabled={form.formState.isSubmitting}
+              disabled={busy}
             >
-              {form.formState.isSubmitting ? t("submitting") : t("submit")}
+              {busy && <Spinner />}
+              {busy ? t("submitting") : t("submit")}
             </Button>
           </CardFooter>
         </form>

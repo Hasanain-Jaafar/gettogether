@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { PostCard, type PostCardProps } from "@/components/feed/post-card";
 import { loadMoreFeedPosts } from "@/app/[locale]/(dashboard)/actions/feed";
 
@@ -59,6 +60,7 @@ export function LoadMorePosts({
       {hasMore ? (
         <div className="flex justify-center">
           <Button variant="outline" onClick={loadMore} disabled={isPending}>
+            {isPending && <Spinner />}
             {isPending ? t("loading") : t("button")}
           </Button>
         </div>

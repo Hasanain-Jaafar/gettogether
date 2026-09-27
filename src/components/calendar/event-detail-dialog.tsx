@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { deleteEvent, type CalendarEvent } from "@/app/[locale]/(dashboard)/actions/events";
 import { EventForm } from "./event-form";
@@ -141,7 +142,7 @@ export function EventDetailDialog({
                 disabled={pending}
                 className="text-destructive hover:text-destructive"
               >
-                <Trash2 className="size-4" />
+                {pending ? <Spinner /> : <Trash2 className="size-4" />}
                 {t("deleteEvent")}
               </Button>
             </DialogFooter>
