@@ -4,8 +4,9 @@ import { Link } from "@/i18n/navigation";
 import { createClient, getUser } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PostGrid } from "@/components/profile/post-grid";
+import { PostGrid, isVideoPost } from "@/components/profile/post-grid";
 import { FollowButton } from "@/components/profile/follow-button";
+import { ScrollToTop } from "@/components/feed/scroll-to-top";
 import {
   MapPin,
   Calendar,
@@ -57,7 +58,6 @@ export default async function PublicProfilePage({
   setRequestLocale(locale);
   const t = await getTranslations("profile");
   const tFeed = await getTranslations("feed");
-  const tSidebar = await getTranslations("sidebar");
   const supabase = await createClient();
   const {
     data: { user: currentUser },
@@ -94,8 +94,13 @@ export default async function PublicProfilePage({
 
   const isFollowing = !!followRow;
 
+  const songCount = posts?.filter((p) => p.category === "songs").length ?? 0;
+  const imageCount = posts?.filter((p) => p.category === "images").length ?? 0;
+  const videoCount = posts?.filter(isVideoPost).length ?? 0;
+
   return (
     <div className="space-y-6">
+      <ScrollToTop />
       {/* Profile Card */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
@@ -203,7 +208,11 @@ export default async function PublicProfilePage({
             {/* Stats */}
             <div className="text-sm">
               <p className="font-medium text-foreground">
-                {tSidebar("postCount", { count: posts?.length ?? 0 })}
+                {[
+                  t("songsCount", { count: songCount }),
+                  t("imagesCount", { count: imageCount }),
+                  t("videosCount", { count: videoCount }),
+                ].join(" · ")}
               </p>
             </div>
           </div>

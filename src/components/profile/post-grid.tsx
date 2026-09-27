@@ -16,6 +16,11 @@ export type PostGridItem = {
 
 const VIDEO_FILE = /\.(mp4|webm|mov|m4v)(\?|$)/i;
 
+/** True when the post carries a video (a video link, or a video file stored as its media). */
+export function isVideoPost(post: Pick<PostGridItem, "image_url" | "video_url">): boolean {
+  return !!post.video_url || (!!post.image_url && VIDEO_FILE.test(post.image_url));
+}
+
 type VideoThumb = { kind: "image"; src: string } | { kind: "frame"; src: string };
 
 // How to preview a post's video: a thumbnail image when the host provides one,
@@ -46,7 +51,7 @@ export function PostGrid({ posts }: { posts: PostGridItem[] }) {
       {posts.map((post) => {
         const isVideoFile = !!post.image_url && VIDEO_FILE.test(post.image_url);
         const image = post.image_url && !isVideoFile ? post.image_url : null;
-        const isVideo = isVideoFile || !!post.video_url;
+        const isVideo = isVideoPost(post);
         const thumb: VideoThumb | null = image
           ? null
           : isVideoFile && post.image_url

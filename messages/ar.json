@@ -161,7 +161,6 @@
     }
   },
   "sidebar": {
-    "postCount": "{count, plural, =1 {منشور واحد} =2 {منشوران} other {# منشورات}}",
     "clearFilter": "إزالة الفلتر"
   },
   "notifications": {
@@ -222,6 +221,9 @@
     "location": "الموقع",
     "posts": "المنشورات",
     "joined": "انضم في {date}",
+    "songsCount": "{count, plural, =1 {أغنية واحدة} =2 {أغنيتان} few {# أغانٍ} other {# أغنية}}",
+    "imagesCount": "{count, plural, =1 {صورة واحدة} =2 {صورتان} few {# صور} other {# صورة}}",
+    "videosCount": "{count, plural, =1 {فيديو واحد} =2 {فيديوهان} few {# فيديوهات} other {# فيديو}}",
     "updated": "تم تحديث الملف.",
     "saveFailed": "تعذّر حفظ الملف",
     "follow": "متابعة",
