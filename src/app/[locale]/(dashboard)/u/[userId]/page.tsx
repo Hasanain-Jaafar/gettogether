@@ -103,9 +103,9 @@ export default async function PublicProfilePage({
       <ScrollToTop />
       {/* Profile Card */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+        <div className="flex flex-col items-center gap-6">
           {/* Avatar and Basic Info */}
-          <div className="flex flex-col items-center gap-4 sm:w-auto">
+          <div className="flex flex-col items-center gap-4">
             <Avatar className="size-24">
               <AvatarImage src={profile.avatar_url ?? undefined} />
               <AvatarFallback className="text-3xl">
@@ -115,9 +115,10 @@ export default async function PublicProfilePage({
           </div>
 
           {/* Profile Details */}
-          <div className="flex-1 space-y-4 text-center sm:text-left">
+          {/* Every row is centered: the column centers its children, and text inside them is centered too */}
+          <div className="flex w-full flex-col items-center gap-4 text-center">
             <div>
-              <h1 className="flex items-center justify-center gap-2 text-2xl font-semibold text-foreground sm:justify-start">
+              <h1 className="flex items-center justify-center gap-2 text-2xl font-semibold text-foreground">
                 {profile.name ?? tFeed("post.someone")}
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -162,13 +163,13 @@ export default async function PublicProfilePage({
             {/* Interests */}
             {profile.interests && profile.interests.length > 0 && (
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <Hash className="size-4 shrink-0 text-primary" />
                   <span className="text-sm font-medium text-foreground">
                     {t("interestsSection")}
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap justify-center gap-2">
                   {profile.interests.map((interest: string) => (
                     <span
                       key={interest}
@@ -197,7 +198,7 @@ export default async function PublicProfilePage({
                 <Link href="/profile">{t("editProfile")}</Link>
               </Button>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center gap-2">
                 <FollowButton
                   targetUserId={userId}
                   initialFollowing={isFollowing}
