@@ -21,8 +21,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LikeButton } from "@/components/feed/like-button";
 import { CommentSection } from "@/components/feed/comment-section";
 import { VerifiedBadge } from "@/components/feed/verified-badge";
-import { LevelBadge } from "@/components/profile/level-badge";
-import { LeveledAvatar } from "@/components/profile/leveled-avatar";
 import { cn, relativeTime } from "@/lib/utils";
 import { deletePost, updatePost } from "@/app/[locale]/(dashboard)/actions/posts";
 import { getVideoEmbed } from "@/lib/video-embed";
@@ -61,7 +59,7 @@ export type PostCardProps = {
     user_id: string;
     category?: string | null;
   };
-  author: { name: string | null; avatar_url: string | null; level?: number | null };
+  author: { name: string | null; avatar_url: string | null };
   isVerified?: boolean;
   verificationType?: "individual" | "organization" | "government" | null;
   likeCount: number;
@@ -209,20 +207,17 @@ export function PostCard({
             href={`/u/${post.user_id}`}
             className="flex min-w-0 flex-1 items-center gap-3"
           >
-            <LeveledAvatar level={author.level ?? 1} className="size-10 shrink-0">
+            <Avatar className="size-10 shrink-0">
               <AvatarImage src={author.avatar_url ?? undefined} />
               <AvatarFallback className="text-sm">
                 {getInitials(author.name)}
               </AvatarFallback>
-            </LeveledAvatar>
+            </Avatar>
             <div className="min-w-0">
               <p className="flex items-center gap-1 font-semibold text-foreground truncate">
                 {author.name ?? t("someone")}
                 {isVerified && (
                   <VerifiedBadge type={verificationType} size="sm" />
-                )}
-                {author.level != null && author.level > 1 && (
-                  <LevelBadge level={author.level} size="sm" />
                 )}
               </p>
               <p className="text-xs text-muted-foreground" suppressHydrationWarning>

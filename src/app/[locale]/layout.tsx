@@ -13,7 +13,6 @@ export function generateStaticParams() {
 const CLIENT_NAMESPACES = [
   "auth",
   "feed",
-  "level",
   "marketing",
   "nav",
   "notifications",

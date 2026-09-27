@@ -14,13 +14,12 @@ A full-stack social community app built with Next.js (App Router), Supabase (Aut
 ## Features
 
 - Email/password sign up and sign in, protected routes, persistent sessions (Supabase SSR)
-- Profiles with name, bio, avatar, username, level — auto-created on sign up
+- Profiles with name, bio, avatar, username — auto-created on sign up
 - **Feed**: posts with images / video URLs / polls / link previews, likes, reactions, threaded comments with replies and likes, reposts, bookmarks, hashtags with trending
 - **Follows**: follow users, "Following" feed tab, who-to-follow suggestions
 - **Public profiles** at `/u/[userId]` (or `/u/[username]`)
 - **Direct messages** between users (follow-gated)
 - **Notifications** with realtime updates
-- **XP, levels, badges** (gamification)
 - **Explore** page with trending hashtags and suggested people
 - **i18n** with English/Arabic + RTL layout, dark mode, mobile-first responsive UI
 

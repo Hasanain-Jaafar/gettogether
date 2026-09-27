@@ -29,7 +29,7 @@ export default async function PostPage({
 
   const { data: author } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url, level")
+    .select("id, name, avatar_url")
     .eq("id", post.user_id)
     .maybeSingle();
 
