@@ -51,8 +51,12 @@ function videoThumbnail(videoUrl: string): VideoThumb | null {
   return null;
 }
 
-/** Instagram-style 3-column grid of square post thumbnails; each tile opens the post. */
-export function PostGrid({ posts }: { posts: PostGridItem[] }) {
+/**
+ * Instagram-style 3-column grid of square post thumbnails; each tile opens the post.
+ * `returnTo` is the page the grid is on, so the post page can send the user back there
+ * (its back link, and after deleting the post).
+ */
+export function PostGrid({ posts, returnTo }: { posts: PostGridItem[]; returnTo?: string }) {
   return (
     <ul className="grid grid-cols-3 gap-1">
       {posts.map((post) => {
@@ -71,7 +75,7 @@ export function PostGrid({ posts }: { posts: PostGridItem[] }) {
         return (
           <li key={post.id}>
             <Link
-              href={`/post/${post.id}`}
+              href={returnTo ? `/post/${post.id}?returnTo=${encodeURIComponent(returnTo)}` : `/post/${post.id}`}
               aria-label={post.content.slice(0, 80) || undefined}
               className="relative block aspect-square overflow-hidden rounded-md bg-muted"
             >

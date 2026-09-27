@@ -4,13 +4,18 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { createClient, getUser } from "@/lib/supabase/server";
 import { PostCard } from "@/components/feed/post-card";
+import { safeInternalPath } from "@/lib/safe-path";
 
 export default async function PostPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; postId: string }>;
+  searchParams: Promise<{ returnTo?: string }>;
 }) {
   const { locale, postId } = await params;
+  // Set by links that know where the user came from (e.g. profile grid tiles).
+  const returnTo = safeInternalPath((await searchParams).returnTo);
   setRequestLocale(locale);
   const t = await getTranslations("postPage");
   const supabase = await createClient();
@@ -87,7 +92,7 @@ export default async function PostPage({
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <Link
-        href="/dashboard"
+        href={returnTo ?? "/dashboard"}
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="size-4 rtl:hidden" />
@@ -103,6 +108,8 @@ export default async function PostPage({
         comments={commentsWithAuthors}
         currentUserId={user.id}
         likers={likers}
+        // Once deleted this page would 404, so go back where the user came from (or their profile).
+        afterDeleteHref={returnTo ?? `/u/${user.id}`}
       />
     </div>
   );

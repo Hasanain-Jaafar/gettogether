@@ -270,7 +270,7 @@ export default async function PublicProfilePage({
                   <p className="text-sm font-medium text-foreground">
                     {t("postedTimes", { count: group.length })}
                   </p>
-                  <PostGrid posts={group} />
+                  <PostGrid posts={group} returnTo={`/u/${userId}?view=duplicates`} />
                 </div>
               ))}
             </>
@@ -281,7 +281,7 @@ export default async function PublicProfilePage({
           <p>{tFeed("empty.noPostsTitle")}</p>
         </div>
       ) : (
-        <PostGrid posts={posts} />
+        <PostGrid posts={posts} returnTo={`/u/${userId}`} />
       )}
     </div>
   );

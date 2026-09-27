@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { safeInternalPath } from "@/lib/safe-path";
 import { createClient } from "@/lib/supabase/server";
 import { createPostSchema, updatePostSchema } from "@/lib/validations/post";
 import { notifyMentionedUsers } from "./mentions";
@@ -126,7 +128,12 @@ export async function updatePost(
   return { success: true };
 }
 
-export async function deletePost(postId: string): Promise<PostResult> {
+/**
+ * Deletes one of the caller's posts. Pass `redirectTo` when deleting from the post's
+ * own page: redirecting inside the action avoids re-rendering the (now missing) post,
+ * which would otherwise show a 404.
+ */
+export async function deletePost(postId: string, redirectTo?: string): Promise<PostResult> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -143,5 +150,7 @@ export async function deletePost(postId: string): Promise<PostResult> {
   revalidatePath("/dashboard");
   revalidatePath("/profile");
   revalidatePath(`/u/${user.id}`);
+  const target = safeInternalPath(redirectTo);
+  if (target) redirect(target);
   return { success: true };
 }

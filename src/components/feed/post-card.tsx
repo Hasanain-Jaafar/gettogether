@@ -69,6 +69,9 @@ export type PostCardProps = {
   comments?: CommentWithAuthor[];
   currentUserId: string;
   likers: { name: string | null; avatar_url: string | null }[];
+  // Where to go after deleting this post. Set on the post's own page, which can't
+  // stay put once its post is gone; in lists the card just hides itself.
+  afterDeleteHref?: string;
 };
 
 function VideoEmbed({ url, orientation }: { url: string; orientation?: "landscape" | "portrait" | null }) {
@@ -141,6 +144,7 @@ export function PostCard({
   comments,
   currentUserId,
   likers,
+  afterDeleteHref,
 }: PostCardProps) {
   const router = useRouter();
   const t = useTranslations("feed.post");
@@ -186,7 +190,9 @@ export function PostCard({
 
   async function confirmDelete() {
     setDeleting(true);
-    const result = await deletePost(post.id);
+    // With afterDeleteHref the action redirects on success, so there's no result to handle.
+    const result = await deletePost(post.id, afterDeleteHref);
+    if (!result) return;
     setDeleting(false);
     if (result.success) {
       setConfirmDeleteOpen(false);
