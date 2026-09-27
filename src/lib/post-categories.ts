@@ -1,6 +1,6 @@
-import { Music, BookOpen, Landmark, Sunrise, ImageIcon } from "lucide-react";
+import { Music, BookOpen, Landmark, ImageIcon } from "lucide-react";
 
-export const POST_CATEGORIES = ["songs", "diaries", "culture", "morning", "images"] as const;
+export const POST_CATEGORIES = ["songs", "diaries", "culture", "images"] as const;
 
 export type PostCategory = (typeof POST_CATEGORIES)[number];
 
@@ -8,7 +8,6 @@ export const CATEGORY_COLORS: Record<PostCategory, string> = {
   songs: "bg-rose-500/10 text-rose-600 border-rose-500/20",
   diaries: "bg-sky-500/10 text-sky-600 border-sky-500/20",
   culture: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  morning: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
   images: "bg-violet-500/10 text-violet-600 border-violet-500/20",
 };
 
@@ -17,7 +16,6 @@ export const CATEGORY_SOLID: Record<PostCategory, string> = {
   songs: "bg-rose-500 text-white shadow-md shadow-rose-500/25",
   diaries: "bg-sky-500 text-white shadow-md shadow-sky-500/25",
   culture: "bg-amber-500 text-white shadow-md shadow-amber-500/25",
-  morning: "bg-emerald-500 text-white shadow-md shadow-emerald-500/25",
   images: "bg-violet-500 text-white shadow-md shadow-violet-500/25",
 };
 
@@ -25,7 +23,6 @@ export const CATEGORY_ICONS: Record<PostCategory, typeof Music> = {
   songs: Music,
   diaries: BookOpen,
   culture: Landmark,
-  morning: Sunrise,
   images: ImageIcon,
 };
 
