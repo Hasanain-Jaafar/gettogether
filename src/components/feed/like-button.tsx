@@ -110,9 +110,10 @@ export function LikeButton({
                 </span>
               </div>
             ))}
-            {likers.length > 10 && (
+            {/* The feed sends at most 10 likers, so the remainder comes from the total count. */}
+            {likers.length >= 10 && count > 10 && (
               <p className="text-xs text-muted-foreground text-center">
-                {t("more", { count: likers.length - 10 })}
+                {t("more", { count: count - 10 })}
               </p>
             )}
           </div>

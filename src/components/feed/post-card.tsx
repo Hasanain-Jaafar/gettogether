@@ -67,7 +67,8 @@ export type PostCardProps = {
   likeCount: number;
   commentCount: number;
   currentUserLiked: boolean;
-  comments: CommentWithAuthor[];
+  // Omitted in the feed: CommentSection loads them when opened.
+  comments?: CommentWithAuthor[];
   currentUserId: string;
   likers: { name: string | null; avatar_url: string | null }[];
 };

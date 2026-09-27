@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createCommentSchema, updateCommentSchema } from "@/lib/validations/comment";
 import { createNotification } from "./notifications";
 import { notifyMentionedUsers } from "./mentions";
+import type { PostCardProps } from "@/components/feed/post-card";
 
 export type CommentResult = { success: true } | { success: false; error: string };
 
@@ -138,4 +139,19 @@ export async function deleteComment(commentId: string): Promise<CommentResult> {
   revalidatePath("/dashboard");
   revalidatePath("/profile");
   return { success: true };
+}
+
+export type PostComment = NonNullable<PostCardProps["comments"]>[number];
+
+// One post's comments, loaded when its comment section is opened in the feed
+// (the feed itself only carries counts). Returns null on failure so the caller
+// can tell "failed" apart from "no comments".
+export async function getPostComments(postId: string): Promise<PostComment[] | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_post_comments", { p_post_id: postId });
+  if (error) {
+    console.error("get_post_comments failed:", error.message);
+    return null;
+  }
+  return (data ?? []) as PostComment[];
 }

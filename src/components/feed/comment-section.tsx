@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useLocale, useTranslations } from "next-intl";
 import { Heart, MessageCircle } from "lucide-react";
-import { createComment } from "@/app/[locale]/(dashboard)/actions/comments";
+import { createComment, getPostComments } from "@/app/[locale]/(dashboard)/actions/comments";
 import { toggleCommentLike } from "@/app/[locale]/(dashboard)/actions/likes";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,9 +27,12 @@ type Comment = {
 
 type CommentSectionProps = {
   postId: string;
-  initialComments: Comment[];
+  // Undefined in the feed: comments are fetched the first time the section is opened.
+  initialComments?: Comment[];
   commentCount: number;
 };
+
+const NO_COMMENTS: Comment[] = [];
 
 function getInitials(name: string | null): string {
   if (!name?.trim()) return "?";
@@ -54,6 +57,11 @@ export function CommentSection({
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [replySubmitting, setReplySubmitting] = useState(false);
+  const lazy = initialComments === undefined;
+  const [fetchedComments, setFetchedComments] = useState<Comment[] | null>(null);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const comments = lazy ? fetchedComments ?? NO_COMMENTS : initialComments;
+  const displayCount = lazy && fetchedComments ? fetchedComments.length : commentCount;
   const [likeState, setLikeState] = useState<
     Record<string, { liked: boolean; count: number } | undefined>
   >({});
@@ -86,10 +94,30 @@ export function CommentSection({
     }));
   }
 
+  async function loadComments() {
+    setLoadingComments(true);
+    const result = await getPostComments(postId);
+    setLoadingComments(false);
+    if (result) setFetchedComments(result);
+    else toast.error(t("loadFailed"));
+  }
+
+  function toggleExpanded() {
+    const next = !expanded;
+    setExpanded(next);
+    if (next && lazy && !fetchedComments && !loadingComments) loadComments();
+  }
+
+  // After posting: the feed has no server-provided comments to refresh, so refetch just this post's.
+  function reloadComments() {
+    if (lazy) loadComments();
+    else router.refresh();
+  }
+
   const { roots, repliesByParent } = useMemo(() => {
     const roots: Comment[] = [];
     const repliesByParent = new Map<string, Comment[]>();
-    for (const c of initialComments) {
+    for (const c of comments) {
       if (c.parent_id) {
         const arr = repliesByParent.get(c.parent_id) ?? [];
         arr.push(c);
@@ -99,7 +127,7 @@ export function CommentSection({
       }
     }
     return { roots, repliesByParent };
-  }, [initialComments]);
+  }, [comments]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -110,7 +138,7 @@ export function CommentSection({
     setSubmitting(false);
     if (result.success) {
       setContent("");
-      router.refresh();
+      reloadComments();
     } else {
       toast.error(result.error);
     }
@@ -128,7 +156,7 @@ export function CommentSection({
     if (result.success) {
       setReplyContent("");
       setReplyTo(null);
-      router.refresh();
+      reloadComments();
     } else {
       toast.error(result.error);
     }
@@ -227,10 +255,10 @@ export function CommentSection({
         variant="ghost"
         size="sm"
         className="gap-1.5 rounded-xl text-muted-foreground hover:text-foreground shrink-0"
-        onClick={() => setExpanded(!expanded)}
+        onClick={toggleExpanded}
       >
         <MessageCircle className="size-4" />
-        <span>{commentCount}</span>
+        <span>{displayCount}</span>
       </Button>
       {expanded && (
         <div className="w-full flex-[1_1_100%] space-y-3 pt-3">
@@ -252,9 +280,17 @@ export function CommentSection({
               {submitting ? <Spinner /> : t("submit")}
             </Button>
           </form>
-          <ul className="space-y-3">
-            {roots.map((c) => renderComment(c))}
-          </ul>
+          {lazy && !fetchedComments ? (
+            loadingComments && (
+              <div className="flex justify-center py-2 text-muted-foreground">
+                <Spinner />
+              </div>
+            )
+          ) : (
+            <ul className="space-y-3">
+              {roots.map((c) => renderComment(c))}
+            </ul>
+          )}
         </div>
       )}
     </>
