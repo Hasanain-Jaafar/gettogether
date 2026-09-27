@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { Sparkles } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { CATEGORY_ICONS, CATEGORY_SOLID, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
+import { CATEGORY_SOLID, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
 import { cn } from "@/lib/utils";
+import { LinkPendingSpinner } from "@/components/ui/link-pending-spinner";
 
 export async function CategoryFilterBar({ active }: { active: PostCategory | null }) {
   const t = await getTranslations("feed");
@@ -14,31 +14,30 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
           <Link
             href="/dashboard"
             className={cn(
-              "flex shrink-0 snap-start items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all",
+              "flex shrink-0 snap-start items-center rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap transition-all",
               active === null
                 ? "bg-foreground text-background shadow-md shadow-foreground/20"
                 : "border border-border/40 bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
             )}
           >
-            <Sparkles className="size-3.5" />
             {t("all")}
+            <LinkPendingSpinner />
           </Link>
           {POST_CATEGORIES.map((c) => {
-            const Icon = CATEGORY_ICONS[c];
             const selected = active === c;
             return (
               <Link
                 key={c}
                 href={`/dashboard?category=${c}`}
                 className={cn(
-                  "flex shrink-0 snap-start items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all",
+                  "flex shrink-0 snap-start items-center rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap transition-all",
                   selected
                     ? CATEGORY_SOLID[c]
                     : "border border-border/40 bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
                 )}
               >
-                <Icon className="size-3.5" />
                 {t(`categories.${c}`)}
+                <LinkPendingSpinner />
               </Link>
             );
           })}

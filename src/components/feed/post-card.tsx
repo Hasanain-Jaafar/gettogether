@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { CATEGORY_COLORS, CATEGORY_ICONS, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
+import { CATEGORY_COLORS, CATEGORY_ICONS, POST_CATEGORIES, isPostCategory, type PostCategory } from "@/lib/post-categories";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -148,9 +148,7 @@ export function PostCard({
   const t = useTranslations("feed.post");
   const tCategories = useTranslations("feed.categories");
   const locale = useLocale();
-  const CategoryIcon = post.category && post.category in CATEGORY_ICONS
-    ? CATEGORY_ICONS[post.category as PostCategory]
-    : null;
+  const category = isPostCategory(post.category) ? post.category : null;
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [editCategory, setEditCategory] = useState<PostCategory>(
@@ -233,15 +231,14 @@ export function PostCard({
             </div>
           </Link>
           <div className="flex shrink-0 items-center gap-2">
-            {CategoryIcon && (
+            {category && (
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-[family-name:var(--font-zain)]",
-                  CATEGORY_COLORS[post.category as PostCategory],
+                  "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-[family-name:var(--font-zain)]",
+                  CATEGORY_COLORS[category],
                 )}
               >
-                <CategoryIcon className="size-3" />
-                {tCategories(post.category as PostCategory)}
+                {tCategories(category)}
               </span>
             )}
             {isOwn && (

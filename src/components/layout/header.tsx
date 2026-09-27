@@ -145,105 +145,108 @@ export function Header({ user, profile }: HeaderProps) {
   if (!user) return null;
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/95 px-2 sm:px-4 backdrop-blur supports-backdrop-filter:bg-background/60">
-      {/* Main navigation - desktop */}
-      <nav className="hidden md:flex items-center gap-1">
-        {mainNavItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                pathname === item.href
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
-            >
-              <Icon className="size-4 shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+    <header className="sticky top-0 z-10 h-14 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+      {/* Same width and side padding as the page content, so the icons line up with the posts */}
+      <div className="mx-auto flex h-full w-full max-w-4xl items-center gap-4 px-4 md:px-6 lg:max-w-6xl">
+        {/* Main navigation - desktop */}
+        <nav className="hidden md:flex items-center gap-1">
+          {mainNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  pathname === item.href
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                <Icon className="size-4 shrink-0" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-      {/* Spacer */}
-      <div className="flex-1" />
+        {/* Spacer (desktop only; on mobile the icon row fills the width) */}
+        <div className="hidden flex-1 md:block" />
 
-      {/* Secondary navigation */}
-      <nav className="flex items-center gap-1 sm:gap-2">
-        {secondaryNavItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Button
-              key={item.href}
-              variant="ghost"
-              size="icon"
-              asChild
-              className={cn(
-                "rounded-lg",
-                item.mobileOnly && "md:hidden",
-                pathname === item.href && "bg-accent text-primary"
+        {/* Secondary navigation: spread evenly across the bar on mobile */}
+        <nav className="flex flex-1 items-center justify-between md:flex-none md:justify-end md:gap-2">
+          {secondaryNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Button
+                key={item.href}
+                variant="ghost"
+                size="icon"
+                asChild
+                className={cn(
+                  "rounded-lg",
+                  item.mobileOnly && "md:hidden",
+                  pathname === item.href && "bg-accent text-primary"
+                )}
+              >
+                <Link href={item.href}>
+                  <Icon className="size-5" />
+                  <span className="sr-only">{item.label}</span>
+                </Link>
+              </Button>
+            );
+          })}
+
+          {/* Notifications with badge */}
+          <Button
+            variant="ghost"
+            size="icon"
+            asChild
+            className={cn("rounded-lg relative", pathname === "/notifications" && "bg-accent text-primary")}
+          >
+            <Link href="/notifications" aria-label={t("notifications")}>
+              <Bell className="size-5" />
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
               )}
-            >
-              <Link href={item.href}>
-                <Icon className="size-5" />
-                <span className="sr-only">{item.label}</span>
-              </Link>
-            </Button>
-          );
-        })}
+            </Link>
+          </Button>
 
-        {/* Notifications with badge */}
-        <Button
-          variant="ghost"
-          size="icon"
-          asChild
-          className={cn("rounded-lg relative", pathname === "/notifications" && "bg-accent text-primary")}
-        >
-          <Link href="/notifications" aria-label={t("notifications")}>
-            <Bell className="size-5" />
-            {unreadCount > 0 && (
-              <Badge className="absolute -top-0.5 -right-0.5 size-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </Badge>
-            )}
-          </Link>
-        </Button>
+          {/* Theme toggle */}
+          <ThemeToggle />
 
-        {/* Theme toggle */}
-        <ThemeToggle />
-
-        {/* Avatar dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative size-9 rounded-full hover:bg-accent p-0">
-              <LeveledAvatar level={profile?.level ?? 1} className="size-9">
-                <AvatarImage src={avatarUrl ?? undefined} alt={name ?? "User"} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </LeveledAvatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem asChild>
-              <Link href={`/u/${userId}`} className="flex items-center gap-2">
-                <UserCircle className="size-4" />
-                {t("viewProfile")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/profile" className="flex items-center gap-2">
-                <User className="size-4" />
-                {t("editProfile")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
-              <LogOut className="size-4" />
-              {t("logout")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </nav>
+          {/* Avatar dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative size-9 rounded-full hover:bg-accent p-0">
+                <LeveledAvatar level={profile?.level ?? 1} className="size-9">
+                  <AvatarImage src={avatarUrl ?? undefined} alt={name ?? "User"} />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </LeveledAvatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link href={`/u/${userId}`} className="flex items-center gap-2">
+                  <UserCircle className="size-4" />
+                  {t("viewProfile")}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/profile" className="flex items-center gap-2">
+                  <User className="size-4" />
+                  {t("editProfile")}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
+                <LogOut className="size-4" />
+                {t("logout")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </nav>
+      </div>
     </header>
   );
 }

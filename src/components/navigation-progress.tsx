@@ -2,29 +2,11 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { NAVIGATION_PROGRESS_START, startNavigationProgress } from "@/lib/navigation-progress";
 
-const START_EVENT = "navigation-progress:start";
-
-/** Call before a programmatic router.push() so the top bar shows while the next page loads. */
-export function startNavigationProgress() {
-  window.dispatchEvent(new Event(START_EVENT));
-}
-
-function isInternalNavigation(e: MouseEvent): boolean {
-  if (e.defaultPrevented || e.button !== 0) return false;
-  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
-
-  const anchor = (e.target as Element | null)?.closest("a");
-  if (!anchor || !anchor.href) return false;
-  if (anchor.target && anchor.target !== "_self") return false;
-  if (anchor.hasAttribute("download")) return false;
-
-  const next = new URL(anchor.href, window.location.href);
-  const current = window.location;
-  if (next.origin !== current.origin) return false;
-  // Same page (or hash-only change): Next.js won't navigate, so nothing would finish the bar.
-  return next.pathname !== current.pathname || next.search !== current.search;
-}
+// Navigation starts are reported by onRouterTransitionStart in src/instrumentation-client.ts.
+// Call startNavigationProgress() yourself only when there's async work before a router.push().
+export { startNavigationProgress };
 
 function ProgressBar() {
   const pathname = usePathname();
@@ -50,6 +32,8 @@ function ProgressBar() {
   }
 
   function start() {
+    // Already running (e.g. startNavigationProgress() followed by router.push()): keep going.
+    if (timers.current.show !== undefined) return;
     clearTimers();
     // Short delay so instant (prefetched) navigations don't flash the bar.
     timers.current.show = window.setTimeout(() => {
@@ -70,15 +54,9 @@ function ProgressBar() {
   }, [pathname, searchParams]);
 
   useEffect(() => {
-    // Bubble phase on document runs after React's handlers, so e.defaultPrevented is accurate.
-    const onClick = (e: MouseEvent) => {
-      if (isInternalNavigation(e)) start();
-    };
-    window.addEventListener(START_EVENT, start);
-    document.addEventListener("click", onClick);
+    window.addEventListener(NAVIGATION_PROGRESS_START, start);
     return () => {
-      window.removeEventListener(START_EVENT, start);
-      document.removeEventListener("click", onClick);
+      window.removeEventListener(NAVIGATION_PROGRESS_START, start);
       clearTimers();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
