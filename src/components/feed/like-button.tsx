@@ -4,7 +4,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Heart } from "lucide-react";
-import { motion } from "framer-motion";
 import { toggleLike } from "@/app/[locale]/(dashboard)/actions/likes";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,15 +65,13 @@ export function LikeButton({
           onClick={handleClick}
           disabled={loading}
         >
-          <motion.span
-            animate={liked ? { scale: [1, 1.2, 1] } : {}}
-            transition={{ duration: 0.2 }}
-          >
+          {/* key remounts the span so the pop replays each time the post is liked */}
+          <span key={liked ? "liked" : "unliked"} className={cn(liked && "animate-[like-pop_0.2s_ease-out]")}>
             <Heart
               className={cn("size-4", liked && "fill-primary")}
               strokeWidth={liked ? 2.5 : 2}
             />
-          </motion.span>
+          </span>
           <span>{count}</span>
         </Button>
       </PopoverTrigger>

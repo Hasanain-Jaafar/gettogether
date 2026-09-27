@@ -91,8 +91,9 @@ export async function createComment(
     });
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/profile");
+  // No revalidatePath: CommentSection refetches this post's comments itself (or
+  // calls router.refresh() on pages that pass comments in), and revalidating
+  // /dashboard re-rendered the whole feed on every comment.
   return { success: true };
 }
 

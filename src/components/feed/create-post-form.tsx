@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Upload as TusUpload } from "tus-js-client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -72,43 +71,51 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     setExpanded(false);
   }
 
-  function uploadVideoToBunny(file: File): Promise<string | null> {
-    return createBunnyUploadTicket(file.name).then((ticketResult) => {
-      if (!ticketResult.success) {
-        toast.error(ticketResult.error);
-        return null;
-      }
-      const { ticket } = ticketResult;
-      setUploadProgress(0);
-      return new Promise<string | null>((resolve) => {
-        const upload = new TusUpload(file, {
-          endpoint: ticket.uploadEndpoint,
-          retryDelays: [0, 1000, 3000, 5000],
-          headers: {
-            AuthorizationSignature: ticket.signature,
-            AuthorizationExpire: String(ticket.expiration),
-            VideoId: ticket.videoId,
-            LibraryId: ticket.libraryId,
-          },
-          metadata: {
-            filetype: file.type,
-            title: file.name,
-          },
-          onError: () => {
-            toast.error(t("videoUploadFailed"));
-            setUploadProgress(null);
-            resolve(null);
-          },
-          onProgress: (bytesSent, bytesTotal) => {
-            setUploadProgress(Math.round((bytesSent / bytesTotal) * 100));
-          },
-          onSuccess: () => {
-            setUploadProgress(null);
-            resolve(`https://iframe.mediadelivery.net/embed/${ticket.libraryId}/${ticket.videoId}`);
-          },
-        });
-        upload.start();
+  async function uploadVideoToBunny(file: File): Promise<string | null> {
+    // tus-js-client is only needed for video uploads, so it's loaded on demand
+    // (in parallel with the upload ticket) instead of on every feed visit.
+    const [ticketResult, tus] = await Promise.all([
+      createBunnyUploadTicket(file.name),
+      import("tus-js-client").catch(() => null),
+    ]);
+    if (!ticketResult.success) {
+      toast.error(ticketResult.error);
+      return null;
+    }
+    if (!tus) {
+      toast.error(t("videoUploadFailed"));
+      return null;
+    }
+    const { ticket } = ticketResult;
+    setUploadProgress(0);
+    return new Promise<string | null>((resolve) => {
+      const upload = new tus.Upload(file, {
+        endpoint: ticket.uploadEndpoint,
+        retryDelays: [0, 1000, 3000, 5000],
+        headers: {
+          AuthorizationSignature: ticket.signature,
+          AuthorizationExpire: String(ticket.expiration),
+          VideoId: ticket.videoId,
+          LibraryId: ticket.libraryId,
+        },
+        metadata: {
+          filetype: file.type,
+          title: file.name,
+        },
+        onError: () => {
+          toast.error(t("videoUploadFailed"));
+          setUploadProgress(null);
+          resolve(null);
+        },
+        onProgress: (bytesSent, bytesTotal) => {
+          setUploadProgress(Math.round((bytesSent / bytesTotal) * 100));
+        },
+        onSuccess: () => {
+          setUploadProgress(null);
+          resolve(`https://iframe.mediadelivery.net/embed/${ticket.libraryId}/${ticket.videoId}`);
+        },
       });
+      upload.start();
     });
   }
 

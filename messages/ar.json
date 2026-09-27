@@ -164,13 +164,7 @@
     }
   },
   "sidebar": {
-    "whoToFollow": "أشخاص لمتابعتهم",
-    "follow": "متابعة",
-    "following": "أتابع",
-    "unfollow": "إلغاء المتابعة",
-    "viewAll": "عرض الكل",
     "postCount": "{count, plural, =1 {منشور واحد} =2 {منشوران} other {# منشورات}}",
-    "mutualFollowers": "{count, plural, =1 {متابع مشترك واحد} =2 {متابعان مشتركان} other {# متابعين مشتركين}}",
     "clearFilter": "إزالة الفلتر"
   },
   "notifications": {

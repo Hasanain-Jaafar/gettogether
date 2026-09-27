@@ -208,6 +208,12 @@
     }
   }
 
+  /* Like button heart pop */
+  @keyframes like-pop {
+    50% {
+      transform: scale(1.2);
+    }
+  }
   @keyframes slideInLeft {
     from {
       transform: translateX(-20px);

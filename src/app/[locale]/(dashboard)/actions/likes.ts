@@ -1,9 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createNotification } from "./notifications";
 
+// No revalidatePath here: the buttons that call these update optimistically
+// from the returned count, and revalidating /dashboard made every tap
+// re-render and re-download the entire feed.
 export type LikeResult =
   | { success: true; liked: boolean; count: number }
   | { success: false; error: string };
@@ -33,7 +35,6 @@ export async function toggleCommentLike(commentId: string): Promise<LikeResult> 
       .from("comment_likes")
       .select("id", { count: "exact", head: true })
       .eq("comment_id", commentId);
-    revalidatePath("/dashboard");
     return { success: true, liked: false, count: count ?? 0 };
   }
 
@@ -46,7 +47,6 @@ export async function toggleCommentLike(commentId: string): Promise<LikeResult> 
     .from("comment_likes")
     .select("id", { count: "exact", head: true })
     .eq("comment_id", commentId);
-  revalidatePath("/dashboard");
   return { success: true, liked: true, count: count ?? 0 };
 }
 
@@ -75,8 +75,6 @@ export async function toggleLike(postId: string): Promise<LikeResult> {
       .from("likes")
       .select("id", { count: "exact", head: true })
       .eq("post_id", postId);
-    revalidatePath("/dashboard");
-    revalidatePath("/profile");
     return { success: true, liked: false, count: count ?? 0 };
   }
 
@@ -104,7 +102,5 @@ export async function toggleLike(postId: string): Promise<LikeResult> {
     });
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/profile");
   return { success: true, liked: true, count: count ?? 0 };
 }

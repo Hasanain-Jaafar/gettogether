@@ -20,7 +20,6 @@ const CLIENT_NAMESPACES = [
   "notifications",
   "poll",
   "profile",
-  "sidebar",
   "verified",
 ] as const;
 

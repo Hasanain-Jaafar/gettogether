@@ -129,36 +129,3 @@ export async function getFollowers(userId: string): Promise<FollowRelation[]> {
     }) ?? []
   );
 }
-
-export async function getWhoToFollow(
-  userId: string,
-  limit: number = 5
-): Promise<{ user: FollowRelation; mutualFollowers: number }[]> {
-  const supabase = await createClient();
-
-  // Candidate selection, exclusion and mutual-follower counting all happen
-  // in one query server-side (see migrations/032_who_to_follow_rpc.sql)
-  // instead of 3 sequential round trips from here.
-  const { data, error } = await supabase.rpc("get_who_to_follow", {
-    p_user_id: userId,
-    p_limit: limit,
-  });
-
-  if (error || !data?.length) return [];
-
-  type WhoToFollowRow = {
-    id: string;
-    name: string | null;
-    avatar_url: string | null;
-    mutual_followers: number | null;
-  };
-
-  return (data as WhoToFollowRow[]).map((row) => ({
-    user: {
-      id: row.id,
-      name: row.name,
-      avatar_url: row.avatar_url,
-    },
-    mutualFollowers: row.mutual_followers ?? 0,
-  }));
-}

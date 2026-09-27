@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 type EmptyStateProps = {
   type?: "no-posts" | "no-results" | "welcome";
   actionLabel?: string;
-  actionTarget?: "focus-create-post" | "scroll-who-to-follow";
+  actionTarget?: "focus-create-post";
 };
 
 export function EmptyState({
@@ -39,11 +39,7 @@ export function EmptyState({
   const { icon: Icon, title, description } = states[type];
 
   const handleAction = () => {
-    if (actionTarget === "scroll-who-to-follow") {
-      document
-        .getElementById("who-to-follow")
-        ?.scrollIntoView({ behavior: "smooth" });
-    } else if (actionTarget === "focus-create-post") {
+    if (actionTarget === "focus-create-post") {
       document.querySelector<HTMLTextAreaElement>("textarea")?.focus();
     }
   };
