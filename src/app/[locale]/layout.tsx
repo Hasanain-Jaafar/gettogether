@@ -12,7 +12,6 @@ export function generateStaticParams() {
 // doesn't need to be serialized into the client bundle on every page.
 const CLIENT_NAMESPACES = [
   "auth",
-  "calendar",
   "feed",
   "level",
   "marketing",

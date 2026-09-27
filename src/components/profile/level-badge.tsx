@@ -11,7 +11,7 @@ type LevelBadgeProps = {
 };
 
 function tierClasses(level: number): string {
-  if (level >= 15) return "bg-amber-500/15 text-amber-600 dark:text-amber-400";
+  if (level >= 15) return "bg-amber-500/15 text-amber-600";
   if (level >= 5) return "bg-primary/10 text-primary";
   return "bg-muted text-muted-foreground";
 }

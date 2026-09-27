@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Tajawal, Zain } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
@@ -45,10 +44,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3f1f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e090a" },
-  ],
+  themeColor: "#f3f1f1",
+  // Light only: keep native controls light even when the phone is in dark mode.
+  colorScheme: "light",
 };
 
 export default function RootLayout({
@@ -57,15 +55,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="ar" dir="rtl">
       <body
         className={`${tajawal.variable} ${zain.variable} antialiased font-arabic`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NavigationProgress />
-          {children}
-          <Toaster richColors position="top-center" />
-        </ThemeProvider>
+        <NavigationProgress />
+        {children}
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );

@@ -71,7 +71,7 @@ export function SignInForm() {
   }
 
   return (
-    <Card className="border-border/80 bg-card/95 shadow-xl shadow-primary/5 dark:shadow-primary/10 backdrop-blur-sm">
+    <Card className="border-border/80 bg-card/95 shadow-xl shadow-primary/5 backdrop-blur-sm">
       <CardHeader className="space-y-1.5 pb-2">
         <CardTitle className="text-2xl tracking-tight">{t("title")}</CardTitle>
         <CardDescription className="text-muted-foreground">

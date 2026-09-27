@@ -32,11 +32,11 @@ const ICONS: Record<string, LucideIcon> = {
 function tierRing(tier: BadgeRow["tier"]): string {
   switch (tier) {
     case "gold":
-      return "bg-amber-500/15 text-amber-600 dark:text-amber-400 ring-amber-500/30";
+      return "bg-amber-500/15 text-amber-600 ring-amber-500/30";
     case "silver":
-      return "bg-slate-400/15 text-slate-600 dark:text-slate-300 ring-slate-400/30";
+      return "bg-slate-400/15 text-slate-600 ring-slate-400/30";
     default:
-      return "bg-orange-700/15 text-orange-700 dark:text-orange-400 ring-orange-700/30";
+      return "bg-orange-700/15 text-orange-700 ring-orange-700/30";
   }
 }
 

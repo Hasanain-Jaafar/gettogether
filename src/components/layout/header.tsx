@@ -15,9 +15,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { startNavigationProgress } from "@/components/navigation-progress";
-import { Home, User, UserCircle, LogOut, Bell, Trophy, Calendar } from "lucide-react";
+import { Home, User, UserCircle, LogOut, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function getInitials(name: string | null, email: string | undefined): string {
@@ -53,15 +52,12 @@ export function Header({ user, profile }: HeaderProps) {
 
   const mainNavItems = [
     { href: "/dashboard", label: t("feed"), icon: Home },
-    { href: "/calendar", label: t("calendar"), icon: Calendar },
     { href: "/profile", label: t("profile"), icon: User },
   ];
 
-  // Home/Events icons replace the old mobile menu; desktop already shows them as text links above.
+  // The Home icon replaces the old mobile menu; desktop already shows it as a text link above.
   const secondaryNavItems = [
     { href: "/dashboard", label: t("feed"), icon: Home, mobileOnly: true },
-    { href: "/calendar", label: t("calendar"), icon: Calendar, mobileOnly: true },
-    { href: "/leaderboard", label: t("leaderboard"), icon: Trophy, mobileOnly: false },
   ];
 
   const name =
@@ -213,8 +209,6 @@ export function Header({ user, profile }: HeaderProps) {
             </Link>
           </Button>
 
-          {/* Theme toggle */}
-          <ThemeToggle />
 
           {/* Avatar dropdown */}
           <DropdownMenu>

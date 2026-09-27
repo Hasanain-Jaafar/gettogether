@@ -20,8 +20,7 @@ A full-stack social community app built with Next.js (App Router), Supabase (Aut
 - **Public profiles** at `/u/[userId]` (or `/u/[username]`)
 - **Direct messages** between users (follow-gated)
 - **Notifications** with realtime updates
-- **Events** (`/calendar`): publish events visible to followers, the public, or just you — RLS enforces visibility against the follows graph
-- **Leaderboard, XP, levels, badges** (gamification)
+- **XP, levels, badges** (gamification)
 - **Explore** page with trending hashtags and suggested people
 - **i18n** with English/Arabic + RTL layout, dark mode, mobile-first responsive UI
 
@@ -43,7 +42,7 @@ Create `.env.local` with:
 ### 3. Supabase setup
 
 1. Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor.
-2. Apply every migration in [`supabase/migrations/`](supabase/migrations/) in order (`002_community.sql` → `026_calendar_events.sql`). Either paste them into the SQL editor one by one or use the Supabase CLI (`supabase db push`).
+2. Apply every migration in [`supabase/migrations/`](supabase/migrations/) in order (starting from `002_community.sql`). Either paste them into the SQL editor one by one or use the Supabase CLI (`supabase db push`).
 3. Create the `avatars` and `post-images` storage buckets and apply the policies in [`supabase/STORAGE.md`](supabase/STORAGE.md) and [`supabase/storage-post-images.sql`](supabase/storage-post-images.sql).
 4. In **Authentication → URL Configuration**, add redirect URL `http://localhost:3000/api/auth/callback`.
 
@@ -67,7 +66,7 @@ src/
     [locale]/
       (auth)/        # sign in / sign up
       (marketing)/   # landing pages
-      (dashboard)/   # authenticated app: feed, calendar, messages, etc.
+      (dashboard)/   # authenticated app: feed, profiles, notifications, etc.
   components/        # UI primitives + feature components
   i18n/              # next-intl routing + request config
   lib/               # supabase clients, validations, utils

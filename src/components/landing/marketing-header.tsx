@@ -1,7 +1,6 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Heart } from "lucide-react";
 
 export function MarketingHeader() {
@@ -26,10 +25,6 @@ export function MarketingHeader() {
           <Heart className="size-5 text-primary fill-primary/20" />
           <span>GetTogether</span>
         </Link>
-
-        <nav className="flex items-center gap-2">
-          <ThemeToggle />
-        </nav>
       </div>
     </header>
   );

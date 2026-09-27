@@ -2,8 +2,6 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
 .font-arabic {
   --font-sans: var(--font-tajawal);
   font-family: var(--font-tajawal), system-ui, sans-serif;
@@ -53,6 +51,7 @@
 }
 
 :root {
+  color-scheme: light;
   --radius: 0.875rem;
   /* Vibrant pink primary, soft gray background, white cards, charcoal text */
   --background: oklch(0.96 0.005 0);
@@ -88,40 +87,6 @@
   --sidebar-ring: oklch(0.65 0.2 350);
 }
 
-.dark {
-  --background: oklch(0.14 0.02 0);
-  --foreground: oklch(0.96 0.01 0);
-  --card: oklch(0.19 0.02 0);
-  --card-foreground: oklch(0.96 0.01 0);
-  --popover: oklch(0.19 0.02 0);
-  --popover-foreground: oklch(0.96 0.01 0);
-  --primary: oklch(0.7 0.18 350);
-  --primary-foreground: oklch(0.14 0.02 0);
-  --secondary: oklch(0.26 0.02 0);
-  --secondary-foreground: oklch(0.96 0.01 0);
-  --muted: oklch(0.26 0.02 0);
-  --muted-foreground: oklch(0.65 0.02 0);
-  --accent: oklch(0.28 0.06 350);
-  --accent-foreground: oklch(0.96 0.01 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.3 0.03 0);
-  --input: oklch(0.28 0.03 0);
-  --ring: oklch(0.7 0.18 350);
-  --chart-1: oklch(0.7 0.18 350);
-  --chart-2: oklch(0.65 0.12 195);
-  --chart-3: oklch(0.75 0.15 45);
-  --chart-4: oklch(0.65 0.2 300);
-  --chart-5: oklch(0.7 0.14 165);
-  --sidebar: oklch(0.17 0.02 0);
-  --sidebar-foreground: oklch(0.96 0.01 0);
-  --sidebar-primary: oklch(0.7 0.18 350);
-  --sidebar-primary-foreground: oklch(0.14 0.02 0);
-  --sidebar-accent: oklch(0.26 0.05 350);
-  --sidebar-accent-foreground: oklch(0.96 0.01 0);
-  --sidebar-border: oklch(0.3 0.03 0);
-  --sidebar-ring: oklch(0.7 0.18 350);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -136,11 +101,6 @@
     -webkit-text-fill-color: var(--foreground);
     -webkit-box-shadow: 0 0 0 1000px var(--muted) inset;
     transition: background-color 5000s ease-in-out 0s;
-  }
-  .dark input:-webkit-autofill,
-  .dark input:-webkit-autofill:hover,
-  .dark input:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0 1000px oklch(0.26 0.02 0) inset;
   }
 }
 
@@ -285,15 +245,6 @@
     }
   }
 
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
-  }
-
   @keyframes heartbeat {
     0% {
       transform: scale(1);
@@ -374,31 +325,12 @@
     animation: scaleOut 0.3s ease-in;
   }
 
-  .animate-pulse-slow {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
   .animate-spin-slow {
     animation: spin 3s linear infinite;
   }
 
-  .animate-bounce-slow {
-    animation: bounce 2s infinite;
-  }
-
   .animate-heartbeat {
     animation: heartbeat 1.5s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 2s linear infinite;
-    background: linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      transparent 100%
-    );
-    background-size: 1000px 100%;
   }
 
   /* Staggered animation delay utilities */

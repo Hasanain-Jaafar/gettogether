@@ -51,8 +51,6 @@
   "nav": {
     "feed": "الرئيسية",
     "profile": "الملف الشخصي",
-    "calendar": "الأحداث",
-    "leaderboard": "المتصدرون",
     "notifications": "الإشعارات",
     "viewProfile": "عرض",
     "editProfile": "تعديل",
@@ -272,12 +270,6 @@
   "level": {
     "label": "المستوى {n}"
   },
-  "leaderboard": {
-    "title": "المتصدرون",
-    "subtitle": "أعلى الأعضاء بالنقاط.",
-    "empty": "لا يوجد متصدرون بعد. ابدأ بالنشر لتتصدر القائمة.",
-    "xpSuffix": "نقطة"
-  },
   "badges": {
     "first_post": {
       "name": "أول منشور",
@@ -311,46 +303,5 @@
       "name": "صدى",
       "description": "أُعيد نشر منشوراتك ١٠ مرات."
     }
-  },
-  "calendar": {
-    "title": "التقويم",
-    "upcomingEvents": "الأحداث القادمة",
-    "upcomingSubtitle": "أحداثك وأحداث من تتابعهم.",
-    "pastEvents": "الأحداث السابقة",
-    "pastSubtitle": "أحداث انتهت بالفعل.",
-    "archived": "مؤرشف",
-    "emptyTitle": "لا توجد أحداث بعد",
-    "emptyDescription": "أنشئ حدثًا وسيظهر هنا لمتابعيك.",
-    "today": "اليوم",
-    "previousMonth": "الشهر السابق",
-    "nextMonth": "الشهر التالي",
-    "createEvent": "إنشاء حدث",
-    "editEvent": "تعديل الحدث",
-    "deleteEvent": "حذف الحدث",
-    "eventCreated": "تم إنشاء الحدث",
-    "eventUpdated": "تم تحديث الحدث",
-    "eventDeleted": "تم حذف الحدث",
-    "confirmDelete": "هل تريد حذف هذا الحدث؟",
-    "more": "أخرى",
-    "unknownUser": "مستخدم غير معروف",
-    "formDescription": "شارك ما تخطط له ليظهر في تقويم متابعيك.",
-    "titleLabel": "العنوان",
-    "titlePlaceholder": "ماذا يحدث؟",
-    "startsAt": "يبدأ",
-    "endsAt": "ينتهي (اختياري)",
-    "locationLabel": "الموقع",
-    "locationPlaceholder": "مكان أو رابط",
-    "descriptionLabel": "الوصف",
-    "descriptionPlaceholder": "أضف تفاصيل (اختياري)",
-    "visibilityLabel": "من يمكنه الرؤية؟",
-    "visibility": {
-      "public": "عام",
-      "followers": "المتابعون",
-      "private": "أنا فقط"
-    },
-    "cancel": "إلغاء",
-    "save": "حفظ",
-    "create": "إنشاء",
-    "saving": "جارٍ الحفظ…"
   }
 }
