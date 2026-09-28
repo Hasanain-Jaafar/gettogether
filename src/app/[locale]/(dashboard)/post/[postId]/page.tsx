@@ -24,21 +24,14 @@ export default async function PostPage({
   } = await getUser();
   if (!user) return null;
 
-  const { data: post } = await supabase
-    .from("posts")
-    .select("id, user_id, content, image_url, image_width, image_height, video_url, video_orientation, created_at, category")
-    .eq("id", postId)
-    .maybeSingle();
-
-  if (!post) notFound();
-
-  const { data: author } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url")
-    .eq("id", post.user_id)
-    .maybeSingle();
-
-  const [{ data: likes }, { data: comments }] = await Promise.all([
+  // Likes and comments only need the post id from the URL, so they're fetched
+  // alongside the post instead of waiting for it.
+  const [{ data: post }, { data: likes }, { data: comments }] = await Promise.all([
+    supabase
+      .from("posts")
+      .select("id, user_id, content, image_url, image_width, image_height, video_url, video_orientation, created_at, category")
+      .eq("id", postId)
+      .maybeSingle(),
     supabase.from("likes").select("user_id").eq("post_id", postId),
     supabase
       .from("comments")
@@ -47,24 +40,22 @@ export default async function PostPage({
       .order("created_at", { ascending: true }),
   ]);
 
-  const commentUserIds = [...new Set(comments?.map((c) => c.user_id) ?? [])];
-  const likerUserIds = [...new Set(likes?.map((l) => l.user_id) ?? [])];
-  const allProfileIds = [...new Set([...commentUserIds, ...likerUserIds])];
-  const { data: profiles } = allProfileIds.length
-    ? await supabase
-        .from("profiles")
-        .select("id, name, avatar_url")
-        .in("id", allProfileIds)
-    : { data: [] };
-  const profileMap = new Map(profiles?.map((p) => [p.id, p]) ?? []);
+  if (!post) notFound();
 
+  // Second round: everything that depends on the rows above. The author is looked
+  // up together with commenters and likers in a single profiles query.
+  const commentUserIds = comments?.map((c) => c.user_id) ?? [];
+  const likerUserIds = likes?.map((l) => l.user_id) ?? [];
+  const allProfileIds = [...new Set([post.user_id, ...commentUserIds, ...likerUserIds])];
   const commentIds = comments?.map((c) => c.id) ?? [];
-  const { data: commentLikes } = commentIds.length
-    ? await supabase
-        .from("comment_likes")
-        .select("comment_id, user_id")
-        .in("comment_id", commentIds)
-    : { data: [] as { comment_id: string; user_id: string }[] };
+  const [{ data: profiles }, { data: commentLikes }] = await Promise.all([
+    supabase.from("profiles").select("id, name, avatar_url").in("id", allProfileIds),
+    commentIds.length
+      ? supabase.from("comment_likes").select("comment_id, user_id").in("comment_id", commentIds)
+      : Promise.resolve({ data: [] as { comment_id: string; user_id: string }[] }),
+  ]);
+  const profileMap = new Map(profiles?.map((p) => [p.id, p]) ?? []);
+  const author = profileMap.get(post.user_id);
   const commentLikeCount = new Map<string, number>();
   const commentLikedByMe = new Set<string>();
   commentLikes?.forEach((l) => {
@@ -110,6 +101,7 @@ export default async function PostPage({
         likers={likers}
         // Once deleted this page would 404, so go back where the user came from (or their profile).
         afterDeleteHref={returnTo ?? `/u/${user.id}`}
+        priority
       />
     </div>
   );

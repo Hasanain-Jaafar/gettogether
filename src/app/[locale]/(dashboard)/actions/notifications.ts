@@ -26,31 +26,33 @@ export async function getNotifications(
 ): Promise<{ notifications: Notification[]; unreadCount: number }> {
   const supabase = await createClient();
 
-  // Get notifications
-  const { data: notifications, error } = await supabase
-    .from("notifications")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(limit);
+  // The list and the unread count don't depend on each other, so fetch them together.
+  const [{ data: notifications, error }, { count }] = await Promise.all([
+    supabase
+      .from("notifications")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(limit),
+    supabase
+      .from("notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("read", false),
+  ]);
 
   if (error) {
     return { notifications: [], unreadCount: 0 };
   }
 
-  // Get unread count
-  const { count } = await supabase
-    .from("notifications")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .eq("read", false);
-
-  // Get actor profiles
+  // Get actor profiles (skipped when there's nobody to look up)
   const actorIds = [...new Set(notifications?.map((n) => n.actor_id).filter(Boolean) ?? [])];
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, name, avatar_url")
-    .in("id", actorIds);
+  const { data: profiles } = actorIds.length
+    ? await supabase
+        .from("profiles")
+        .select("id, name, avatar_url")
+        .in("id", actorIds)
+    : { data: [] as { id: string; name: string | null; avatar_url: string | null }[] };
 
   const profileMap = new Map(profiles?.map((p) => [p.id, p]) ?? []);
 

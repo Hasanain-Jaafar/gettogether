@@ -71,9 +71,10 @@ export default async function DashboardPage({
           </div>
         )}
         <ul className="space-y-4">
-          {feedPage.items.map((item) => (
+          {feedPage.items.map((item, index) => (
             <li key={item.post.id}>
-              <PostCard {...item} />
+              {/* Only the first post is on screen at load; the rest stay lazy. */}
+              <PostCard {...item} priority={index === 0} />
             </li>
           ))}
         </ul>

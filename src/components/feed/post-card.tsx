@@ -72,6 +72,9 @@ export type PostCardProps = {
   // Where to go after deleting this post. Set on the post's own page, which can't
   // stay put once its post is gone; in lists the card just hides itself.
   afterDeleteHref?: string;
+  // The card is visible on first paint (top of the feed, or the post's own page),
+  // so its image should download right away instead of waiting to be lazy-loaded.
+  priority?: boolean;
 };
 
 function VideoEmbed({ url, orientation }: { url: string; orientation?: "landscape" | "portrait" | null }) {
@@ -145,6 +148,7 @@ export function PostCard({
   currentUserId,
   likers,
   afterDeleteHref,
+  priority = false,
 }: PostCardProps) {
   const router = useRouter();
   const t = useTranslations("feed.post");
@@ -350,6 +354,7 @@ export function PostCard({
                       width={post.image_width}
                       height={post.image_height}
                       sizes="(min-width: 1024px) 800px, 100vw"
+                      preload={priority}
                       className="mx-auto block h-auto max-h-[600px] w-full object-contain"
                     />
                   ) : (
@@ -357,7 +362,8 @@ export function PostCard({
                     <img
                       src={post.image_url}
                       alt="Post image"
-                      loading="lazy"
+                      loading={priority ? "eager" : "lazy"}
+                      fetchPriority={priority ? "high" : undefined}
                       className="mx-auto block h-auto max-h-[600px] w-full object-contain"
                     />
                   )}
