@@ -7,7 +7,7 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
   const t = await getTranslations("feed");
 
   return (
-    <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60 md:-mx-6 md:px-6">
+    <div className="sticky -top-4 z-10 -mx-4 bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60 md:-top-6 md:-mx-6 md:px-6">
       <div className="relative">
         <div className="flex gap-2 overflow-x-auto scroll-px-4 snap-x snap-mandatory scrollbar-hide py-2">
           {/* Auto margins on the end spacers center the chips when they fit, and collapse to 0 when they
