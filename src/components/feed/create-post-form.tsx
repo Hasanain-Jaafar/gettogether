@@ -240,18 +240,16 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         />
 
         {!expanded ? (
-          <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="mx-auto flex w-4/5 items-center gap-2 rounded-full border border-border/60 bg-muted/40 py-1 ps-1 pe-3.5 text-start text-sm text-muted-foreground hover:bg-muted/60 transition-colors"
+          >
             <span aria-hidden className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
               <PenLine className="size-3.5" />
             </span>
-            <button
-              type="button"
-              onClick={() => setExpanded(true)}
-              className="flex-1 rounded-full border border-border/60 bg-muted/40 px-3.5 py-1.5 text-start text-sm text-muted-foreground hover:bg-muted/60 transition-colors"
-            >
-              {t("placeholder")}
-            </button>
-          </div>
+            {t("placeholder")}
+          </button>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex items-start gap-3">
