@@ -10,14 +10,14 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
   return (
     <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60 md:-mx-6 md:px-6">
       <div className="relative">
-        <div className="flex gap-1.5 overflow-x-auto scroll-px-4 snap-x snap-mandatory scrollbar-hide py-1.5">
+        <div className="flex gap-2 overflow-x-auto scroll-px-4 snap-x snap-mandatory scrollbar-hide py-2">
           {/* Auto margins on the end spacers center the chips when they fit, and collapse to 0 when they
               overflow so the row still scrolls from the first chip. Spacers keep end chips clear of the fades. */}
           <div className="ms-auto w-3 shrink-0" aria-hidden />
           <Link
             href="/dashboard"
             className={cn(
-              "flex shrink-0 snap-start items-center rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap transition-all",
+              "flex shrink-0 snap-start items-center rounded-full px-5 py-2 text-base font-medium whitespace-nowrap transition-all",
               active === null
                 ? "bg-foreground text-background shadow-md shadow-foreground/20"
                 : "border border-border/40 bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
@@ -33,7 +33,7 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
                 key={c}
                 href={`/dashboard?category=${c}`}
                 className={cn(
-                  "flex shrink-0 snap-start items-center rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap transition-all",
+                  "flex shrink-0 snap-start items-center rounded-full px-5 py-2 text-base font-medium whitespace-nowrap transition-all",
                   selected
                     ? CATEGORY_SOLID[c]
                     : "border border-border/40 bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
