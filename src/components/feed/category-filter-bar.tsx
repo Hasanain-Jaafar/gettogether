@@ -11,8 +11,8 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
       <div className="relative">
         <div className="flex gap-2 overflow-x-auto scroll-px-4 snap-x snap-mandatory scrollbar-hide py-2">
           {/* Auto margins on the end spacers center the chips when they fit, and collapse to 0 when they
-              overflow so the row still scrolls from the first chip. Spacers keep end chips clear of the fades. */}
-          <div className="ms-auto w-3 shrink-0" aria-hidden />
+              overflow so the row still scrolls from the first chip. */}
+          <div className="ms-auto w-0 shrink-0" aria-hidden />
           <Link
             href="/dashboard"
             className={cn(
@@ -41,10 +41,8 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
               </Link>
             );
           })}
-          <div className="me-auto w-3 shrink-0" aria-hidden />
+          <div className="me-auto w-0 shrink-0" aria-hidden />
         </div>
-        <div className="pointer-events-none absolute inset-y-0 w-10 ltr:right-0 ltr:bg-gradient-to-l rtl:left-0 rtl:bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 w-10 ltr:left-0 ltr:bg-gradient-to-r rtl:right-0 rtl:bg-gradient-to-l from-background to-transparent" />
       </div>
     </div>
   );
