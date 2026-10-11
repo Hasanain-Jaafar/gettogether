@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { CATEGORY_SOLID, POST_CATEGORIES, type PostCategory } from "@/lib/post-categories";
 import { cn } from "@/lib/utils";
-import { LinkPendingSpinner } from "@/components/ui/link-pending-spinner";
 
 export async function CategoryFilterBar({ active }: { active: PostCategory | null }) {
   const t = await getTranslations("feed");
@@ -24,7 +23,6 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
             )}
           >
             {t("all")}
-            <LinkPendingSpinner />
           </Link>
           {POST_CATEGORIES.map((c) => {
             const selected = active === c;
@@ -40,7 +38,6 @@ export async function CategoryFilterBar({ active }: { active: PostCategory | nul
                 )}
               >
                 {t(`categories.${c}`)}
-                <LinkPendingSpinner />
               </Link>
             );
           })}
